@@ -355,3 +355,13 @@ body[data-page="explore"] .header{background-color:#d3f3ac!important}
 .services-reference .textlink{background-color:#fff!important;border:1px solid #e1e9e2!important;color:#315744!important;border-radius:999px}
 .services-reference #featured .pro-footer .btn{background-color:#194b3b!important;border:1px solid #194b3b!important;color:#fff!important;opacity:1!important}
 .services-reference #featured .pro-footer .btn:hover{background-color:#2c8659!important}
+
+/* Profile creation state and edit state */
+.profile-created-actions{display:flex;align-items:center;gap:13px;margin-top:20px;padding:16px;border:1px solid #d4e7d6;background:#eff7ef;border-radius:14px;color:#204f3b}
+.profile-created-actions[hidden]{display:none!important}
+.profile-created-check{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:50%;background:#d0e9d3;color:#235d41;font-weight:900}
+.profile-created-actions>div{flex:1;min-width:0}
+.profile-created-actions strong{font-size:13px}
+.profile-created-actions p{font-size:11px;margin:4px 0 0;line-height:1.4;color:#647e6c}
+.profile-created-actions .btn{white-space:nowrap}
+@media(max-width:700px){.profile-created-actions{flex-wrap:wrap}.profile-created-actions .btn{width:100%}}
