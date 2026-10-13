@@ -1,0 +1,75 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#154c3c"><meta name="description" content="Encontre profissionais, explore serviços e publique seus pedidos com facilidade no Conecta."><title>Conecta | Pessoas certas para o que você precisa</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="premium.css"><link rel="stylesheet" href="reference.css"></head><body>
+
+<header class="header clean-header"><div class="header-row clean-header-row"><a href="#" class="logo" data-route="home"><span class="logo-symbol"><i></i><i></i><i></i><i></i></span>conecta<span class="logo-dot">.</span></a><form id="topMarketplaceSearch" class="top-search clean-top-search" action="#"><input id="topSearchQuery" placeholder="Buscar serviços, profissionais ou cidade" aria-label="Buscar serviços, profissionais ou cidade"><button type="submit" class="top-search-btn" aria-label="Pesquisar"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 4.2 4.2"/></svg></button></form><nav class="desktop-nav clean-nav"><button data-route="home" class="navlink current">Início</button><button data-route="explore" class="navlink">Profissionais</button><button data-route="requests" class="navlink">Pedidos</button><button data-route="dashboard" class="navlink">Meu espaço</button></nav><div class="header-right clean-header-right"><button class="btn btn-light top-cta" data-action="open-request">Publicar pedido</button><button class="btn btn-accent top-cta" data-route="dashboard">Meu perfil</button><button id="menuBtn" class="menu-button" aria-label="Abrir menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></div></header>
+<div id="mobileNav" class="mobile-nav"><button data-route="home">Início</button><button data-route="explore">Profissionais</button><button data-route="requests">Pedidos</button><button data-route="dashboard">Meu espaço</button></div>
+<main>
+<section id="page-home" class="page active">
+  <div class="clean-home-wrap">
+    <section class="clean-hero">
+      <div class="clean-hero-main">
+        <div class="hero-chip"><span class="status-dot"></span> BEM-VINDO AO CONECTA</div>
+        <h1>Encontre a pessoa certa para <span>cada serviço.</span></h1>
+        <p>Profissionais para transformar seus planos em realidade. Descubra talentos, conheça serviços e encontre a ajuda ideal para o que você precisa.</p>
+        <form id="heroSearch" class="hero-search clean-hero-search">
+          <span class="search-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 4.2 4.2"/></svg></span>
+          <input id="heroQuery" placeholder="Qual serviço você precisa?" aria-label="Pesquisar serviços">
+          <select id="heroCategory" aria-label="Categoria de serviço"><option value="">Todas as categorias</option></select>
+          <button class="btn btn-accent" type="submit">Buscar <span aria-hidden="true">↗</span></button>
+        </form>
+        <div class="hero-stats-reference">
+          <div><strong id="heroProCount">6</strong><span>Perfis no catálogo</span></div>
+          <div><strong id="heroCatCount">12</strong><span>Áreas de serviços</span></div>
+          <div><strong id="heroReqCount">3</strong><span>Pedidos publicados</span></div>
+        </div>
+      </div>
+      <div class="hero-visual" aria-label="Pessoas e profissionais da plataforma">
+        <div class="hero-photo hero-photo-small"><img src="assets/hero-side.jpg" data-upgrade-src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=700&amp;q=85" alt="Pessoas trabalhando em conjunto"></div>
+        <div class="hero-photo hero-photo-main"><img src="assets/hero-main.jpg" data-upgrade-src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&amp;q=85" alt="Profissional sorrindo"></div>
+        <div class="visual-note visual-note-top"><span class="note-icon">✦</span><span><b>Um mundo de talentos</b><small>Descubra o profissional ideal</small></span></div>
+        <div class="visual-note visual-note-bottom"><span class="note-icon check-icon">✓</span><span><b>Conecte e resolva</b><small>Simples, direto e fácil</small></span></div>
+        <div class="hero-visual-spark hero-spark-one"></div><div class="hero-visual-spark hero-spark-two"></div>
+      </div>
+    </section>
+    <section class="services-reference">
+      <div class="main-container clean-main">
+        <div class="section-head clean-head"><div><span class="overline">DESCUBRA O QUE VOCÊ PRECISA</span><h2>Serviços populares para você</h2><p>De pequenos reparos a grandes projetos, encontre quem pode ajudar.</p></div><button class="textlink" data-route="explore">Ver todos os serviços <span aria-hidden="true">↗</span></button></div>
+        <div class="services-slider-wrap"><div id="categories" class="category-grid clean-category-grid"></div><div class="slide-controls"><button type="button" aria-label="Ver serviços anteriores" data-category-scroll="prev">←</button><button type="button" aria-label="Ver próximos serviços" data-category-scroll="next">→</button></div></div>
+        <div class="section-head clean-head with-gap"><div><span class="overline">FEITO PARA VOCÊ</span><h2>Profissionais em destaque</h2><p>Conheça quem faz acontecer e encontre a pessoa certa.</p></div><button class="textlink" data-route="explore">Explorar profissionais <span aria-hidden="true">↗</span></button></div>
+        <div id="featured" class="professional-grid"></div>
+        <section class="clean-cta"><div><span class="overline overline-light">FAÇA PARTE DO CONECTA</span><h2>Seu talento merece ser encontrado.</h2><p>Crie seu perfil, apresente seu trabalho e deixe novos clientes descobrirem o que você faz.</p></div><button class="btn btn-white" data-route="dashboard">Quero anunciar meus serviços <span aria-hidden="true">↗</span></button></section>
+      </div>
+    </section>
+  </div>
+</section>
+<section id="page-explore" class="page">
+  <div class="explore-outer">
+    <div class="explore-shell main-container subpage">
+      <div class="explore-titlebar"><h1>PROFISSIONAIS</h1><span>Encontre o talento certo para cada projeto <span aria-hidden="true">↗</span></span></div>
+      <div class="explore-topline">
+        <div class="explore-tabs" role="group" aria-label="Visualização dos profissionais"><button class="active" type="button" data-explore-tab="all">Todos</button><button type="button" data-explore-tab="saved">Meus salvos</button></div>
+        <button class="explore-join" type="button" data-route="dashboard">+ Anuncie seu serviço</button>
+      </div>
+      <div class="explore-toolbar">
+        <span class="explore-filter-title"><svg width="17" height="17" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8"><path d="M4 7h16M7 12h10m-7 5h4"/></svg> Filtros</span>
+        <span class="toolbar-divider"></span>
+        <div id="resultCount" class="result-count" aria-live="polite"></div>
+        <label class="filter-search"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 4.2 4.2"/></svg><input id="searchPros" placeholder="Buscar profissionais ou serviços" aria-label="Buscar profissionais ou serviços"></label>
+        <label class="sort-label" for="proSort">Ordenar</label><select id="proSort" aria-label="Ordenar profissionais"><option value="default">Relevância</option><option value="name">Nome A a Z</option><option value="city">Cidade</option></select>
+      </div>
+      <div class="explore-layout">
+        <aside class="explore-sidebar" aria-label="Filtros de busca">
+          <div class="sidebar-section"><div class="sidebar-heading">LOCALIZAÇÃO</div><label class="sidebar-field"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><input id="cityFilter" placeholder="Qual cidade?" aria-label="Filtrar cidade"></label></div>
+          <div class="sidebar-section"><div class="sidebar-heading">CATEGORIAS</div><select id="categoryFilter" aria-label="Filtrar categoria" class="sidebar-select"></select><div id="sidebarCategories" class="sidebar-categories"></div></div>
+          <div class="sidebar-section"><div class="sidebar-heading">SUA BUSCA</div><p class="sidebar-help">Escolha uma área ou digite o nome de um profissional para refinar a busca.</p></div>
+          <button id="clearFilters" class="btn btn-light sidebar-reset">Limpar todos os filtros <span>↗</span></button>
+        </aside>
+        <div class="explore-results"><div id="professionalsList" class="professional-grid"></div><div class="explore-end-note">Conectando pessoas a novas possibilidades <span>✳</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section id="page-requests" class="page"><div class="main-container subpage"><div class="section-head"><div><span class="overline">OPORTUNIDADES</span><h1>Pedidos de serviço</h1><p>Veja o que as pessoas precisam e encontre oportunidades de trabalho.</p></div><button class="btn btn-green" data-action="open-request">+ Publicar pedido</button></div><div class="filterbar"><label class="filter-search"><svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 4.2 4.2"/></svg><input id="requestSearch" placeholder="Buscar pedidos"></label><select id="requestCategory" aria-label="Categoria dos pedidos"></select><select id="requestSort"><option value="recent">Mais recentes</option><option value="old">Mais antigos</option></select></div><div id="requestList" class="request-grid"></div></div></section>
+<section id="page-dashboard" class="page"><div class="main-container subpage"><div class="section-head"><div><span class="overline">SUA ÁREA</span><h1>Meu espaço no Conecta</h1><p>Gerencie seu perfil, mostre o que faz e acompanhe suas publicações.</p></div><span class="demo-label">Dados salvos neste navegador</span></div><div class="dashboard-tabs"><button class="selected" data-dash="profile">Meu perfil</button><button data-dash="portfolio">Meu portfólio</button><button data-dash="myrequests">Meus pedidos</button></div><section id="dashProfile" class="dash-panel active"><div class="panel-grid"><form id="profileForm" class="form-card"><h3>Informações profissionais</h3><p>Monte sua vitrine para que clientes conheçam seu trabalho.</p><div class="row-fields"><label>Seu nome ou nome profissional <input name="name" maxlength="80" required placeholder="Ex.: João Silva"></label><label>Serviço principal <select name="category" required id="profileCategory"></select></label></div><div class="row-fields"><label>Cidade <input name="city" maxlength="60" required placeholder="São José dos Campos"></label><label>WhatsApp com DDD <input name="phone" inputmode="tel" maxlength="20" placeholder="12999999999"></label></div><label>Apresentação <textarea name="bio" rows="4" maxlength="500" placeholder="Conte sobre seus serviços, experiência e diferencial"></textarea></label><label>Foto de perfil <input id="profilePicture" type="file" accept="image/png,image/jpeg,image/webp"></label><div id="profilePreview" class="profile-preview"></div><button class="btn btn-green" type="submit">Salvar perfil <span>↗</span></button></form><div class="side-info"><div class="info-illustration"><svg viewBox="0 0 100 100" width="104" height="104" fill="none" stroke="currentColor" stroke-width="2"><rect x="22" y="18" width="56" height="64" rx="12"/><circle cx="50" cy="42" r="11"/><path d="M34 67c4-13 28-13 32 0M36 13h28"/></svg></div><h3>Um perfil que inspira confiança.</h3><p>Adicione uma foto, explique o que você faz e publique trabalhos com imagens. Assim os clientes conseguem avaliar melhor seus serviços.</p><ul><li>Foto e descrição profissional</li><li>Contato direto pelo WhatsApp</li><li>Portfólio com fotos</li></ul></div></div></section><section id="dashPortfolio" class="dash-panel"><div class="dashboard-intro"><div><h3>Trabalhos publicados</h3><p>Adicione até seis fotos por trabalho para mostrar seus resultados.</p></div><button class="btn btn-green" data-action="open-work">+ Adicionar trabalho</button></div><div id="myWorks" class="portfolio-grid"></div></section><section id="dashMyrequests" class="dash-panel"><div class="dashboard-intro"><div><h3>Meus pedidos</h3><p>Pedidos que você criou neste navegador.</p></div><button class="btn btn-green" data-action="open-request">+ Novo pedido</button></div><div id="myRequests" class="request-grid"></div></section></div></section>
+<section id="page-professional" class="page"><div class="main-container subpage"><button class="back-link" data-route="explore">← Voltar aos profissionais</button><div id="professionalDetail"></div></div></section>
+</main><footer><div class="footer-main"><a href="#" class="logo footer-logo" data-route="home"><span class="logo-symbol"><i></i><i></i><i></i><i></i></span>conecta<span class="logo-dot">.</span></a><p>Conexões certas. Projetos realizados.<br>Um espaço para quem precisa e quem faz.</p><div><button data-route="explore">Profissionais</button><button data-route="requests">Pedidos</button><button data-route="dashboard">Meu espaço</button></div></div><div class="footer-bottom"><span>© Conecta · Feito para aproximar</span><span>Versão demonstrativa. Perfis de exemplo identificados.</span></div></footer>
+<div id="modal" class="modal-backdrop" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true"><button class="modal-close" id="closeModal" aria-label="Fechar">×</button><div id="modalBody"></div></div></div><div id="toast" role="status"></div><script src="app.js"></script></body></html>
