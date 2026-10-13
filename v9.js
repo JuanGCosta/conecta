@@ -101,14 +101,14 @@
     $('#chatThreadCount').textContent=threads.length;
     list.innerHTML=threads.length?threads.map(t=>{
       const p=getDisplayPerson(t);
-      return `<button class="thread-item ${activeChat?.id===t.id?'selected':''}" data-thread="${safe(t.id)}"><span class="thread-avatar">${safe(nick(p.name))}</span><span class="thread-copy"><strong>${safe(p.name)}</strong><small>${safe(t.lastMessage||'Conversa iniciada')}</small></span></button>`;
-    }).join(''):'<div class="thread-empty">Você ainda não tem conversas.<br>Abra o perfil de um profissional e clique em <b>Enviar mensagem</b>.</div>';
+      return `<button class="thread-item ${activeChat?.id===t.id?'selected':''}" data-thread="${safe(t.id)}"><span class="thread-avatar">${safe(nick(p.name))}</span><span class="thread-copy"><span class="thread-copy-top"><strong>${safe(p.name)}</strong><em>${safe(p.subtitle)}</em></span><small>${safe(t.lastMessage||'Conversa iniciada')}</small></span></button>`;
+    }).join(''):'<div class="thread-empty"><span class="v11-thread-empty-icon">✉</span><strong>Nenhuma conversa ainda</strong><p>Encontre um profissional para iniciar sua primeira conversa.</p><button data-route="explore">Ver profissionais ↗</button></div>';
   }
   function renderMessages(){
     const el=$('#chatMessages');if(!el)return;
-    if(!activeChat){el.innerHTML='<div class="chat-intro"><span class="chat-intro-symbol">✉</span><strong>Suas conversas aparecem aqui</strong><p>Explore os profissionais, escolha um perfil e comece a conversar.</p></div>';return}
+    if(!activeChat){el.innerHTML='<div class="chat-intro"><span class="chat-intro-symbol">✉</span><span class="v11-empty-tag">SUA CONVERSA COMEÇA AQUI</span><strong>Um bom projeto começa com um olá.</strong><p>Encontre um profissional, tire suas dúvidas e combine os detalhes com segurança.</p><button data-route="explore">Explorar profissionais ↗</button></div>';return}
     const name=getDisplayPerson(activeChat).name;
-    el.innerHTML=messages.length?messages.map(m=>`<div class="bubble-line ${m.senderId===currentUid()?'own':''}"><div class="chat-bubble">${safe(m.text)}</div></div>`).join(''):`<div class="chat-intro"><span class="chat-intro-symbol">✉</span><strong>Diga olá para ${safe(name)}</strong><p>Apresente seu projeto e combine os detalhes do serviço.</p></div>`;
+    el.innerHTML=messages.length?messages.map(m=>`<div class="bubble-line ${m.senderId===currentUid()?'own':''}"><div class="chat-bubble"><p>${safe(m.text)}</p></div></div>`).join(''):`<div class="chat-intro"><span class="chat-intro-symbol">✉</span><span class="v11-empty-tag">PRIMEIRA MENSAGEM</span><strong>Diga olá para ${safe(name)}</strong><p>Conte brevemente o que você precisa para começar.</p></div>`;
     el.scrollTop=el.scrollHeight;
   }
   function renderInbox(){

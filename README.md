@@ -1,4 +1,33 @@
-# Conecta V9 | Cadastro verificado e chat interno
+# Conecta V11 | Reformulação visual completa
+
+A V11 muda a estrutura das páginas **Pedidos**, **Mensagens** e **Meu espaço**, mantendo a navegação e a integração Firebase da V9. Não é apenas uma troca de cores.
+
+**Principais melhorias visuais:**
+
+- Página de pedidos com hero verde, composição fotográfica, painel de filtros e categorias rápidas, cards horizontais mais trabalhados e bloco lateral de orientações.
+- Mensagens com nova apresentação, caixa de entrada e estado inicial de conversa redesenhados, mantendo o chat privado existente.
+- Meu espaço com formulário organizado em três etapas e **prévia dinâmica do perfil durante o preenchimento**.
+- Modal de novo pedido com duas colunas no desktop, lateral editorial verde, campos em etapas e layout adaptado ao celular.
+- Refinamentos adicionais nos componentes e no menu mobile, sem alterar os requisitos do Firebase.
+
+**Importante:** O novo formulário de pedido continua usando o armazenamento local da versão anterior. Ele não publica pedidos para outros usuários. O botão agora diz **Salvar pedido**, com essa limitação indicada no modal. Os recursos de contas, perfis públicos e chat continuam dependendo da configuração de Firebase abaixo.
+
+## Como publicar esta atualização no seu GitHub
+
+1. Extraia o ZIP e entre na pasta `conecta-v11`.
+2. Copie **todos os arquivos internos** para a raiz da pasta local já vinculada ao Git, ao lado da pasta `.git`. Preserve sua configuração existente em `firebase-config.js` se já tiver colocado dados do projeto Firebase, pois este pacote traz um arquivo de exemplo ainda vazio.
+3. No CMD dentro da pasta local do repositório, execute:
+
+```cmd
+git status
+git add .
+git commit -m "Conecta V11 - Novo visual"
+git push origin main
+```
+
+4. Aguarde o fluxo do GitHub Pages ficar verde em **Actions**, depois atualize o navegador com Ctrl + Shift + R.
+
+## Base funcional preservada (Firebase V9)
 
 Esta versão mantém o visual verde do Conecta e implementa uma base **real** de autenticação e mensagens com Firebase Authentication e Cloud Firestore. É HTML, CSS e JavaScript puro, sem build.
 
