@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signed() {
+      return request.auth != null;
+    }
+    function verified() {
+      return signed() && request.auth.token.email_verified == true;
+    }
+    function profileValid(p) {
+      return p.keys().hasOnly(['ownerUid','name','category','city','hasWhatsapp','bio','photo','updatedAt'])
+        && p.ownerUid == request.auth.uid
+        && p.name is string && p.name.size() > 1 && p.name.size() <= 80
+        && p.category is string && p.category.size() > 1 && p.category.size() <= 40
+        && p.city is string && p.city.size() > 1 && p.city.size() <= 60
+        && p.hasWhatsapp is bool
+        && p.bio is string && p.bio.size() <= 500
+        && p.photo is string && p.photo.size() <= 350000
+        && p.updatedAt == request.time;
+    }
+    match /profiles/{userId} {
+      allow read: if true;
+      allow create: if verified() && userId == request.auth.uid && profileValid(request.resource.data);
+      allow update: if verified() && userId == request.auth.uid
+        && resource.data.ownerUid == request.auth.uid && profileValid(request.resource.data);
+      allow delete: if verified() && userId == request.auth.uid;
+    }
+    // Phone numbers are not part of the publicly-readable professional profile.
+    // Verified accounts can look up a specific professional's contact; bulk listing is blocked.
+    match /contacts/{userId} {
+      allow get: if verified();
+      allow list: if false;
+      allow create, update: if verified() && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['ownerUid','phone','updatedAt'])
+        && request.resource.data.ownerUid == userId
+        && request.resource.data.phone is string
+        && request.resource.data.phone.matches('^[0-9]{0,20}$')
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if verified() && request.auth.uid == userId;
+    }
+    function participant(data) {
+      return verified() && request.auth.uid in data.participants;
+    }
+    function validThread(data) {
+      return data.keys().hasOnly(['customerId','providerId','participants','customerName','providerName','lastMessage','lastSenderId','createdAt','updatedAt'])
+        && data.customerId is string && data.providerId is string
+        && data.customerId != data.providerId
+        && data.participants == [data.customerId,data.providerId]
+        && data.customerName is string && data.customerName.size() <= 70
+        && data.providerName is string && data.providerName.size() <= 80
+        && data.lastMessage is string && data.lastMessage.size() > 0 && data.lastMessage.size() <= 1000
+        && data.lastSenderId == request.auth.uid
+        && data.updatedAt == request.time;
+    }
+    match /chats/{chatId} {
+      allow get, list: if participant(resource.data);
+      allow create: if verified() && chatId == request.resource.data.customerId + '_' + request.resource.data.providerId
+        && request.auth.uid == request.resource.data.customerId
+        && exists(/databases/$(database)/documents/profiles/$(request.resource.data.providerId))
+        && validThread(request.resource.data)
+        && request.resource.data.createdAt == request.time;
+      allow update: if participant(resource.data)
+        && validThread(request.resource.data)
+        && request.resource.data.customerId == resource.data.customerId
+        && request.resource.data.providerId == resource.data.providerId
+        && request.resource.data.participants == resource.data.participants
+        && request.resource.data.customerName == resource.data.customerName
+        && request.resource.data.providerName == resource.data.providerName
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if false;
+      match /messages/{messageId} {
+        allow get, list: if participant(get(/databases/$(database)/documents/chats/$(chatId)).data);
+        allow create: if participant(getAfter(/databases/$(database)/documents/chats/$(chatId)).data)
+          && request.resource.data.keys().hasOnly(['senderId','text','createdAt'])
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 1000
+          && request.resource.data.createdAt == request.time;
+        allow update, delete: if false;
+      }
+    }
+  }
+}
