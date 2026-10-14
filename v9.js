@@ -78,7 +78,7 @@
   async function saveProfile(form){
     if(!requireAuth('profile'))return;
     const fields=form.elements;
-    const data={name:fields.name.value.trim(),category:fields.category.value,city:fields.city.value.trim(),phone:fields.phone.value.replace(/[^\d]/g,''),bio:fields.bio.value.trim(),photo:profileImage||''};
+    const data={name:fields.name.value.trim(),category:fields.category.value,city:fields.city.value.trim(),neighborhood:fields.neighborhood.value.trim(),phone:fields.phone.value.replace(/[^\d]/g,''),bio:fields.bio.value.trim(),photo:profileImage||''};
     if(!data.name||!data.category||!data.city){notify('Preencha os campos obrigatórios.');return}
     if(data.photo.length>340000){notify('Esta foto é muito grande. Escolha uma foto menor.');return}
     const existed=!!state.profile?.name;

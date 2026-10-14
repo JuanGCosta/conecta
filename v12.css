@@ -1,0 +1,27 @@
+/* V12 */
+.v12-marquee-viewport{overflow:hidden;position:relative;mask-image:linear-gradient(to right,transparent,#000 3%,#000 97%,transparent)}
+.v12-marquee-viewport #categories{display:flex!important;flex-wrap:nowrap!important;gap:16px!important;width:max-content!important;max-width:none!important;scroll-behavior:auto!important;will-change:transform;overflow:visible!important;}
+.v12-marquee-viewport #categories>.category-item{flex:0 0 230px!important;width:230px!important;min-width:230px!important}
+.v12-marquee-viewport [data-v12-clone]{pointer-events:none}
+.v12-neighborhood{padding:14px 0 4px;display:flex;flex-direction:column;gap:8px}
+.v12-neighborhood label{font-size:11px;font-weight:800;letter-spacing:.12em;color:#245747}
+.v12-neighborhood input,.v12-neighborhood-profile input{width:100%;border:1px solid #d9e8db;background:#f9fcf9;border-radius:12px;padding:13px 14px;font:inherit;color:#184a39}
+.v12-neighborhood small,.v12-neighborhood-profile small{font-size:12px;color:#739183}
+.v12-neighborhood-profile{display:flex;flex-direction:column;gap:8px;margin-top:15px}
+.v12-rating-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:30px;background:#eef7ed;color:#245d3e;font-size:12px;font-weight:750;margin:10px 0}
+.v12-reviews{padding:24px 0;margin-top:24px;border-top:1px solid #dce9df}
+.v12-reviews h2{font-size:24px;letter-spacing:-.04em}
+.v12-review-summary{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.v12-review-summary strong{font-size:21px;color:#1c654a}
+.v12-review-summary span,.v12-review-disclaimer{font-size:13px;color:#658174}
+.v12-review-list{display:grid;gap:12px;margin-top:18px}
+.v12-review{border:1px solid #dbeadc;background:#f9fcf9;border-radius:16px;padding:14px}
+.v12-review>div{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.v12-review span{color:#db9c2d;letter-spacing:2px}
+.v12-review p{margin:8px 0 0;color:#4a675c;line-height:1.6}
+.v12-review-form{display:grid;gap:12px;background:#f1f8f1;border:1px solid #dbeadd;border-radius:20px;padding:20px;margin-top:18px}
+.v12-review-form h3{font-size:18px;color:#1c4f3e}
+.v12-review-form label{display:grid;gap:6px;font-size:13px;color:#245747;font-weight:700}
+.v12-review-form select,.v12-review-form textarea{border:1px solid #ccdfd0;border-radius:12px;padding:12px;background:white;color:#224a3b;font:inherit;width:100%}
+.v12-review-form button{justify-self:start}
+@media(max-width:680px){.v12-marquee-viewport #categories>.category-item{flex-basis:195px!important;width:195px!important;min-width:195px!important}.v12-reviews{padding:20px 0}.v12-review-form{padding:14px}}

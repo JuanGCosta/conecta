@@ -1,4 +1,5 @@
-
+// Configuração pública do Firebase Web do Conecta.
+// Regras do Firestore controlam o acesso aos dados. Não armazene segredos aqui.
 window.CONECTA_FIREBASE_CONFIG = {
   apiKey: "AIzaSyCIXlPIY0JfV97lFSJOmfC0e2-_1nppCjc",
   authDomain: "conecta-f6ac1.firebaseapp.com",

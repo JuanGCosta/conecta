@@ -67,6 +67,18 @@
         const snap=await getDoc(doc(db,'contacts',uid));
         return snap.exists()?snap.data().phone:'';
       };
+      backend.subscribeReviews = (providerId,success,failure) => onSnapshot(collection(db,'profiles',providerId,'reviews'),snap=>success(snap.docs.map(d=>({id:d.id,...d.data()}))),failure);
+      backend.saveReview = async (providerId,rating,comment) => {
+        const u=auth.currentUser;
+        if (!u?.emailVerified) throw Error('Confirme seu e-mail primeiro.');
+        if (!providerId||u.uid===providerId) throw Error('Você não pode avaliar seu próprio perfil.');
+        if (!Number.isInteger(rating)||rating<1||rating>5) throw Error('Nota inválida.');
+        if (!comment.trim()||comment.trim().length>500) throw Error('Escreva um comentário de até 500 caracteres.');
+        await setDoc(doc(db,'profiles',providerId,'reviews',u.uid),{
+          authorUid:u.uid, authorName:(u.displayName||'Cliente Conecta').slice(0,70),
+          rating, comment:comment.trim(), updatedAt:serverTimestamp()
+        });
+      };
       backend.subscribeProfiles = (success,failure) => onSnapshot(collection(db,'profiles'),snapshot => {
         success(snapshot.docs.map(d => ({...d.data(),id:d.id})))
       },failure);
