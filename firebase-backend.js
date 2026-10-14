@@ -26,6 +26,7 @@
       ]);
       const app = initializeApp(c);
       const auth = authm.getAuth(app), db = dbm.getFirestore(app);
+      auth.languageCode = 'pt-BR';
       const {collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where, orderBy, limit, onSnapshot, serverTimestamp, writeBatch} = dbm;
       backend.subscribeAuth = callback => authm.onAuthStateChanged(auth, u => {backend.user=u;callback(u)}, err => {backend.error=err.message;callback(null)});
       backend.signup = async (name,email,password) => {

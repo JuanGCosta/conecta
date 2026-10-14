@@ -1,0 +1,49 @@
+CONECTA V16 - PÁGINA DE CONFIRMAÇÃO PERSONALIZADA
+
+Esta versão parte da V15 e mantém todos os recursos anteriores.
+
+O QUE FOI ADICIONADO
+- confirmar.html: página de ação de e-mail com a marca Conecta.
+- confirmar.css / confirmar.js: aparência e integração funcional com Firebase Auth.
+- Confirmação de e-mail por oobCode, redefinição de senha, recuperação de e-mail.
+- Idioma pt-BR no SDK antes dos e-mails enviados pelo Conecta.
+
+1. PUBLICAR O SITE
+Extraia a pasta conecta-v16 e copie TODO seu conteúdo para a pasta conectada ao Git,
+sem apagar .git. Execute no CMD:
+  git add .
+  git commit -m "Conecta V16 - Confirmacao personalizada"
+  git push origin main
+
+2. ESPERAR O GITHUB ACTIONS
+  https://github.com/JuanGCosta/conecta/actions
+
+3. CONFERIR A PÁGINA ONLINE
+  https://juangcosta.github.io/conecta/confirmar.html
+Abrindo sem parâmetros, ela deve avisar que o link está incompleto. Isso é normal:
+para confirmar uma conta, precisa de um link REAL com modo e código de uso único.
+
+4. ALTERAR O FIREBASE (OBRIGATÓRIO)
+No Firebase Console (projeto conecta-f6ac1):
+Authentication > Modelos de e-mail > Verificação de endereço de e-mail >
+Personalizar URL acionável.
+Defina a URL EXATA:
+  https://juangcosta.github.io/conecta/confirmar.html
+Salve a alteração.
+
+ATENÇÃO: a configuração da URL acionável pode afetar TODOS os modelos de
+mensagens de conta do projeto, não só a confirmação. Por isso a página também
+trata redefinição de senha e recuperação de e-mail.
+
+5. TESTE
+Crie uma conta de teste com um e-mail que você controla, confirme pelo novo
+link e verifique que o Firebase marca emailVerified=true após recarregar a conta.
+Use também Esqueci minha senha para verificar a recuperação.
+E-mails antigos podem manter a URL anterior; teste com novos envios.
+
+LIMITES
+- Não exige domínio próprio nem alteração de regras do Firestore.
+- O conteúdo HTML do e-mail continua sujeito às restrições do modelo do Firebase.
+- A nova página não resolve necessariamente o problema de e-mails no spam.
+- Não habilita login automático após a confirmação: o usuário volta ao Conecta.
+- Scripts Firebase são carregados pelo CDN do Google em tempo de execução.

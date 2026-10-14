@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e3e2d">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Confirmação de conta | Conecta</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="confirmar.css?v=16">
+</head>
+<body>
+  <main class="page">
+    <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+    <div class="panel">
+      <section class="story" aria-label="Conecta">
+        <a href="https://juangcosta.github.io/conecta/" class="brand" aria-label="Voltar ao Conecta">
+          <span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>conecta<span class="brand-period">.</span></span>
+        </a>
+        <div class="story-main">
+          <div class="story-label"><span class="story-dot"></span> UM NOVO JEITO DE SE CONECTAR</div>
+          <h1>Boas conexões<br>começam com <em>confiança.</em></h1>
+          <p>Uma comunidade feita para aproximar quem precisa de um serviço de quem sabe fazer acontecer.</p>
+          <div class="story-decoration" aria-hidden="true"><div class="orbit orbit-outer"></div><div class="orbit orbit-inner"></div><div class="spark">✳</div><div class="mini-card"><span class="mini-check">✓</span><span><strong>Você está no caminho certo</strong><small>Mais segurança para se conectar</small></span></div></div>
+        </div>
+        <div class="story-footer"><span>CONEXÕES CERTAS. PROJETOS REALIZADOS.</span><span>© Conecta</span></div>
+      </section>
+      <section class="action" aria-label="Confirmação de conta">
+        <div class="action-top"><span class="secure-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/></svg> CONTA CONECTA</span><a class="close-link" href="https://juangcosta.github.io/conecta/" aria-label="Voltar para o Conecta">×</a></div>
+        <div class="action-content">
+          <div class="status-icon" id="statusIcon" data-kind="loading" aria-hidden="true"><span class="status-spinner"></span></div>
+          <div class="eyebrow" id="statusEyebrow">SEGURANÇA DA SUA CONTA</div>
+          <h2 id="statusTitle">Estamos verificando seu link...</h2>
+          <p id="statusDescription" aria-live="polite">Só um instante enquanto confirmamos as informações com segurança.</p>
+          <div id="passwordSection" class="password-section" hidden>
+            <form id="passwordForm">
+              <label for="newPassword">Nova senha</label>
+              <input type="password" id="newPassword" autocomplete="new-password" placeholder="No mínimo 8 caracteres" minlength="8" required>
+              <label for="confirmPassword">Confirme a nova senha</label>
+              <input type="password" id="confirmPassword" autocomplete="new-password" placeholder="Digite a senha novamente" minlength="8" required>
+              <p class="form-error" id="formError" role="alert" hidden></p>
+              <button class="action-button" id="resetSubmit" type="submit">Salvar nova senha <span aria-hidden="true">↗</span></button>
+            </form>
+          </div>
+          <a id="primaryButton" class="action-button" href="https://juangcosta.github.io/conecta/" hidden>Ir para o Conecta <span aria-hidden="true">↗</span></a>
+          <div class="support-line" id="supportLine">Sua segurança vem em primeiro lugar.</div>
+        </div>
+        <div class="action-footer"><div class="safe-mark"><span>✓</span> Confirmação protegida pelo Firebase</div><a href="https://juangcosta.github.io/conecta/">Voltar ao início <span aria-hidden="true">↗</span></a></div>
+      </section>
+    </div>
+  </main>
+  <script src="firebase-config.js?v=16"></script>
+  <script type="module" src="confirmar.js?v=16"></script>
+</body>
+</html>
