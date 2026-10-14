@@ -94,6 +94,8 @@
           success(snapshot.docs.map(d=>({id:d.id,...d.data()})));
         },failure);
       };
+      // First contact must NOT read an absent /chats document: Firestore rules
+      // only allow a participant to read a chat that already exists.
       backend.sendMessage = async (providerId,providerName,text) => {
         const u=auth.currentUser;
         if (!u?.emailVerified) throw Error('Confirme seu e-mail para enviar mensagens.');
@@ -102,20 +104,32 @@
         if (!content || content.length>1000) throw Error('A mensagem deve conter de 1 a 1000 caracteres.');
         const threadId=`${u.uid}_${providerId}`;
         const chatRef=doc(db,'chats',threadId);
-        const existing=await getDoc(chatRef);
+        const messageData={senderId:u.uid,text:content,createdAt:serverTimestamp()};
         const batch=writeBatch(db);
-        if (existing.exists()) {
-          if (existing.data().customerId!==u.uid) throw Error('Esta conversa pertence a outro usuário.');
-          batch.update(chatRef,{lastMessage:content,lastSenderId:u.uid,updatedAt:serverTimestamp()});
-        } else {
-          batch.set(chatRef,{
-            customerId:u.uid, providerId,participants:[u.uid,providerId],
-            customerName:(u.displayName||'Cliente Conecta').slice(0,70),providerName:providerName.slice(0,80),
-            createdAt:serverTimestamp(),updatedAt:serverTimestamp(),lastMessage:content,lastSenderId:u.uid
-          });
+        batch.set(chatRef,{
+          customerId:u.uid, providerId, participants:[u.uid,providerId],
+          customerName:(u.displayName||'Cliente Conecta').slice(0,70),
+          providerName:providerName.slice(0,80),
+          createdAt:serverTimestamp(),updatedAt:serverTimestamp(),
+          lastMessage:content,lastSenderId:u.uid
+        });
+        batch.set(doc(collection(db,'chats',threadId,'messages')),messageData);
+        try {
+          await batch.commit();
+        } catch(e) {
+          // The chat can already exist if the inbox subscription had not arrived.
+          // Only retry when it is a real conversation belonging to this account.
+          if (!['permission-denied','already-exists'].includes(e?.code)) throw e;
+          let existing;
+          try { existing=await getDoc(chatRef); } catch { throw e; }
+          const t=existing.data();
+          if (!existing.exists() || t.customerId!==u.uid || t.providerId!==providerId ||
+              !Array.isArray(t.participants) || !t.participants.includes(u.uid)) throw e;
+          const retry=writeBatch(db);
+          retry.update(chatRef,{lastMessage:content,lastSenderId:u.uid,updatedAt:serverTimestamp()});
+          retry.set(doc(collection(db,'chats',threadId,'messages')),messageData);
+          await retry.commit();
         }
-        batch.set(doc(collection(db,'chats',threadId,'messages')),{senderId:u.uid,text:content,createdAt:serverTimestamp()});
-        await batch.commit();
         return threadId;
       };
       backend.reply = async (thread,text) => {

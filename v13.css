@@ -1,0 +1,27 @@
+/* Conecta V13: bugfixes and accessibility improvements. */
+/* Work/portfolio modal must scroll independently of the locked page. */
+.modal:has(.request-modal-shell):not(:has(.v11-modal-request)){
+  max-height:calc(100dvh - 36px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  -webkit-overflow-scrolling:touch;
+}
+.modal:has(.request-modal-shell) #modalBody{overflow:visible!important;}
+.modal:has(.request-modal-shell) .modal-close{position:sticky;float:right;top:12px;right:12px;z-index:8;margin-top:-10px;margin-right:-12px;}
+.request-modal-shell:after{content:'';display:block;height:1px;}
+.request-modal-shell .upload-dropzone{gap:8px;}
+.request-modal-shell .upload-dropzone strong,.request-modal-shell .upload-dropzone small{display:block;}
+.request-modal-shell .upload-dropzone small{margin-top:4px;}
+.v13-review-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+.v13-review-head h2{margin:0;}
+.v13-review-head button{font-size:12px;min-height:44px;}
+#v12ReviewsSection{scroll-margin-top:98px;}
+.upload-status{width:100%;text-align:center;color:#37644e;padding:12px;font-size:13px;}
+@media(max-width:700px){
+  .modal:has(.request-modal-shell):not(:has(.v11-modal-request)){max-height:calc(100dvh - 18px)!important;width:calc(100vw - 16px)!important;}
+  .modal:has(.request-modal-shell) #modalBody{padding-bottom:32px!important;}
+  .v13-review-head{align-items:flex-start;}
+  .v13-review-head button{width:100%;}
+}

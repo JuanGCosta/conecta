@@ -16,7 +16,7 @@
     'auth/invalid-credential':'E-mail ou senha incorretos.',
     'auth/too-many-requests':'Muitas tentativas. Aguarde alguns minutos.',
     'auth/unauthorized-domain':'Adicione o domínio do site em Authentication > Settings > Authorized domains.',
-    'permission-denied':'Acesso negado pelo Firestore. Verifique suas regras e a confirmação de e-mail.'
+    'permission-denied':'Acesso negado pelo Firestore. Confira se a conta confirmou o e-mail e se as regras foram publicadas.'
   }[e?.code] || e?.message || 'Não foi possível concluir a operação.');
   function showSetup(){modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">CONTA CONECTA</span><h2>Ative o cadastro real</h2><p>A navegação da plataforma já é pública. Para criar contas e trocar mensagens entre computadores, é necessário conectar seu projeto Firebase.</p><div class="auth-notice">Configure <strong>firebase-config.js</strong>, ative Authentication e publique as regras do Firestore. As instruções estão no <strong>README.md</strong> do ZIP.</div><button class="btn btn-green" data-action="close-modal">Entendi</button></div>`)}
   function openAuth(mode='login'){
@@ -166,7 +166,8 @@
         const digits=String(await backend().getContact(p.ownerUid)).replace(/\D/g,'');
         if(!digits){notify('WhatsApp indisponível. Use o chat do Conecta.');return}
         const target=digits.startsWith('55')?digits:'55'+digits;
-        modal(`<div class="auth-shell"><div class="auth-symbol">✉</div><span class="overline">CONTATO VERIFICADO</span><h2>Conversar com ${safe(p.name)}</h2><p>Você já está cadastrado. Agora pode abrir o WhatsApp do profissional ou optar pelo chat do Conecta.</p><a class="btn btn-green" href="https://wa.me/${target}" target="_blank" rel="noopener noreferrer">Abrir WhatsApp ↗</a><button class="btn btn-chat-light" data-chat-pro="${safe(p.id)}">Preferir chat do Conecta</button></div>`)
+        const greeting=encodeURIComponent('Olá! Vim pelo Conecta e gostaria de saber mais sobre seus serviços.');
+        modal(`<div class="auth-shell"><div class="auth-symbol">✉</div><span class="overline">CONTATO VERIFICADO</span><h2>Conversar com ${safe(p.name)}</h2><p>Você já está cadastrado. Agora pode abrir o WhatsApp do profissional ou optar pelo chat do Conecta.</p><a class="btn btn-green" href="https://wa.me/${target}?text=${greeting}" target="_blank" rel="noopener noreferrer">Abrir WhatsApp ↗</a><button class="btn btn-chat-light" data-chat-pro="${safe(p.id)}">Preferir chat do Conecta</button></div>`)
       }catch(ex){notify('Não foi possível abrir o contato: '+authProblem(ex))}
       return;
     }
