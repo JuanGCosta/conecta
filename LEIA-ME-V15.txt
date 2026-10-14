@@ -1,0 +1,48 @@
+CONECTA V15 — BUSCA POR REGIÃO + AUTORIZAÇÃO DE MENSAGENS
+
+Arquivos baseados na V14. Mantida a configuração pública do Firebase já existente.
+
+1. BUSCA POR REGIÃO
+- Em Profissionais > Localização > Bairro, digite "Zona Norte".
+- Serão exibidas sugestões de bairros de São José dos Campos. É possível clicar em um bairro para filtrar especificamente por ele.
+- O filtro por região procura profissionais cadastrados na cidade de São José dos Campos e com bairro reconhecido naquela região.
+- Há correspondência com bairros conhecidos de Norte, Sul, Leste, Oeste, Sudeste e Centro. Não é uma lista exaustiva.
+- Esse recurso é uma busca local por sinônimos e bairros, NÃO utiliza IA generativa ou API paga.
+- Outros municípios ainda recebem apenas a filtragem direta por bairro, sem inferência de zona.
+- Os bairros são de atendimento informados pelos próprios profissionais; não são endereços residenciais.
+- Referências oficiais: 
+  https://www.sjc.sp.gov.br/noticias/2019/dezembro/04/prefeitura-inicia-instalacao-de-leds-em-mais-15-bairros/
+  https://www.sjc.sp.gov.br/noticias/2019/setembro/30/instalacao-de-leds-chega-ao-motorama-e-a-6-bairros-da-regiao-leste/
+  https://www.sjc.sp.gov.br/noticias/2020/janeiro/15/iluminacao-de-leds-chega-a-mais-9-bairros-das-regioes-central-e-sul/
+
+2. CHAT COM PEDIDO DE AUTORIZAÇÃO
+- Uma conta verificada pode enviar uma primeira mensagem a um profissional.
+- O profissional pode ACEITAR ou RECUSAR o pedido de contato na caixa de entrada.
+- Até a aceitação, ninguém pode mandar novas mensagens naquela conversa.
+- Após a aceitação, o chat funciona normalmente entre as contas.
+- Após a recusa, a conversa fica encerrada.
+- Conversas antigas (anteriores à V15, sem campo status) são tratadas como já autorizadas, para não interromper contatos estabelecidos.
+- IMPORTANTE: a limitação é também aplicada nas regras do Firestore. É obrigatório atualizar essas regras. Somente fazer git push NÃO altera regras no Firebase.
+
+3. REGRAS DO FIRESTORE — PASSO OBRIGATÓRIO
+- Abra https://console.firebase.google.com/project/conecta-f6ac1/firestore/rules
+- Substitua as regras atuais pelo conteúdo integral de firestore.rules deste ZIP.
+- Publique. Sem isso, a primeira mensagem da V15 poderá falhar com "permission-denied".
+- Faça primeiro esta etapa, em seguida publique o código da V15 no GitHub. O fluxo V14 ficará indisponível enquanto as regras V15 forem aplicadas antes do site V15 entrar no ar.
+- Teste com duas contas: uma como cliente, outra com perfil profissional. Verifique primeiro contato, pendência, aceite, recusa e resposta.
+- As regras foram escritas para preservar perfis, avaliações, contatos e conversas antigas. A troca real com o Firebase ainda precisa ser testada no seu projeto.
+
+4. E-MAIL CAINDO NO SPAM
+- A tela de verificação agora lembra o usuário de consultar Spam e Lixo eletrônico.
+- O texto da tela NÃO altera a reputação do e-mail enviado pelo Firebase.
+- Para melhorar entregabilidade, configure um domínio próprio de e-mail no Firebase Authentication > Templates,
+  seguindo os registros DNS TXT/CNAME apresentados, e certifique-se de usar SPF/DKIM conforme instruções.
+- Documentação oficial: https://firebase.google.com/docs/auth/email-custom-domain?hl=pt-BR
+- Isso reduz problemas de identidade do remetente, mas não garante que todas as mensagens entrem na caixa principal.
+
+5. INSTALAÇÃO
+- Extraia o ZIP, copie todo o conteúdo de conecta-v15 para a pasta Git do Conecta sem apagar .git.
+- Não substitua outras configurações privadas se tiver personalizado seu Firebase posteriormente.
+- git add .
+- git commit -m "Conecta V15 - Busca regional e autorizacao do chat"
+- git push origin main

@@ -24,13 +24,13 @@
     if(user && !verified())mode='verify';
     if(user && verified() && mode!=='verify'){closeModal();return}
     if(mode==='verify'){
-      modal(`<div class="auth-shell"><div class="auth-symbol">✉</div><span class="overline">SEGURANÇA CONECTA</span><h2>Confirme seu e-mail</h2><p>Enviamos um link de confirmação para <strong>${safe(user?.email)}</strong>. Abra sua caixa de entrada, clique no link e volte aqui.</p><div class="auth-notice">Você pode explorar os serviços sem login, mas para publicar perfil ou conversar é necessário confirmar seu endereço.</div><button class="btn btn-green" data-action="auth-check">Já confirmei meu e-mail</button><div class="auth-inline"><button data-action="auth-resend">Reenviar e-mail</button><button data-action="auth-logout">Sair da conta</button></div><p id="authFeedback" class="auth-feedback" role="status"></p></div>`);return;
+      modal(`<div class="auth-shell"><div class="auth-symbol">✉</div><span class="overline">SEGURANÇA CONECTA</span><h2>Confirme seu e-mail</h2><p>Enviamos um link de confirmação para <strong>${safe(user?.email)}</strong>. Confira sua caixa de entrada e também Spam ou Lixo eletrônico. Clique no link e volte aqui.</p><div class="auth-notice">Você pode explorar os serviços sem login, mas para publicar perfil ou conversar é necessário confirmar seu endereço.</div><button class="btn btn-green" data-action="auth-check">Já confirmei meu e-mail</button><div class="auth-inline"><button data-action="auth-resend">Reenviar e-mail</button><button data-action="auth-logout">Sair da conta</button></div><p id="authFeedback" class="auth-feedback" role="status"></p></div>`);return;
     }
     if(mode==='reset'){
       modal(`<div class="auth-shell"><div class="auth-symbol">✉</div><h2>Recuperar senha</h2><p>Enviaremos um link para você definir uma nova senha.</p><form id="resetAuthForm" class="auth-form"><label>E-mail<input name="email" type="email" required autocomplete="email" placeholder="voce@exemplo.com"></label><button type="submit" class="btn btn-green">Enviar link</button><p id="authFeedback" class="auth-feedback" role="status"></p></form><div class="auth-inline"><button data-auth-mode="login">Voltar ao login</button></div></div>`);return;
     }
     const create=mode==='register';
-    modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">BEM-VINDO AO CONECTA</span><h2>${create?'Crie sua conta':'Entre na sua conta'}</h2><p>${create?'Cadastre-se gratuitamente para conversar e, se desejar, oferecer seus serviços.':'Acesse suas mensagens e gerencie seu perfil profissional.'}</p><div class="auth-tabs"><button type="button" data-auth-mode="login" class="${!create?'active':''}">Entrar</button><button type="button" data-auth-mode="register" class="${create?'active':''}">Criar conta</button></div><form id="${create?'registerAuthForm':'loginAuthForm'}" class="auth-form">${create?'<label>Seu nome<input type="text" name="name" maxlength="70" minlength="2" required autocomplete="name" placeholder="Como podemos chamar você?"></label>':''}<label>E-mail<input type="email" name="email" required autocomplete="email" placeholder="voce@exemplo.com"></label><label>Senha<input type="password" name="password" minlength="${create?'8':'6'}" required autocomplete="${create?'new-password':'current-password'}" placeholder="${create?'Mínimo de 8 caracteres':'Sua senha'}"></label>${create?'<p class="auth-small">Enviaremos um e-mail para validar o endereço antes de liberar mensagens e perfis.</p>':''}<button type="submit" class="btn btn-green">${create?'Criar conta':'Entrar'} ↗</button><p class="auth-feedback" id="authFeedback" role="status"></p></form><div class="auth-inline">${!create?'<button data-auth-mode="reset">Esqueci minha senha</button>':''}<span>Explorar profissionais é grátis e não exige login.</span></div></div>`);
+    modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">BEM-VINDO AO CONECTA</span><h2>${create?'Crie sua conta':'Entre na sua conta'}</h2><p>${create?'Cadastre-se gratuitamente para conversar e, se desejar, oferecer seus serviços.':'Acesse suas mensagens e gerencie seu perfil profissional.'}</p><div class="auth-tabs"><button type="button" data-auth-mode="login" class="${!create?'active':''}">Entrar</button><button type="button" data-auth-mode="register" class="${create?'active':''}">Criar conta</button></div><form id="${create?'registerAuthForm':'loginAuthForm'}" class="auth-form">${create?'<label>Seu nome<input type="text" name="name" maxlength="70" minlength="2" required autocomplete="name" placeholder="Como podemos chamar você?"></label>':''}<label>E-mail<input type="email" name="email" required autocomplete="email" placeholder="voce@exemplo.com"></label><label>Senha<input type="password" name="password" minlength="${create?'8':'6'}" required autocomplete="${create?'new-password':'current-password'}" placeholder="${create?'Mínimo de 8 caracteres':'Sua senha'}"></label>${create?'<p class="auth-small">Enviaremos um e-mail para validar o endereço. Se não encontrar, confira Spam e Lixo eletrônico.</p>':''}<button type="submit" class="btn btn-green">${create?'Criar conta':'Entrar'} ↗</button><p class="auth-feedback" id="authFeedback" role="status"></p></form><div class="auth-inline">${!create?'<button data-auth-mode="reset">Esqueci minha senha</button>':''}<span>Explorar profissionais é grátis e não exige login.</span></div></div>`);
   }
   function errorAtAuth(msg){const t=$('#authFeedback');if(t)t.textContent=msg;else notify(msg)}
   function updateHeaders(){
@@ -64,7 +64,7 @@
       renderDashboard();renderHome();renderExplore();updateHeaders();
     }catch(e){notify('Não foi possível carregar seu perfil: '+authProblem(e))}
     if(serial!==authSerial)return;
-    stopThreads=backend().subscribeThreads(list=>{threads=list;renderInbox()},e=>notify('Mensagens: '+authProblem(e)));
+    stopThreads=backend().subscribeThreads(list=>{threads=list;if(activeChat){const current=threads.find(t=>t.id===activeChat.id);if(current)activeChat={...current,newConversation:false};}renderInbox()},e=>notify('Mensagens: '+authProblem(e)));
     if(pendingPro){const p=pendingPro;pendingPro=null;closeModal();startConversation(p)}
   }
   function refreshCatalog(){renderHome();renderExplore();if(currentPage==='professional')renderProfessional()}
@@ -101,7 +101,7 @@
     $('#chatThreadCount').textContent=threads.length;
     list.innerHTML=threads.length?threads.map(t=>{
       const p=getDisplayPerson(t);
-      return `<button class="thread-item ${activeChat?.id===t.id?'selected':''}" data-thread="${safe(t.id)}"><span class="thread-avatar">${safe(nick(p.name))}</span><span class="thread-copy"><span class="thread-copy-top"><strong>${safe(p.name)}</strong><em>${safe(p.subtitle)}</em></span><small>${safe(t.lastMessage||'Conversa iniciada')}</small></span></button>`;
+      return `<button class="thread-item ${activeChat?.id===t.id?'selected':''}" data-thread="${safe(t.id)}"><span class="thread-avatar">${safe(nick(p.name))}</span><span class="thread-copy"><span class="thread-copy-top"><strong>${safe(p.name)}</strong><em>${safe(p.subtitle)}</em></span><small>${safe(t.lastMessage||'Conversa iniciada')}</small>${t.status==='pending'?`<span class="v15-thread-state">${t.providerId===currentUid()?'Solicitação recebida':'Aguardando autorização'}</span>`:''}${t.status==='declined'?'<span class="v15-thread-state declined">Contato não autorizado</span>':''}</span></button>`;
     }).join(''):'<div class="thread-empty"><span class="v11-thread-empty-icon">✉</span><strong>Nenhuma conversa ainda</strong><p>Encontre um profissional para iniciar sua primeira conversa.</p><button data-route="explore">Ver profissionais ↗</button></div>';
   }
   function renderMessages(){
@@ -117,7 +117,17 @@
     const head=$('#chatHead'),input=$('#chatInput'),send=$('#chatSend');
     if(!activeChat){head.innerHTML='<div class="chat-person-icon">C</div><div><strong>Suas conversas</strong><small>Escolha uma conversa para começar</small></div>'}
     else {const person=getDisplayPerson(activeChat);head.innerHTML=`<div class="chat-person-icon">${safe(nick(person.name))}</div><div><strong>${safe(person.name)}</strong><small>${safe(person.subtitle)} · conversa privada</small></div>`}
-    input.disabled=send.disabled=!activeChat||!verified()||waitingSend;
+    const status=activeChat?.status || 'accepted';
+    const isProvider=activeChat?.providerId===currentUid();
+    if(activeChat && status==='pending'){
+      const info=isProvider?'Esta pessoa enviou uma primeira mensagem. Autorize o contato para continuar conversando.':'Seu pedido de contato foi enviado. Aguarde a autorização do profissional.';
+      head.insertAdjacentHTML('beforeend',`<div class="v15-contact-banner"><span>${safe(info)}</span>${isProvider?'<div class="v15-decision-actions"><button type="button" class="v15-accept" data-contact-decision="accepted">Aceitar contato</button><button type="button" class="v15-decline" data-contact-decision="declined">Recusar</button></div>':''}</div>`);
+    }else if(activeChat && status==='declined'){
+      head.insertAdjacentHTML('beforeend','<div class="v15-contact-banner declined">O pedido de contato foi recusado. Esta conversa está encerrada.</div>');
+    }
+    const allowed=!!activeChat && (activeChat.newConversation || status==='accepted') && verified() && !waitingSend;
+    input.disabled=send.disabled=!allowed;
+    input.placeholder=activeChat && status==='pending'?'Aguardando autorização para continuar...':activeChat && status==='declined'?'Conversa encerrada': 'Escreva sua mensagem...';
     renderMessages();
   }
   function chooseThread(thread){
@@ -141,21 +151,24 @@
   async function sendChat(event){
     event.preventDefault();
     if(!activeChat||waitingSend||!requireAuth('messages'))return;
+    if(!activeChat.newConversation && activeChat.status && activeChat.status!=='accepted'){
+      window.ConectaUI?.dialog({title:'Aguarde a autorização',message:'Você já enviou a primeira mensagem. Só será possível continuar quando o profissional aceitar o contato.'});return;
+    }
     const input=$('#chatInput');const text=input.value.trim();if(!text)return;
     waitingSend=true;renderInbox();
     try{
       if(activeChat.newConversation){
         const id=await backend().sendMessage(activeChat.providerId,activeChat.providerName,text);
-        activeChat={...activeChat,id,newConversation:false};
+        activeChat={...activeChat,id,status:'pending',newConversation:false};
         if(stopMessages)stopMessages();
         stopMessages=backend().subscribeMessages(id,list=>{messages=list;renderMessages()},e=>notify(authProblem(e)));
       }else await backend().reply(activeChat,text);
       input.value='';
     }catch(e){notify('Falha ao enviar: '+authProblem(e))}
-    finally{waitingSend=false;renderInbox();input.focus()}
+    finally{waitingSend=false;renderInbox();if(!input.disabled)input.focus()}
   }
   document.addEventListener('click',async e=>{
-    const b=e.target.closest('[data-chat-pro],[data-whatsapp-pro],[data-thread],[data-auth-mode],[data-action="auth-open"],[data-action="auth-logout"],[data-action="auth-check"],[data-action="auth-resend"]');
+    const b=e.target.closest('[data-chat-pro],[data-whatsapp-pro],[data-thread],[data-contact-decision],[data-auth-mode],[data-action="auth-open"],[data-action="auth-logout"],[data-action="auth-check"],[data-action="auth-resend"]');
     if(!b)return;
     if(b.dataset.chatPro){startConversation(allPros().find(p=>p.id===b.dataset.chatPro));return}
     if(b.dataset.whatsappPro){
@@ -169,6 +182,17 @@
         const greeting=encodeURIComponent('Olá! Vim pelo Conecta e gostaria de saber mais sobre seus serviços.');
         modal(`<div class="auth-shell"><div class="auth-symbol">✉</div><span class="overline">CONTATO VERIFICADO</span><h2>Conversar com ${safe(p.name)}</h2><p>Você já está cadastrado. Agora pode abrir o WhatsApp do profissional ou optar pelo chat do Conecta.</p><a class="btn btn-green" href="https://wa.me/${target}?text=${greeting}" target="_blank" rel="noopener noreferrer">Abrir WhatsApp ↗</a><button class="btn btn-chat-light" data-chat-pro="${safe(p.id)}">Preferir chat do Conecta</button></div>`)
       }catch(ex){notify('Não foi possível abrir o contato: '+authProblem(ex))}
+      return;
+    }
+    if(b.dataset.contactDecision){
+      if(!activeChat||activeChat.providerId!==currentUid()||activeChat.status!=='pending')return;
+      const decision=b.dataset.contactDecision;
+      if(!['accepted','declined'].includes(decision))return;
+      b.disabled=true;
+      try { await backend().decideContact(activeChat.id,decision);
+        activeChat={...activeChat,status:decision};renderInbox();
+        window.ConectaUI?.dialog({tone:decision==='accepted'?'success':'info',title:decision==='accepted'?'Contato autorizado':'Contato recusado',message:decision==='accepted'?'Vocês já podem conversar livremente pelo Conecta.':'O contato foi encerrado. A pessoa não poderá enviar novas mensagens nesta conversa.'});
+      }catch(ex){notify('Não foi possível responder: '+authProblem(ex));b.disabled=false}
       return;
     }
     if(b.dataset.thread){const t=threads.find(x=>x.id===b.dataset.thread);if(t)chooseThread(t);return}

@@ -110,10 +110,10 @@
           customerId:u.uid, providerId, participants:[u.uid,providerId],
           customerName:(u.displayName||'Cliente Conecta').slice(0,70),
           providerName:providerName.slice(0,80),
-          createdAt:serverTimestamp(),updatedAt:serverTimestamp(),
+          createdAt:serverTimestamp(),updatedAt:serverTimestamp(),status:'pending',
           lastMessage:content,lastSenderId:u.uid
         });
-        batch.set(doc(collection(db,'chats',threadId,'messages')),messageData);
+        batch.set(doc(db,'chats',threadId,'messages','intro'),messageData);
         try {
           await batch.commit();
         } catch(e) {
@@ -125,6 +125,8 @@
           const t=existing.data();
           if (!existing.exists() || t.customerId!==u.uid || t.providerId!==providerId ||
               !Array.isArray(t.participants) || !t.participants.includes(u.uid)) throw e;
+          if (t.status==='pending') throw Error('Aguarde o profissional aceitar sua primeira mensagem.');
+          if (t.status==='declined') throw Error('Este contato foi recusado e está encerrado.');
           const retry=writeBatch(db);
           retry.update(chatRef,{lastMessage:content,lastSenderId:u.uid,updatedAt:serverTimestamp()});
           retry.set(doc(collection(db,'chats',threadId,'messages')),messageData);
@@ -132,11 +134,22 @@
         }
         return threadId;
       };
+      backend.decideContact = async (threadId,decision) => {
+        const u=auth.currentUser;
+        if (!u?.emailVerified) throw Error('Confirme o e-mail para responder.');
+        if (!['accepted','declined'].includes(decision)) throw Error('Ação inválida.');
+        const ref=doc(db,'chats',threadId);
+        const snap=await getDoc(ref);
+        if(!snap.exists()||snap.data().providerId!==u.uid||snap.data().status!=='pending')
+          throw Error('Este pedido não está aguardando sua autorização.');
+        await updateDoc(ref,{status:decision,updatedAt:serverTimestamp()});
+      };
       backend.reply = async (thread,text) => {
         const u=auth.currentUser;
         if (!u?.emailVerified) throw Error('Confirme seu e-mail para responder.');
         const content=text.trim();
         if(!content || content.length>1000) throw Error('A mensagem deve ter de 1 a 1000 caracteres.');
+        if(thread.status && thread.status!=='accepted') throw Error('Aguarde a autorização do contato.');
         const threadRef=doc(db,'chats',thread.id);
         const batch=writeBatch(db);
         batch.update(threadRef,{updatedAt:serverTimestamp(),lastMessage:content,lastSenderId:u.uid});

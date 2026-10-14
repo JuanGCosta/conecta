@@ -68,7 +68,7 @@ function renderHome(){
 }
 function renderExplore(){
   const q=$('#searchPros').value.trim().toLowerCase(),cat=$('#categoryFilter').value,city=$('#cityFilter').value.toLowerCase(),neighborhood=$('#neighborhoodFilter').value.trim().toLocaleLowerCase('pt-BR');
-  let list=allPros().filter(p=>(!cat||p.category===cat)&&(!city||p.city.toLowerCase().includes(city))&&(!neighborhood||String(p.neighborhood||'').toLocaleLowerCase('pt-BR').includes(neighborhood))&&(!q||[p.name,p.category,p.bio,p.city,p.neighborhood||''].join(' ').toLowerCase().includes(q))&&(exploreTab!=='saved'||(state.favorites||[]).includes(p.id)));
+  let list=allPros().filter(p=>(!cat||p.category===cat)&&(!city||p.city.toLowerCase().includes(city))&&(!neighborhood||(window.ConectaRegions?.matches(p,neighborhood)??String(p.neighborhood||'').toLocaleLowerCase('pt-BR').includes(neighborhood)))&&(!q||[p.name,p.category,p.bio,p.city,p.neighborhood||''].join(' ').toLowerCase().includes(q))&&(exploreTab!=='saved'||(state.favorites||[]).includes(p.id)));
   if($('#proSort').value==='name')list.sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
   if($('#proSort').value==='city')list.sort((a,b)=>a.city.localeCompare(b.city,'pt-BR'));
   if($('#proSort').value==='rating')list.sort((a,b)=>{const get=p=>window.ConectaReviewScores?.get(p.ownerUid)?.average||0;const count=p=>window.ConectaReviewScores?.get(p.ownerUid)?.count||0;return get(b)-get(a)||count(b)-count(a)});

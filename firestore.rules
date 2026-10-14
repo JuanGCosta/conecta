@@ -59,16 +59,27 @@ service cloud.firestore {
     function participant(data) {
       return verified() && request.auth.uid in data.participants;
     }
+    function threadStatus(data) {
+      return data.get('status','accepted');
+    }
     function validThread(data) {
-      return data.keys().hasOnly(['customerId','providerId','participants','customerName','providerName','lastMessage','lastSenderId','createdAt','updatedAt'])
+      return data.keys().hasOnly(['customerId','providerId','participants','customerName','providerName','lastMessage','lastSenderId','createdAt','updatedAt','status'])
         && data.customerId is string && data.providerId is string
         && data.customerId != data.providerId
         && data.participants == [data.customerId,data.providerId]
         && data.customerName is string && data.customerName.size() <= 70
         && data.providerName is string && data.providerName.size() <= 80
         && data.lastMessage is string && data.lastMessage.size() > 0 && data.lastMessage.size() <= 1000
-        && data.lastSenderId == request.auth.uid
-        && data.updatedAt == request.time;
+        && data.lastSenderId == request.auth.uid && data.updatedAt == request.time
+        && threadStatus(data) in ['pending','accepted','declined'];
+    }
+    function stableThread(before,after) {
+      return after.customerId == before.customerId
+        && after.providerId == before.providerId
+        && after.participants == before.participants
+        && after.customerName == before.customerName
+        && after.providerName == before.providerName
+        && after.createdAt == before.createdAt;
     }
     match /chats/{chatId} {
       allow get, list: if participant(resource.data);
@@ -76,26 +87,56 @@ service cloud.firestore {
         && request.auth.uid == request.resource.data.customerId
         && exists(/databases/$(database)/documents/profiles/$(request.resource.data.providerId))
         && validThread(request.resource.data)
+        && request.resource.data.status == 'pending'
         && request.resource.data.createdAt == request.time;
       allow update: if participant(resource.data)
-        && validThread(request.resource.data)
-        && request.resource.data.customerId == resource.data.customerId
-        && request.resource.data.providerId == resource.data.providerId
-        && request.resource.data.participants == resource.data.participants
-        && request.resource.data.customerName == resource.data.customerName
-        && request.resource.data.providerName == resource.data.providerName
-        && request.resource.data.createdAt == resource.data.createdAt;
+        && request.resource.data.keys().hasOnly(['customerId','providerId','participants','customerName','providerName','lastMessage','lastSenderId','createdAt','updatedAt','status'])
+        && stableThread(resource.data,request.resource.data)
+        && request.resource.data.updatedAt == request.time
+        && (
+          // Only the professional may authorize or refuse the request.
+          (request.auth.uid == resource.data.providerId
+            && threadStatus(resource.data) == 'pending'
+            && threadStatus(request.resource.data) in ['accepted','declined']
+            && request.resource.data.lastMessage == resource.data.lastMessage
+            && request.resource.data.lastSenderId == resource.data.lastSenderId)
+          ||
+          // Once authorized, both participants can send ordinary messages.
+          (threadStatus(resource.data) == 'accepted'
+            && threadStatus(request.resource.data) == 'accepted'
+            && request.resource.data.lastSenderId == request.auth.uid
+            && request.resource.data.lastMessage is string
+            && request.resource.data.lastMessage.size() > 0
+            && request.resource.data.lastMessage.size() <= 1000)
+        );
       allow delete: if false;
       match /messages/{messageId} {
         allow get, list: if participant(get(/databases/$(database)/documents/chats/$(chatId)).data);
-        allow create: if participant(getAfter(/databases/$(database)/documents/chats/$(chatId)).data)
+        allow create: if verified()
           && request.resource.data.keys().hasOnly(['senderId','text','createdAt'])
           && request.resource.data.senderId == request.auth.uid
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 1000
-          && request.resource.data.createdAt == request.time;
+          && request.resource.data.createdAt == request.time
+          && participant(getAfter(/databases/$(database)/documents/chats/$(chatId)).data)
+          && (
+            // Exactly one first message with a fixed document id when creating a request.
+            (messageId == 'intro'
+              && threadStatus(getAfter(/databases/$(database)/documents/chats/$(chatId)).data) == 'pending'
+              && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.customerId == request.auth.uid
+              && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.createdAt == request.time
+              && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.lastSenderId == request.auth.uid
+              && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.lastMessage == request.resource.data.text)
+            ||
+            (messageId != 'intro'
+              && threadStatus(getAfter(/databases/$(database)/documents/chats/$(chatId)).data) == 'accepted'
+              && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.updatedAt == request.time
+              && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.lastSenderId == request.auth.uid
+              && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.lastMessage == request.resource.data.text)
+          );
         allow update, delete: if false;
       }
     }
+
   }
 }
