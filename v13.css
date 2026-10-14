@@ -25,3 +25,13 @@
   .v13-review-head{align-items:flex-start;}
   .v13-review-head button{width:100%;}
 }
+
+
+/* V14: centered dialog + larger service areas */
+.conecta-dialog{max-width:520px;margin:0 auto;text-align:center;padding:22px 10px 4px}.conecta-dialog-badge{width:74px;height:74px;margin:0 auto 16px;border-radius:24px;display:grid;place-items:center;font:800 30px/1 'Plus Jakarta Sans',sans-serif;color:#1d5b45;background:linear-gradient(180deg,#ecf7ef 0%,#dcedde 100%);box-shadow:inset 0 1px 0 #fff,0 14px 35px #14392d12}.conecta-dialog-eyebrow{display:block;letter-spacing:.18em;font-size:11px;font-weight:800;color:#2d8b63;margin-bottom:12px}.conecta-dialog h2{margin:0 0 10px;font:800 clamp(28px,3.2vw,40px)/1.05 'Plus Jakarta Sans',sans-serif;letter-spacing:-1.4px;color:#173c30}.conecta-dialog p{margin:0 auto;max-width:420px;font-size:15px;line-height:1.7;color:#688174}.conecta-dialog-actions{display:flex;justify-content:center;margin-top:26px}.conecta-dialog .btn{min-width:180px;padding:14px 20px;border-radius:16px}.conecta-dialog-success .conecta-dialog-badge{color:#187652;background:linear-gradient(180deg,#edf9ef 0%,#d9f0df 100%)}.conecta-dialog-error .conecta-dialog-badge{color:#96563a;background:linear-gradient(180deg,#fff0e9 0%,#fde0d4 100%)}
+
+.quick-services{gap:12px}.quick-services button{padding:16px 17px;border-radius:16px}.quick-icon{width:52px;height:52px;border-radius:14px}.quick-services strong{font-size:15px;margin-bottom:4px}.quick-services small{font-size:12px}.side-all-link{margin-top:22px;font-size:13px}
+
+.services-reference .clean-category-grid{gap:18px;padding:4px 0 12px}.services-reference .category-item{flex:0 0 280px;min-height:118px;padding:12px 18px 12px 12px;gap:15px;border-radius:18px;box-shadow:0 10px 24px #0e322a08}.category-picture{width:92px;height:92px;border-radius:14px}.category-words{gap:8px}.services-reference .category-item strong{font-size:15px;letter-spacing:-.4px}.services-reference .category-item span:nth-of-type(2){font-size:12px;line-height:1.55;color:#6d8477}.services-reference .textlink{padding:13px 18px;font-size:12px}.services-reference .section-head h2{font-size:clamp(28px,2.7vw,36px)}
+@media (max-width: 900px){.services-reference .category-item{flex-basis:244px;min-height:108px}.category-picture{width:82px;height:82px}}
+@media (max-width: 640px){.conecta-dialog{padding:10px 0 0}.conecta-dialog-badge{width:62px;height:62px;border-radius:20px;font-size:24px}.conecta-dialog h2{font-size:29px}.conecta-dialog p{font-size:14px}.quick-services button{padding:14px}.services-reference .category-item{flex-basis:220px;min-height:102px}.category-picture{width:76px;height:76px}}

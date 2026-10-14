@@ -82,9 +82,9 @@
     const backend=window.ConectaBackend;
     if(!backend?.configured){window.ConectaV9?.openAuth();return}
     if(!backend.user?.emailVerified){window.ConectaV9?.openAuth('login');return}
-    const uid=f.dataset.reviewForm;if(uid===backend.user.uid){alert('Você não pode avaliar seu próprio perfil.');return}
+    const uid=f.dataset.reviewForm;if(uid===backend.user.uid){window.ConectaUI?.dialog({tone:'info',eyebrow:'AVALIAÇÕES',title:'Você está no seu próprio perfil',message:'Para manter as avaliações honestas, não é possível avaliar o seu próprio perfil.'});return}
     const button=f.querySelector('button[type=submit]');button.disabled=true;
-    try{await backend.saveReview(uid,Number(f.elements.rating.value),f.elements.comment.value);f.reset();alert('Avaliação publicada!')}
-    catch(err){alert('Não foi possível enviar: '+(err.message||err))}finally{button.disabled=false}
+    try{await backend.saveReview(uid,Number(f.elements.rating.value),f.elements.comment.value);f.reset();window.ConectaUI?.dialog({tone:'success',eyebrow:'AVALIAÇÕES',title:'Avaliação publicada',message:'Sua avaliação foi enviada com sucesso e já aparece no perfil do profissional.'})}
+    catch(err){window.ConectaUI?.dialog({tone:'error',eyebrow:'AVALIAÇÕES',title:'Não foi possível enviar',message:String(err?.message||err||'Tente novamente em instantes.')})}finally{button.disabled=false}
   });
 })();
