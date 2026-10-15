@@ -1,0 +1,53 @@
+CONECTA V17 — CORREÇÃO EXCLUSIVA DO FILTRO DE LOCALIZAÇÃO
+
+Esta versão é baseada na V16 (página de confirmação de e-mail mantida).
+Não foram alterados os filtros de profissões/categorias, as funções de chat,
+o fluxo do Firebase Authentication ou as regras do Firestore.
+
+O QUE FOI CORRIGIDO
+
+• Cidade agora aceita busca sem acentos: São José dos Campos e Sao Jose dos Campos.
+• Reconhece abreviações: SJC, S.J.C., nomes com SP no final.
+• O bairro também ignora diferenças de acento e entende Jd., Vl., Pq., Res. e Ch.
+• Pesquisa por "Centro" retorna bairros chamados Centro de QUALQUER cidade.
+• A opção "Região Central" representa a região central de São José dos Campos.
+• A busca pelas zonas Norte, Sul, Leste, Oeste, Sudeste e região central de SJC
+  considera os bairros cadastrados mapeados na lista interna.
+• Sugestões mostram TODOS os bairros conhecidos da região, com rolagem,
+  não apenas os 16 primeiros. Bairros com profissionais aparecem primeiro.
+• O botão Limpar filtros atualiza os resultados e o texto de orientação.
+• Cidade, bairro e categoria continuam funcionando em conjunto.
+
+LIMITAÇÕES IMPORTANTES
+
+O Conecta usa o bairro de atendimento que cada profissional informa ao criar
+seu perfil. Se o profissional deixa esse campo vazio, não há como descobrir
+sua região automaticamente e ele não aparece em filtros por bairro/zona.
+
+A associação de bairros às zonas de São José dos Campos é uma lista local
+PARCIAL, não um cadastro geográfico de todo o Brasil. Outras cidades podem
+ser filtradas diretamente por nome de cidade e bairro. Não há API paga.
+
+COMO INSTALAR
+
+1. Extraia o ZIP.
+2. Copie o conteúdo da pasta conecta-v17 para a pasta do seu repositório
+   (a pasta que contém .git). Substitua os arquivos existentes.
+3. No CMD, dentro dessa pasta, execute:
+
+git add .
+git commit -m "Conecta V17 - Correcao do filtro de localizacao"
+git push origin main
+
+4. Espere o GitHub Pages publicar e recarregue a página com Ctrl+F5.
+5. Teste: Profissionais > Cidade: Sao Jose dos Campos > Bairro: Zona Norte.
+   Para encontrar alguém nessa zona, o profissional precisa ter bairro cadastrado.
+
+NÃO É NECESSÁRIO alterar as regras do Firestore.
+
+TESTES DO CÓDIGO
+
+12 combinações de cidade, 24 de bairros/regiões e 9 cenários integrados
+(combinações de cidade, bairro e categoria) executados sem falhas.
+A interface não pôde ser testada em navegador nesta sessão por restrição
+de acesso local; recomenda-se validar no GitHub Pages após a publicação.
