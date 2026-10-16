@@ -106,23 +106,27 @@ function empty(title,body){return `<div class="empty"><h3>${esc(title)}</h3><p>$
 function updateProfileUI(){
   const created=!!state.profile?.name;
   $$('[data-profile-cta]').forEach(button=>button.textContent=created?'Meu perfil':'Criar perfil');
-  $('#profileTabLabel').textContent=created?'Meu perfil':'Criar perfil';
-  $('#dashboardTitle').textContent=created?'Meu espaço no Conecta':'Crie seu perfil no Conecta';
-  $('#dashboardSubtitle').textContent=created?'Gerencie seu perfil, mostre o que faz e acompanhe suas publicações.':'Apresente seus serviços e comece a construir sua vitrine profissional.';
-  $('#profileFormTitle').textContent=created?'Editar informações profissionais':'Crie seu perfil profissional';
-  $('#profileFormDescription').textContent=created?'Atualize seus dados para manter seu perfil sempre completo.':'Preencha seus dados e apresente seu trabalho aos futuros clientes.';
+  const label=$('#profileTabLabel .v30-tab-text');if(label)label.textContent=created?'Meu perfil':'Criar perfil';
+  $('#dashboardTitle').innerHTML='Meu espaço<span class="v30-title-dot">.</span>';
+  $('#dashboardSubtitle').textContent=created?'Gerencie seu perfil, compartilhe trabalhos e acompanhe seus pedidos.':'Tudo para organizar sua presença profissional no Conecta.';
+  $('#profileFormTitle').textContent=created?'Atualize sua apresentação.':'Seu perfil, do seu jeito.';
+  $('#profileFormDescription').textContent=created?'Mantenha seus dados em dia para receber novos contatos.':'Preencha seus dados para os clientes conhecerem seu trabalho.';
   $('#profileSubmitText').textContent=created?'Salvar alterações':'Criar perfil';
   $('#profileCreatedActions').hidden=!created;
+  const status=$('#v30ProfileStatus');if(status)status.textContent=created?'Publicado':'Não publicado';
+  const workCount=$('#v30WorkCount');if(workCount)workCount.textContent=String(state.works?.length||0);
+  const requestCount=$('#v30RequestCount');if(requestCount)requestCount.textContent=String(state.requests?.length||0);
 }
 function renderDashboard(){
   const p=state.profile||{};
   const f=$('#profileForm');
-  for(const key of ['name','category','city','neighborhood','phone','bio']) f.elements[key].value=p[key]||'';
+  for(const key of ['name','category','city','neighborhood','phone','bio']) f.elements[key].value=key==='city'?'São José dos Campos':(p[key]||'');
   profileImage=p.photo||null;
   $('#profilePreview').innerHTML=profileImage?`<img src="${profileImage}" alt="Foto de perfil">`:'';
   updateProfileUI();
   $('#myWorks').innerHTML=state.works.length?state.works.map(w=>workCard(w,true)).join(''):empty('Nenhum trabalho ainda','Adicione trabalhos e mostre suas fotos para futuros clientes.');
   $('#myRequests').innerHTML=state.requests.length?state.requests.map(requestCard).join(''):empty('Você ainda não publicou pedidos','Publique o primeiro pedido e ele aparecerá aqui.');
+  f.dispatchEvent(new Event('input'));
 }
 function workCard(w,manage=false){return `<article class="work-card"><div class="work-photos">${w.photos?.[0]&&safePhoto(w.photos[0])?`<img src="${safePhoto(w.photos[0])}" alt="${esc(w.title)}" data-workphoto="${esc(w.id)}:0">`:''}</div><div class="work-content"><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p><small>${w.photos?.length||0} fotos</small>${manage?`<div style="margin-top:12px"><button data-delete-work="${esc(w.id)}">Excluir trabalho</button></div>`:''}</div></article>`}
 function renderProfessional(){const p=allPros().find(x=>x.id===selectedPro);if(!p){route('explore');return}let works=window.ConectaLaunch?.worksFor(p.ownerUid)||[];window.ConectaLaunch?.observeWorks(p.ownerUid);const own=p.id==='mine';const example=p.id.startsWith('demo-');const real=!own&&!example&&!!p.ownerUid;let contact=own?'<p class="modal-help">Este é seu perfil público.</p>':example?'<p class="modal-help">Este é um perfil ilustrativo. Não é possível enviar mensagens.</p>':real?(p.hasWhatsapp?`<button class="btn btn-green" data-whatsapp-pro="${esc(p.id)}">Conversar no WhatsApp</button><button class="btn btn-chat-light" data-chat-pro="${esc(p.id)}">Enviar mensagem pelo Conecta</button>`:`<button class="btn btn-green" data-chat-pro="${esc(p.id)}">Enviar mensagem no Conecta</button><small>Este profissional prefere conversar pelo aplicativo.</small>`):'<p class="modal-help">Contato indisponível.</p>';$('#professionalDetail').innerHTML=`<div class="detail-banner"><div class="detail-avatar">${p.photo?`<img src="${esc(p.photo)}" ${p.upgrade?`data-upgrade-src="${esc(p.upgrade)}"`:""} alt="">`:esc(p.initials||initials(p.name))}</div></div><div class="detail-main"><div><span class="overline">${own?'SEU PERFIL':example?'PERFIL DEMONSTRATIVO':'PROFISSIONAL DO CONECTA'}</span><h1>${esc(p.name)}</h1><span class="chip">${esc(p.category)}</span><p>${esc(p.bio||'Sem apresentação ainda.')}</p><p>⌖ ${esc(p.city)}${p.neighborhood?' · '+esc(p.neighborhood):''}</p>${p.ownerUid?`<section id="v12ReviewsSection" class="v12-reviews" data-reviews-for="${esc(p.ownerUid)}"><div class="v13-review-head"><h2>Avaliações de clientes</h2>${real?'<button type="button" class="btn btn-green" data-action="jump-review">Avaliar profissional ★</button>':''}</div><div class="v12-reviews-content">Carregando avaliações...</div></section>`:'<div class="v12-reviews-demo">Perfil demonstrativo, ainda sem avaliações reais.</div>'}</div><aside class="detail-aside"><h3>${own?'Seu perfil':'Vamos conversar?'}</h3><p>${own?'Confira como seu perfil aparece aos clientes.':example?'Dados fictícios para demonstração.':'Conte ao profissional sobre o serviço de que você precisa.'}</p>${contact}</aside></div><div class="detail-portfolio"><h2>Trabalhos realizados</h2><div class="portfolio-grid">${works.length?works.map(w=>workCard(w)).join(''):empty('Sem trabalhos publicados','Este perfil ainda não publicou fotos de trabalhos.')}</div></div>`}
