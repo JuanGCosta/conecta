@@ -122,7 +122,7 @@
     if(!key){
       wrapper.innerHTML=query
         ? '<span class="v15-region-hint">Filtrando pelo bairro informado. A busca ignora acentos e entende abreviações como Jd. e Vl.</span>'
-        : '<span class="v15-region-hint">Você também pode buscar por Zona Norte, Zona Sul, Zona Leste, Zona Oeste, Zona Sudeste ou Região Central de São José dos Campos.</span>';
+        : '';
       return;
     }
     const r=regions[key],profs=typeof allPros==='function'?allPros():[];

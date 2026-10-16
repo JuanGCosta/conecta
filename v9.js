@@ -77,7 +77,7 @@
     updateProfileUI();
   }
   function profilesForCatalog(){
-    if(configured())return realProfiles.map(p=>({...p,id:p.ownerUid===currentUid()?'mine':'user:'+p.ownerUid,initials:nick(p.name),demo:false}));
+    if(configured())return realProfiles.filter(p=>window.ConectaRegions?.isSJC(p.city) ?? p.city==='São José dos Campos').map(p=>({...p,id:p.ownerUid===currentUid()?'mine':'user:'+p.ownerUid,initials:nick(p.name),demo:false}));
     return [];
   }
   function requireAuth(reason){
@@ -154,7 +154,7 @@
     renderThreads();
     const head=$('#chatHead'),input=$('#chatInput'),send=$('#chatSend');
     if(!activeChat){head.innerHTML=`<div class="chat-head-main">${avatarHTML({name:'Conecta'},'chat-person-icon')}<div class="chat-head-copy"><strong>Suas conversas</strong><small>Escolha uma conversa para começar</small></div></div>`}
-    else {const person=getDisplayPerson(activeChat);head.innerHTML=`<div class="chat-head-main">${avatarHTML(person,'chat-person-icon')}<div class="chat-head-copy"><strong>${safe(person.name)}</strong><small>${safe(person.subtitle)}</small></div></div>`}
+    else {const person=getDisplayPerson(activeChat);head.innerHTML=`<div class="chat-head-main"><button class="v27-chat-back" type="button" data-chat-back aria-label="Voltar às conversas">←</button>${avatarHTML(person,'chat-person-icon')}<div class="chat-head-copy"><strong title="${safe(person.name)}">${safe(person.name)}</strong><small>${safe(person.subtitle)}</small></div></div>`}
     const status=activeChat?.status || 'accepted';
     const isProvider=activeChat?.providerId===currentUid();
     const pendingCount=Math.max(1,Number(activeChat?.pendingCount||1));
@@ -172,6 +172,7 @@
     renderMessages();
   }
   function chooseThread(thread){
+    document.body.classList.add('v27-chat-open');
     if(stopMessages)stopMessages();stopMessages=null;
     activeChat=thread;messages=[];renderInbox();
     stopMessages=backend().subscribeMessages(thread.id,list=>{messages=list;renderMessages()},e=>notify('Não foi possível carregar conversa: '+authProblem(e)));
@@ -186,6 +187,7 @@
     const existing=threads.find(t=>t.id===id);
     if(existing){chooseThread(existing);return}
     if(stopMessages)stopMessages();stopMessages=null;
+    document.body.classList.add('v27-chat-open');
     activeChat={id,providerId:p.ownerUid,customerId:currentUid(),providerName:p.name,customerName:user.displayName||'Cliente Conecta',newConversation:true};
     messages=[];route('inbox');renderInbox();setTimeout(()=>$('#chatInput')?.focus(),40);
   }
@@ -211,8 +213,9 @@
     finally{waitingSend=false;renderInbox();if(!input.disabled)input.focus()}
   }
   document.addEventListener('click',async e=>{
-    const b=e.target.closest('[data-chat-pro],[data-whatsapp-pro],[data-thread],[data-contact-decision],[data-auth-mode],[data-action="auth-open"],[data-action="auth-logout"],[data-action="auth-check"],[data-action="auth-resend"]');
+    const b=e.target.closest('[data-chat-back],[data-chat-pro],[data-whatsapp-pro],[data-thread],[data-contact-decision],[data-auth-mode],[data-action="auth-open"],[data-action="auth-logout"],[data-action="auth-check"],[data-action="auth-resend"]');
     if(!b)return;
+    if(b.hasAttribute('data-chat-back')){document.body.classList.remove('v27-chat-open');return;}
     if(b.dataset.chatPro){startConversation(allPros().find(p=>p.id===b.dataset.chatPro));return}
     if(b.dataset.whatsappPro){
       if(!requireAuth('messages'))return;
@@ -256,6 +259,7 @@
       }catch(ex){errorAtAuth(authProblem(ex))}
     }
   });
+  document.addEventListener('click',e=>{if(e.target.closest('.v19-tab[data-route="inbox"], .desktop-nav [data-route="inbox"], .navlink[data-route="inbox"]'))document.body.classList.remove('v27-chat-open');},true);
   document.addEventListener('submit',async e=>{
     const f=e.target;if(!['registerAuthForm','loginAuthForm','resetAuthForm','chatComposer'].includes(f.id))return;
     e.preventDefault();

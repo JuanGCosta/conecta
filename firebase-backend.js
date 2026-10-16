@@ -132,7 +132,7 @@
             const nextCount=Math.max(1,Number(t.pendingCount||1))+1;
             if (nextCount>3) throw Error('Você já utilizou as 3 mensagens iniciais. Aguarde a autorização do profissional.');
             retry.update(chatRef,{lastMessage:content,lastSenderId:u.uid,updatedAt:serverTimestamp(),pendingCount:nextCount});
-            retry.set(doc(collection(db,'chats',threadId,'messages')),messageData);
+            retry.set(doc(db,'chats',threadId,'messages',`pending-${nextCount}`),messageData);
             await retry.commit();
             return threadId;
           }
@@ -173,7 +173,7 @@
           const nextCount=Math.max(1,Number(live.pendingCount||1))+1;
           if(nextCount>3) throw Error('Você já utilizou as 3 mensagens iniciais. Aguarde a autorização do profissional.');
           batch.update(threadRef,{updatedAt:serverTimestamp(),lastMessage:content,lastSenderId:u.uid,pendingCount:nextCount});
-          batch.set(messageRef,{senderId:u.uid,text:content,createdAt:serverTimestamp()});
+          batch.set(doc(db,'chats',thread.id,'messages',`pending-${nextCount}`),{senderId:u.uid,text:content,createdAt:serverTimestamp()});
           await batch.commit();
           return {status:'pending',pendingCount:nextCount};
         }

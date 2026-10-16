@@ -12,7 +12,7 @@ service cloud.firestore {
         && p.ownerUid == request.auth.uid
         && p.name is string && p.name.size() > 1 && p.name.size() <= 80
         && p.category is string && p.category.size() > 1 && p.category.size() <= 40
-        && p.city is string && p.city.size() > 1 && p.city.size() <= 60
+        && p.city == 'São José dos Campos'
         && p.neighborhood is string && p.neighborhood.size() <= 80
         && p.hasWhatsapp is bool
         && p.bio is string && p.bio.size() <= 500
@@ -39,7 +39,8 @@ service cloud.firestore {
         && p.owner is string && p.owner.size() > 0 && p.owner.size() <= 70
         && p.title is string && p.title.size() >= 5 && p.title.size() <= 90
         && p.category in ['Reformas','Elétrica','Hidráulica','Limpeza','Pintura','Jardinagem','Montagem','Tecnologia','Beleza','Fotografia','Aulas','Marcenaria','Ar-condicionado','Fretes','Pet care','Costura','Eventos','Automotivo','Saúde','Outros']
-        && p.city is string && p.city.size() > 1 && p.city.size() <= 60
+        && p.city == 'São José dos Campos'
+        && p.city == 'São José dos Campos'
         && p.description is string && p.description.size() >= 10 && p.description.size() <= 1000
         && imageURLs(p.photos,4)
         && p.status == 'open'
@@ -180,7 +181,7 @@ service cloud.firestore {
             && threadStatus(request.resource.data) in ['accepted','declined']
             && request.resource.data.lastMessage == resource.data.lastMessage
             && request.resource.data.lastSenderId == resource.data.lastSenderId
-            && request.resource.data.pendingCount == resource.data.pendingCount)
+            && request.resource.data.get('pendingCount',1) == resource.data.get('pendingCount',1))
           ||
           // The customer may send up to 3 initial messages while the request is pending.
           (threadStatus(resource.data) == 'pending'
@@ -191,7 +192,7 @@ service cloud.firestore {
             && request.resource.data.lastMessage.size() > 0
             && request.resource.data.lastMessage.size() <= 1000
             && request.resource.data.pendingCount is int
-            && request.resource.data.pendingCount == resource.data.pendingCount + 1
+            && request.resource.data.pendingCount == resource.data.get('pendingCount',1) + 1
             && request.resource.data.pendingCount <= 3)
           ||
           // Once authorized, both participants can send ordinary messages.
@@ -201,7 +202,7 @@ service cloud.firestore {
             && request.resource.data.lastMessage is string
             && request.resource.data.lastMessage.size() > 0
             && request.resource.data.lastMessage.size() <= 1000
-            && request.resource.data.pendingCount == resource.data.pendingCount)
+            && request.resource.data.get('pendingCount',1) == resource.data.get('pendingCount',1))
         );
       allow delete: if false;
       match /messages/{messageId} {
@@ -232,9 +233,9 @@ service cloud.firestore {
                 (threadStatus(getAfter(/databases/$(database)/documents/chats/$(chatId)).data) == 'pending'
                   && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.customerId == request.auth.uid
                   && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.pendingCount is int
-                  && get(/databases/$(database)/documents/chats/$(chatId)).data.pendingCount is int
-                  && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.pendingCount == get(/databases/$(database)/documents/chats/$(chatId)).data.pendingCount + 1
-                  && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.pendingCount <= 3)
+                  && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.pendingCount == get(/databases/$(database)/documents/chats/$(chatId)).data.get('pendingCount',1) + 1
+                  && ((messageId == 'pending-2' && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.pendingCount == 2)
+                      || (messageId == 'pending-3' && getAfter(/databases/$(database)/documents/chats/$(chatId)).data.pendingCount == 3)))
               ))
           );
         allow update, delete: if false;

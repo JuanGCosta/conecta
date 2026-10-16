@@ -65,14 +65,14 @@
  get('v19CityForm')?.addEventListener('submit',e=>{
    e.preventDefault();
    const value=cityInput.value.trim();if(!value)return;
-   cityFilter.value=value;
+   cityFilter.value='São José dos Campos';
    cityFilter.dispatchEvent(new Event('input',{bubbles:true}));
    countFilters();setCityModal(false);
    // Use the existing router through its original navigation buttons; it also re-renders results.
    document.querySelector('.desktop-nav [data-route="explore"]')?.click();
  });
  get('v19CityClear')?.addEventListener('click',()=>{
-   cityFilter.value='';cityFilter.dispatchEvent(new Event('input',{bubbles:true}));
+   cityFilter.value='São José dos Campos';cityFilter.dispatchEvent(new Event('input',{bubbles:true}));
    countFilters();setCityModal(false);
    document.querySelector('.desktop-nav [data-route="explore"]')?.click();
  });
