@@ -1,42 +1,38 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#154c3c"><meta name="description" content="Encontre profissionais, explore serviços e publique seus pedidos com facilidade no Conecta."><title>Conecta | Pessoas certas para o que você precisa</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="premium.css"><link rel="stylesheet" href="reference.css"><link rel="stylesheet" href="v9.css"><link rel="stylesheet" href="v10.css"><link rel="stylesheet" href="v11.css"><link rel="stylesheet" href="v12.css"><link rel="stylesheet" href="v13.css"><link rel="stylesheet" href="v15.css"></head><body>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#123a2d"><meta name="description" content="Encontre profissionais, explore serviços e publique seus pedidos com facilidade no Conecta."><title>Conecta | Pessoas certas para o que você precisa</title><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="premium.css"><link rel="stylesheet" href="reference.css"><link rel="stylesheet" href="v9.css"><link rel="stylesheet" href="v10.css"><link rel="stylesheet" href="v11.css"><link rel="stylesheet" href="v12.css"><link rel="stylesheet" href="v13.css"><link rel="stylesheet" href="v15.css"><link rel="stylesheet" href="conecta-novo.css?v=18"></head><body>
 
 <header class="header clean-header"><div class="header-row clean-header-row"><a href="#" class="logo" data-route="home"><span class="logo-symbol"><i></i><i></i><i></i><i></i></span>conecta<span class="logo-dot">.</span></a><form id="topMarketplaceSearch" class="top-search clean-top-search" action="#"><input id="topSearchQuery" placeholder="Buscar serviços, profissionais ou cidade" aria-label="Buscar serviços, profissionais ou cidade"><button type="submit" class="top-search-btn" aria-label="Pesquisar"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 4.2 4.2"/></svg></button></form><nav class="desktop-nav clean-nav"><button data-route="home" class="navlink current">Início</button><button data-route="explore" class="navlink">Profissionais</button><button data-route="requests" class="navlink">Pedidos</button><button data-route="inbox" class="navlink">Mensagens</button><button data-route="dashboard" class="navlink">Meu espaço</button></nav><div class="header-right clean-header-right"><button class="btn btn-light top-cta" data-action="auth-open">Entrar</button><button class="btn btn-light top-cta" data-action="open-request">Publicar pedido</button><button class="btn btn-accent top-cta" data-route="dashboard" data-profile-cta>Criar perfil</button><button id="menuBtn" class="menu-button" aria-label="Abrir menu" aria-expanded="false"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></div></header>
 <div id="mobileNav" class="mobile-nav"><button data-route="home">Início</button><button data-route="explore">Profissionais</button><button data-route="requests">Pedidos</button><button data-route="dashboard">Meu espaço</button><button data-route="inbox">Mensagens</button><button data-action="auth-open">Entrar</button><button data-route="dashboard" data-profile-cta>Criar perfil</button></div>
 <main>
 <section id="page-home" class="page active">
   <div class="clean-home-wrap">
-    <section class="clean-hero">
+    <section class="clean-hero" aria-labelledby="homeMainTitle">
       <div class="clean-hero-main">
-        <div class="hero-chip"><span class="status-dot"></span> BEM-VINDO AO CONECTA</div>
-        <h1>Encontre a pessoa certa para <span>cada serviço.</span></h1>
-        <p>Profissionais para transformar seus planos em realidade. Descubra talentos, conheça serviços e encontre a ajuda ideal para o que você precisa.</p>
+        <div class="hero-chip"><span class="status-dot"></span> GENTE BOA FAZ ACONTECER</div>
+        <h1 id="homeMainTitle">A pessoa certa <em>muda tudo.</em></h1>
+        <p>Do pequeno conserto ao grande projeto. Descubra profissionais perto de você e dê o próximo passo com confiança.</p>
         <form id="heroSearch" class="hero-search clean-hero-search">
-          <span class="search-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 4.2 4.2"/></svg></span>
-          <input id="heroQuery" placeholder="Qual serviço você precisa?" aria-label="Pesquisar serviços">
+          <span class="search-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.7"/><path d="m16 16 4.2 4.2"/></svg></span>
+          <input id="heroQuery" placeholder="Qual serviço você está procurando?" aria-label="Pesquisar serviços">
           <select id="heroCategory" aria-label="Categoria de serviço"><option value="">Todas as categorias</option></select>
-          <button class="btn btn-accent" type="submit">Buscar <span aria-hidden="true">↗</span></button>
+          <button class="btn btn-accent" type="submit">Encontrar <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
         </form>
-        <div class="hero-stats-reference">
-          <div><strong id="heroProCount">6</strong><span>Perfis no catálogo</span></div>
-          <div><strong id="heroCatCount">12</strong><span>Áreas de serviços</span></div>
-          <div><strong id="heroReqCount">3</strong><span>Pedidos publicados</span></div>
-        </div>
+        <div class="hero-quick"><span>Comece por aqui</span><div class="hero-quick-actions"><button type="button" data-category="Reformas">Reformas <span>↗</span></button><button type="button" data-category="Beleza">Beleza <span>↗</span></button><button type="button" data-category="Tecnologia">Tecnologia <span>↗</span></button></div></div>
+        <div class="hero-stats-reference" hidden><strong id="heroProCount">0</strong><strong id="heroCatCount">0</strong><strong id="heroReqCount">0</strong></div>
       </div>
-      <div class="hero-visual" aria-label="Pessoas e profissionais da plataforma">
-        <div class="hero-photo hero-photo-small"><img src="assets/hero-side.jpg" data-upgrade-src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=700&amp;q=85" alt="Pessoas trabalhando em conjunto"></div>
-        <div class="hero-photo hero-photo-main"><img src="assets/hero-main.jpg" data-upgrade-src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&amp;q=85" alt="Profissional sorrindo"></div>
-        <div class="visual-note visual-note-top"><span class="note-icon">✦</span><span><b>Um mundo de talentos</b><small>Descubra o profissional ideal</small></span></div>
-        <div class="visual-note visual-note-bottom"><span class="note-icon check-icon">✓</span><span><b>Conecte e resolva</b><small>Simples, direto e fácil</small></span></div>
-        <div class="hero-visual-spark hero-spark-one"></div><div class="hero-visual-spark hero-spark-two"></div>
+      <div class="hero-visual" aria-label="Conheça talentos e seus serviços">
+        <div class="hero-photo hero-photo-main"><img src="assets/hero-main-clean.jpg" data-upgrade-src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1000&amp;q=90" alt="Profissionais conversando sobre um projeto"></div>
+        <div class="hero-photo hero-photo-small"><img src="assets/portrait-pedro.jpg" data-upgrade-src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=660&amp;q=85" alt="Profissional do catálogo demonstrativo"></div>
+        <div class="hero-floating-tag"><span class="hero-tag-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg></span><span><strong>Seu próximo projeto</strong><small>começa com uma conexão.</small></span></div>
+        <div class="hero-visual-caption"><span class="hero-caption-dot"></span> CONEXÕES QUE ACONTECEM</div>
       </div>
     </section>
     <section class="services-reference">
       <div class="main-container clean-main">
-        <div class="section-head clean-head"><div><span class="overline">DESCUBRA O QUE VOCÊ PRECISA</span><h2>Serviços populares para você</h2><p>De pequenos reparos a grandes projetos, encontre quem pode ajudar.</p></div><button class="textlink" data-route="explore">Ver todos os serviços <span aria-hidden="true">↗</span></button></div>
+        <div class="section-head clean-head"><div><span class="overline">ENCONTRE SEU CAMINHO</span><h2>O que você precisa resolver?</h2><p>Tem sempre alguém que entende exatamente o que você procura.</p></div><button class="textlink" data-route="explore">Ver todos os serviços <span aria-hidden="true">↗</span></button></div>
         <div class="services-slider-wrap"><div class="v12-marquee-viewport" aria-label="Serviços populares, rolagem automática"><div id="categories" class="category-grid clean-category-grid"></div></div><div class="slide-controls"><button type="button" aria-label="Ver serviços anteriores" data-category-scroll="prev">←</button><button type="button" aria-label="Ver próximos serviços" data-category-scroll="next">→</button></div></div>
-        <div class="section-head clean-head with-gap"><div><span class="overline">FEITO PARA VOCÊ</span><h2>Profissionais em destaque</h2><p>Conheça quem faz acontecer e encontre a pessoa certa.</p></div><button class="textlink" data-route="explore">Explorar profissionais <span aria-hidden="true">↗</span></button></div>
+        <div class="section-head clean-head with-gap"><div><span class="overline">PESSOAS QUE FAZEM ACONTECER</span><h2>Conheça quem faz bem feito.</h2><p>Explore perfis, descubra talentos e escolha com tranquilidade.</p></div><button class="textlink" data-route="explore">Explorar profissionais <span aria-hidden="true">↗</span></button></div>
         <div id="featured" class="professional-grid"></div>
-        <section class="clean-cta"><div><span class="overline overline-light">FAÇA PARTE DO CONECTA</span><h2>Seu talento merece ser encontrado.</h2><p>Crie seu perfil, apresente seu trabalho e deixe novos clientes descobrirem o que você faz.</p></div><button class="btn btn-white" data-route="dashboard">Quero anunciar meus serviços <span aria-hidden="true">↗</span></button></section>
+        <section class="clean-cta"><div><span class="overline overline-light">FAÇA PARTE DO CONECTA</span><h2>O próximo cliente pode estar aqui.</h2><p>Mostre o que você faz, conte sua história e faça seu trabalho chegar a mais pessoas.</p></div><button class="btn btn-white" data-route="dashboard">Quero anunciar meus serviços <span aria-hidden="true">↗</span></button></section>
       </div>
     </section>
   </div>
@@ -44,7 +40,7 @@
 <section id="page-explore" class="page">
   <div class="explore-outer">
     <div class="explore-shell main-container subpage">
-      <div class="explore-titlebar"><h1>PROFISSIONAIS</h1><span>Encontre o talento certo para cada projeto <span aria-hidden="true">↗</span></span></div>
+      <div class="explore-titlebar"><div class="explore-title-copy"><span class="explore-eyebrow"><span class="status-dot"></span> DESCUBRA TALENTOS NO CONECTA</span><h1>Encontre quem <em>faz acontecer.</em></h1><p>Um universo de profissionais para tirar suas ideias do papel.</p></div><div class="explore-title-action"><span>Tem um talento para mostrar?</span><button type="button" data-route="dashboard">Criar meu perfil <span aria-hidden="true">↗</span></button></div></div>
       <div class="explore-topline">
         <div class="explore-tabs" role="group" aria-label="Visualização dos profissionais"><button class="active" type="button" data-explore-tab="all">Todos</button><button type="button" data-explore-tab="saved">Meus salvos</button></div>
         <button class="explore-join" type="button" data-route="dashboard">+ Anuncie seu serviço</button>
@@ -63,7 +59,7 @@
           <div class="sidebar-section"><div class="sidebar-heading">SUA BUSCA</div><p class="sidebar-help">Escolha uma área ou digite o nome de um profissional para refinar a busca.</p></div>
           <button id="clearFilters" class="btn btn-light sidebar-reset">Limpar todos os filtros <span>↗</span></button>
         </aside>
-        <div class="explore-results"><div id="professionalsList" class="professional-grid"></div><div class="explore-end-note">Conectando pessoas a novas possibilidades <span>✳</span></div></div>
+        <div class="explore-results"><div id="professionalsList" class="professional-grid"></div><div class="explore-end-note">Boas conexões começam por aqui.</div></div>
       </div>
     </div>
   </div>
@@ -104,7 +100,7 @@
       <h1 id="dashboardTitle">Crie seu perfil no Conecta</h1><p id="dashboardSubtitle">Apresente seu talento, organize seu espaço e mostre o que faz de melhor.</p>
       <div class="v11-hero-foot"><span>Seu trabalho merece ser visto.</span><span class="v11-verified-indicator" id="cloudProfileStatus">Conta necessária para publicar</span></div>
     </div>
-    <div class="v11-dashboard-hero-art" aria-hidden="true"><div class="v11-dash-orbit"></div><div class="v11-dash-cover"><img src="assets/hero-main.jpg" alt=""><span class="v11-dash-cover-tag">SEU PERFIL</span></div><div class="v11-dash-floating"><span>✦</span><div><strong>Seu trabalho em destaque</strong><small>Uma vitrine do seu jeito</small></div></div></div></div>
+    <div class="v11-dashboard-hero-art" aria-hidden="true"><div class="v11-dash-orbit"></div><div class="v11-dash-cover"><img src="assets/hero-main-clean.jpg" alt=""><span class="v11-dash-cover-tag">SEU PERFIL</span></div><div class="v11-dash-floating"><span>✦</span><div><strong>Seu trabalho em destaque</strong><small>Uma vitrine do seu jeito</small></div></div></div></div>
     <div class="v11-board v11-dashboard-board"><div class="v11-workspace-heading"><div><span class="v11-eyebrow">ÁREA DO PROFISSIONAL</span><h2>Seu espaço, suas conquistas<span class="v11-title-point">.</span></h2><p>Tudo para apresentar seu trabalho com mais profissionalismo.</p></div><span class="v11-workspace-pill">Vitrine profissional</span></div>
     <nav class="dashboard-tabs" aria-label="Área do profissional"><button class="selected" data-dash="profile" id="profileTabLabel"><span class="v11-tab-symbol">◉</span> Criar perfil</button><button data-dash="portfolio"><span class="v11-tab-symbol">▦</span> Meu portfólio</button><button data-dash="myrequests"><span class="v11-tab-symbol">▤</span> Meus pedidos</button></nav>
     <section id="dashProfile" class="dash-panel active"><div class="panel-grid"><form id="profileForm" class="form-card">
@@ -129,4 +125,4 @@
   <div class="v11-board v11-inbox-board"><div class="v11-board-heading v11-inbox-board-heading"><div><span class="v11-eyebrow">SUA CAIXA DE ENTRADA</span><h2>Mensagens<span class="v11-title-point">.</span></h2><p>Suas conversas organizadas, tudo em um só lugar.</p></div><span class="v11-privacy-pill"><span>●</span> Espaço privado</span></div>
   <div class="inbox-layout"><aside class="inbox-sidebar"><div class="inbox-sidebar-head"><div><span>CONVERSAS</span><h2>Caixa de entrada</h2></div><span id="chatThreadCount">0</span></div><div class="v11-sidebar-search">Escolha uma conversa abaixo para continuar</div><div id="chatThreadList" class="thread-list"></div><div class="v11-sidebar-bottom"><span class="v11-mini-dot"></span> Conversas com contas verificadas</div></aside><div class="chat-panel"><div id="chatHead" class="chat-head"><div class="chat-person-icon">C</div><div><strong>Suas conversas</strong><small>Escolha uma conversa para começar</small></div></div><div id="chatMessages" class="chat-messages"><div class="chat-intro"><span class="chat-intro-symbol">✉</span><strong>Seu próximo projeto começa com um olá.</strong><p>Encontre um profissional e inicie uma conversa por aqui.</p><button data-route="explore">Explorar profissionais ↗</button></div></div><form id="chatComposer" class="chat-compose"><input id="chatInput" type="text" maxlength="1000" autocomplete="off" placeholder="Escreva sua mensagem..." aria-label="Sua mensagem" disabled><button id="chatSend" type="submit" disabled>Enviar ↗</button></form></div></div>
   </div></div></div></section></main><footer><div class="footer-main"><a href="#" class="logo footer-logo" data-route="home"><span class="logo-symbol"><i></i><i></i><i></i><i></i></span>conecta<span class="logo-dot">.</span></a><p>Conexões certas. Projetos realizados.<br>Um espaço para quem precisa e quem faz.</p><div><button data-route="explore">Profissionais</button><button data-route="requests">Pedidos</button><button data-route="dashboard">Meu espaço</button></div></div><div class="footer-bottom"><span>© Conecta · Feito para aproximar</span><span>Perfis de exemplo identificados. Mensagens reais exigem Firebase configurado.</span></div></footer>
-<div id="modal" class="modal-backdrop" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true"><button class="modal-close" id="closeModal" aria-label="Fechar">×</button><div id="modalBody"></div></div></div><div id="toast" role="status"></div><script src="app.js?v=17"></script><script src="firebase-config.js?v=16"></script><script src="v9.js?v=16"></script><script src="firebase-backend.js?v=16"></script><script src="v11.js"></script><script src="v12.js?v=16"></script><script src="v15.js?v=17"></script></body></html>
+<div id="modal" class="modal-backdrop" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true"><button class="modal-close" id="closeModal" aria-label="Fechar">×</button><div id="modalBody"></div></div></div><div id="toast" role="status"></div><script src="app.js?v=17"></script><script src="firebase-config.js?v=16"></script><script src="v9.js?v=16"></script><script src="firebase-backend.js?v=16"></script><script src="v11.js"></script><script src="v12.js?v=16"></script><script src="v15.js?v=17"></script><script src="conecta-novo.js?v=18"></script></body></html>
