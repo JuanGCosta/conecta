@@ -25,13 +25,24 @@
   width:23px;height:23px;border-radius:50%;background:#e8f3e9;color:#27744d;
   font-size:14px;transition:background .2s,color .2s
 }
+/* Hover and keyboard focus stay light: only the featured chip uses solid green. */
 #page-home .hero-quick-actions button:hover,
 #page-home .hero-quick-actions button:focus-visible{
-  background:#174c37!important;color:#fff!important;border-color:#174c37!important;
-  transform:translateY(-2px);box-shadow:0 8px 20px rgba(20,66,45,.17)!important
+  background:#d8eadc!important;color:#174f36!important;border-color:#add1ba!important;
+  transform:translateY(-2px);box-shadow:0 6px 16px rgba(20,66,45,.10)!important
 }
 #page-home .hero-quick-actions button:hover span,
-#page-home .hero-quick-actions button:focus-visible span{background:#fff;color:#174c37}
+#page-home .hero-quick-actions button:focus-visible span{
+  background:#c4dfcc!important;color:#174f36!important
+}
+#page-home .hero-quick-actions button:first-child:hover,
+#page-home .hero-quick-actions button:first-child:focus-visible{
+  background:#164934!important;color:#fff!important;border-color:#164934!important
+}
+#page-home .hero-quick-actions button:first-child:hover span,
+#page-home .hero-quick-actions button:first-child:focus-visible span{
+  background:#ffffff26!important;color:#fff!important
+}
 #page-professional .subpage>.back-link{
   display:inline-flex!important;align-items:center!important;justify-content:center;
   gap:12px!important;padding:11px 19px 11px 11px!important;min-height:49px;
