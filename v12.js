@@ -48,8 +48,6 @@
       // Clone categories only for animation; clones are hidden from accessibility tree.
       function prepare(){
         belt.querySelectorAll('[data-v12-clone]').forEach(n=>n.remove());
-        // V19: a grade mobile é estática, sem cópias nem animações custosas.
-        if(window.matchMedia('(max-width:900px)').matches){width=0;offset=0;belt.style.transform='';return;}
         const cards=[...belt.children];if(!cards.length)return;
         cards.forEach(card=>{const clone=card.cloneNode(true);clone.dataset.v12Clone='';clone.setAttribute('aria-hidden','true');clone.tabIndex=-1;clone.querySelectorAll('button,a,input').forEach(c=>c.tabIndex=-1);belt.appendChild(clone)});
         width=cards[0]&&belt.children[cards.length]?belt.children[cards.length].offsetLeft-cards[0].offsetLeft:0;

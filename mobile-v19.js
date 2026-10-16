@@ -13,6 +13,18 @@
  const cityLabel=get('v19CityLabel');
  const cityFilter=get('cityFilter');
  const isMobile=()=>window.matchMedia('(max-width:900px)').matches;
+ const originalSheetParent=filterSheet?.parentNode;
+ const originalSheetNext=filterSheet?.nextSibling;
+ function positionSheet(){
+   if(!filterSheet || !originalSheetParent)return;
+   if(isMobile()){
+     // Render outside transformed/overflowing page containers so backdrop cannot block touches.
+     if(filterSheet.parentNode!==document.body)document.body.appendChild(filterSheet);
+   }else if(filterSheet.parentNode!==originalSheetParent){
+     originalSheetParent.insertBefore(filterSheet,originalSheetNext);
+   }
+ }
+
  let returnFocus=null;
  const safeValue=()=>cityFilter?.value.trim()||'';
  const updateCity=()=>{if(cityLabel)cityLabel.textContent=safeValue()||'Escolher cidade'};
@@ -24,6 +36,7 @@
    updateCity();
  }
  function setFilters(open){
+   positionSheet();
    if(!isMobile())open=false;
    document.body.classList.toggle('v19-filters-open',open);
    filterButton.setAttribute('aria-expanded',String(open));
@@ -75,6 +88,7 @@
  });
  // When the explorer is opened, active filters remain visible through their counter.
  // This avoids multiple renderers and keeps app.js as the only filtering implementation.
- window.addEventListener('resize',()=>{if(!isMobile())setFilters(false)});
+ window.addEventListener('resize',()=>{positionSheet();if(!isMobile())setFilters(false)});
+ positionSheet();
  countFilters();
 })();

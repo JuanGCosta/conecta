@@ -1,0 +1,11 @@
+CONECTA V20 - Correções mobile
+
+1. Categorias na home voltaram a passar horizontalmente como no desktop.
+2. Painel de filtros foi movido para a raiz da página no mobile, evitando bloqueio de toques por sobreposição.
+3. Botão Ver resultados, categorias e campos ficam acessíveis.
+4. Layout desktop e Firebase preservados.
+
+Copie todos os arquivos desta pasta para a raiz do projeto, mantendo .git e suas configurações privadas.
+Faça commit e push. Depois atualize a página no emulador.
+
+Teste no Android: abrir filtros, selecionar cidade/categoria, rolar até o final e tocar Ver resultados.
