@@ -111,7 +111,7 @@
           customerId:u.uid, providerId, participants:[u.uid,providerId],
           customerName:(u.displayName||'Cliente Conecta').slice(0,70),
           providerName:providerName.slice(0,80),
-          createdAt:serverTimestamp(),updatedAt:serverTimestamp(),status:'pending',
+          createdAt:serverTimestamp(),updatedAt:serverTimestamp(),status:'pending',pendingCount:1,
           lastMessage:content,lastSenderId:u.uid
         });
         batch.set(doc(db,'chats',threadId,'messages','intro'),messageData);
@@ -126,9 +126,16 @@
           const t=existing.data();
           if (!existing.exists() || t.customerId!==u.uid || t.providerId!==providerId ||
               !Array.isArray(t.participants) || !t.participants.includes(u.uid)) throw e;
-          if (t.status==='pending') throw Error('Aguarde o profissional aceitar sua primeira mensagem.');
           if (t.status==='declined') throw Error('Este contato foi recusado e está encerrado.');
           const retry=writeBatch(db);
+          if (t.status==='pending') {
+            const nextCount=Math.max(1,Number(t.pendingCount||1))+1;
+            if (nextCount>3) throw Error('Você já utilizou as 3 mensagens iniciais. Aguarde a autorização do profissional.');
+            retry.update(chatRef,{lastMessage:content,lastSenderId:u.uid,updatedAt:serverTimestamp(),pendingCount:nextCount});
+            retry.set(doc(collection(db,'chats',threadId,'messages')),messageData);
+            await retry.commit();
+            return threadId;
+          }
           retry.update(chatRef,{lastMessage:content,lastSenderId:u.uid,updatedAt:serverTimestamp()});
           retry.set(doc(collection(db,'chats',threadId,'messages')),messageData);
           await retry.commit();
@@ -150,12 +157,28 @@
         if (!u?.emailVerified) throw Error('Confirme seu e-mail para responder.');
         const content=text.trim();
         if(!content || content.length>1000) throw Error('A mensagem deve ter de 1 a 1000 caracteres.');
-        if(thread.status && thread.status!=='accepted') throw Error('Aguarde a autorização do contato.');
         const threadRef=doc(db,'chats',thread.id);
+        const snap=await getDoc(threadRef);
+        if(!snap.exists()) throw Error('Conversa não encontrada.');
+        const live={id:thread.id,...snap.data()};
         const batch=writeBatch(db);
-        batch.update(threadRef,{updatedAt:serverTimestamp(),lastMessage:content,lastSenderId:u.uid});
-        batch.set(doc(collection(db,'chats',thread.id,'messages')),{senderId:u.uid,text:content,createdAt:serverTimestamp()});
-        await batch.commit();
+        const messageRef=doc(collection(db,'chats',thread.id,'messages'));
+        if(live.status==='accepted'){
+          batch.update(threadRef,{updatedAt:serverTimestamp(),lastMessage:content,lastSenderId:u.uid});
+          batch.set(messageRef,{senderId:u.uid,text:content,createdAt:serverTimestamp()});
+          await batch.commit();
+          return {status:'accepted'};
+        }
+        if(live.status==='pending' && live.customerId===u.uid){
+          const nextCount=Math.max(1,Number(live.pendingCount||1))+1;
+          if(nextCount>3) throw Error('Você já utilizou as 3 mensagens iniciais. Aguarde a autorização do profissional.');
+          batch.update(threadRef,{updatedAt:serverTimestamp(),lastMessage:content,lastSenderId:u.uid,pendingCount:nextCount});
+          batch.set(messageRef,{senderId:u.uid,text:content,createdAt:serverTimestamp()});
+          await batch.commit();
+          return {status:'pending',pendingCount:nextCount};
+        }
+        if(live.status==='declined') throw Error('Este contato foi recusado e está encerrado.');
+        throw Error('Aguarde a autorização do contato.');
       };
       // V24: dados compartilhados e sincronizados entre contas/dispositivos.
       const storageModule = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-storage.js`);

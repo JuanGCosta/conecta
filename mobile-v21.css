@@ -25,24 +25,6 @@
   width:23px;height:23px;border-radius:50%;background:#e8f3e9;color:#27744d;
   font-size:14px;transition:background .2s,color .2s
 }
-/* Hover and keyboard focus stay light: only the featured chip uses solid green. */
-#page-home .hero-quick-actions button:hover,
-#page-home .hero-quick-actions button:focus-visible{
-  background:#d8eadc!important;color:#174f36!important;border-color:#add1ba!important;
-  transform:translateY(-2px);box-shadow:0 6px 16px rgba(20,66,45,.10)!important
-}
-#page-home .hero-quick-actions button:hover span,
-#page-home .hero-quick-actions button:focus-visible span{
-  background:#c4dfcc!important;color:#174f36!important
-}
-#page-home .hero-quick-actions button:first-child:hover,
-#page-home .hero-quick-actions button:first-child:focus-visible{
-  background:#164934!important;color:#fff!important;border-color:#164934!important
-}
-#page-home .hero-quick-actions button:first-child:hover span,
-#page-home .hero-quick-actions button:first-child:focus-visible span{
-  background:#ffffff26!important;color:#fff!important
-}
 #page-professional .subpage>.back-link{
   display:inline-flex!important;align-items:center!important;justify-content:center;
   gap:12px!important;padding:11px 19px 11px 11px!important;min-height:49px;
@@ -125,9 +107,7 @@
  #page-home .v12-marquee-viewport .category-go{display:grid!important}
  #page-home .v12-marquee-viewport .category-item:active{filter:brightness(1.13)!important}
 }
-#page-home .hero-quick-actions button{background:#e8f2e9!important;border:1px solid #cee3d2!important;color:#174f36!important;box-shadow:0 4px 15px #173e2810!important}
-#page-home .hero-quick-actions button:first-child{background:#185b40!important;color:#fff!important;border-color:#185b40!important}
-#page-home .hero-quick-actions button:first-child span{background:#ffffff26!important;color:#fff!important}
+
 #page-professional .subpage>.back-link{background:#185b40!important;color:white!important;border-color:#185b40!important;box-shadow:0 9px 22px #16472e2b!important}
 #page-professional .subpage>.back-link .back-arrow{background:#ffffff27!important;color:#fff!important}
 #page-professional .subpage>.back-link:hover{background:#0c3e2c!important}
@@ -139,3 +119,83 @@
 .v24-offer strong{color:#153f2f;font-size:14px}
 .v24-offer p{margin:5px 0 0;color:#567063;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
 @media(max-width:690px){.v24-offer{align-items:stretch;flex-direction:column}.v24-offer .btn{width:100%}}
+
+/* V25 - Buscas populares: aparencia neutra sem selecao fixa. */
+#page-home .hero-quick{
+  display:flex!important;align-items:flex-start!important;gap:15px!important;
+  margin-top:23px!important
+}
+#page-home .hero-quick>span{
+  display:inline-flex;align-items:center;flex:0 0 auto;
+  min-height:44px;color:#547565!important;font-size:12px!important;
+  font-weight:800!important;white-space:nowrap
+}
+#page-home .hero-quick-actions{
+  display:flex!important;flex:1 1 0;flex-wrap:wrap!important;
+  gap:9px!important;min-width:0
+}
+#page-home .hero-quick-actions button{
+  display:inline-flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:13px!important;min-height:43px!important;
+  padding:8px 9px 8px 16px!important;
+  font-size:12px!important;font-weight:750!important;white-space:nowrap;
+  border-radius:999px!important;border:1px solid #d5e5d8!important;
+  background:#edf5ef!important;color:#245b42!important;
+  box-shadow:0 2px 8px rgba(18,62,42,.045)!important;
+  cursor:pointer;touch-action:manipulation;
+  transition:transform .2s ease,background-color .2s ease,border-color .2s ease,box-shadow .2s ease,color .2s ease!important
+}
+#page-home .hero-quick-actions button span{
+  display:grid!important;place-items:center!important;flex:0 0 25px;
+  width:25px!important;height:25px!important;
+  border-radius:50%!important;
+  background:#dcebdd!important;color:#317a54!important;
+  font-size:14px!important;line-height:1!important;
+  transition:background-color .2s ease,color .2s ease!important
+}
+@media (hover:hover) and (pointer:fine){
+  #page-home .hero-quick-actions button:hover{
+    background:#15543c!important;color:#fff!important;
+    border-color:#15543c!important;
+    box-shadow:0 9px 18px rgba(17,79,54,.15)!important;
+    transform:translateY(-2px)!important
+  }
+  #page-home .hero-quick-actions button:hover span{
+    background:rgba(255,255,255,.2)!important;color:#fff!important
+  }
+}
+#page-home .hero-quick-actions button:focus-visible{
+  outline:3px solid #55a777!important;outline-offset:3px!important
+}
+#page-home .hero-quick-actions button:active{
+  transform:scale(.97)!important
+}
+@media(max-width:900px){
+  #page-home .hero-quick{
+    flex-direction:column!important;align-items:stretch!important;
+    gap:5px!important;margin-top:18px!important
+  }
+  #page-home .hero-quick>span{min-height:24px!important;font-size:11px!important}
+  #page-home .hero-quick-actions{
+    display:grid!important;grid-auto-flow:column!important;
+    grid-template-rows:repeat(2,minmax(40px,auto))!important;
+    grid-auto-columns:max-content!important;align-items:stretch!important;
+    flex:unset!important;flex-wrap:nowrap!important;
+    gap:8px!important;overflow-x:auto!important;overscroll-behavior-inline:contain;
+    scroll-snap-type:x proximity;padding:7px 4px 13px!important;
+    scrollbar-width:none;touch-action:pan-x!important;
+    -webkit-overflow-scrolling:touch
+  }
+  #page-home .hero-quick-actions button{
+    min-height:41px!important;font-size:11px!important;
+    padding:7px 8px 7px 13px!important;
+    scroll-snap-align:start;gap:9px!important
+  }
+  #page-home .hero-quick-actions button span{
+    width:22px!important;height:22px!important;flex-basis:22px
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #page-home .hero-quick-actions button,
+  #page-home .hero-quick-actions button span{transition:none!important}
+}

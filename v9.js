@@ -1,6 +1,6 @@
 /* Conecta V9: public catalog, protected profiles and private conversations. */
 (function(){
-  let user=null,realProfiles=[],threads=[],messages=[],activeChat=null,stopThreads=null,stopMessages=null,stopPros=null,pendingPro=null,authSerial=0,waitingSend=false;
+  let user=null,realProfiles=[],threads=[],messages=[],activeChat=null,stopThreads=null,stopMessages=null,stopPros=null,pendingPro=null,authSerial=0,waitingSend=false,threadsBootstrapped=false,notificationAsked=false;
   const $ = s => document.querySelector(s);
   const backend = () => window.ConectaBackend;
   const configured = () => !!backend()?.configured && !!backend()?.subscribeAuth;
@@ -33,6 +33,41 @@
     modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">BEM-VINDO AO CONECTA</span><h2>${create?'Crie sua conta':'Entre na sua conta'}</h2><p>${create?'Cadastre-se gratuitamente para conversar e, se desejar, oferecer seus serviços.':'Acesse suas mensagens e gerencie seu perfil profissional.'}</p><div class="auth-tabs"><button type="button" data-auth-mode="login" class="${!create?'active':''}">Entrar</button><button type="button" data-auth-mode="register" class="${create?'active':''}">Criar conta</button></div><form id="${create?'registerAuthForm':'loginAuthForm'}" class="auth-form">${create?'<label>Seu nome<input type="text" name="name" maxlength="70" minlength="2" required autocomplete="name" placeholder="Como podemos chamar você?"></label>':''}<label>E-mail<input type="email" name="email" required autocomplete="email" placeholder="voce@exemplo.com"></label><label>Senha<input type="password" name="password" minlength="${create?'8':'6'}" required autocomplete="${create?'new-password':'current-password'}" placeholder="${create?'Mínimo de 8 caracteres':'Sua senha'}"></label>${create?'<p class="auth-small">Enviaremos um e-mail para validar o endereço. Se não encontrar, confira Spam e Lixo eletrônico.</p>':''}<button type="submit" class="btn btn-green">${create?'Criar conta':'Entrar'} ↗</button><p class="auth-feedback" id="authFeedback" role="status"></p></form><div class="auth-inline">${!create?'<button data-auth-mode="reset">Esqueci minha senha</button>':''}<span>Explorar profissionais é grátis e não exige login.</span></div></div>`);
   }
   function errorAtAuth(msg){const t=$('#authFeedback');if(t)t.textContent=msg;else notify(msg)}
+
+  function maybeRequestNotifications(){
+    if(notificationAsked || !verified() || !('Notification' in window) || Notification.permission!=='default')return;
+    notificationAsked=true;
+    try{Notification.requestPermission().catch(()=>{})}catch{}
+  }
+  function lookupProfilePhoto(uid){
+    if(!uid)return '';
+    if(uid===currentUid() && state.profile?.photo)return state.profile.photo;
+    const profile=realProfiles.find(p=>p.ownerUid===uid||p.id===uid);
+    return profile?.photo||'';
+  }
+  function avatarHTML(person,cls){
+    const photo=person?.photo?safe(person.photo):'';
+    return `<span class="${cls}">${photo?`<img src="${photo}" alt="Foto de ${safe(person.name)}">`:safe(nick(person?.name))}</span>`;
+  }
+  function maybeNotifyThreads(nextThreads){
+    if(!('Notification' in window) || Notification.permission!=='granted')return;
+    if(!threadsBootstrapped){threadsBootstrapped=true;return;}
+    const previous=new Map(threads.map(t=>[t.id,t]));
+    nextThreads.forEach(t=>{
+      if(t.lastSenderId===currentUid())return;
+      const before=previous.get(t.id);
+      const currTime=t.updatedAt?.toMillis?.()||0;
+      const prevTime=before?.updatedAt?.toMillis?.()||0;
+      if((!before && currTime) || (before && currTime>prevTime)){
+        if(document.visibilityState==='visible' && currentPage==='inbox' && activeChat?.id===t.id)return;
+        const person=getDisplayPerson(t);
+        try{
+          const note=new Notification(person.name||'Nova mensagem',{body:t.lastMessage||'Você recebeu uma nova mensagem no Conecta.',icon:'favicon.svg'});
+          note.onclick=()=>{window.focus();const match=threads.find(x=>x.id===t.id)||nextThreads.find(x=>x.id===t.id);if(match)chooseThread(match);if(typeof route==='function')route('inbox');note.close();};
+        }catch{}
+      }
+    });
+  }
   function updateHeaders(){
     document.querySelectorAll('[data-action="auth-open"],[data-action="auth-logout"]').forEach(b=>{
       b.dataset.action=user&&verified()?'auth-logout':'auth-open';
@@ -52,7 +87,7 @@
     return true;
   }
   async function handleAuth(u){
-    const serial=++authSerial;user=u;state.profile=null;activeChat=null;messages=[];threads=[];
+    const serial=++authSerial;user=u;state.profile=null;activeChat=null;messages=[];threads=[];threadsBootstrapped=false;
     window.ConectaLaunch?.onAuth(u);
     if(stopThreads)stopThreads();stopThreads=null;
     if(stopMessages)stopMessages();stopMessages=null;
@@ -65,7 +100,7 @@
       renderDashboard();renderHome();renderExplore();updateHeaders();
     }catch(e){notify('Não foi possível carregar seu perfil: '+authProblem(e))}
     if(serial!==authSerial)return;
-    stopThreads=backend().subscribeThreads(list=>{threads=list;if(activeChat){const current=threads.find(t=>t.id===activeChat.id);if(current)activeChat={...current,newConversation:false};}renderInbox()},e=>notify('Mensagens: '+authProblem(e)));
+    stopThreads=backend().subscribeThreads(list=>{maybeNotifyThreads(list);threads=list;if(activeChat){const current=threads.find(t=>t.id===activeChat.id);if(current)activeChat={...current,newConversation:false};}renderInbox()},e=>notify('Mensagens: '+authProblem(e)));
     if(pendingPro){const p=pendingPro;pendingPro=null;closeModal();startConversation(p)}
   }
   function refreshCatalog(){renderHome();renderExplore();if(currentPage==='professional')renderProfessional()}
@@ -96,14 +131,15 @@
   function getDisplayPerson(thread){
     const providerSide=thread.providerId===currentUid();
     const name=providerSide?thread.customerName:thread.providerName;
-    return {name:name||'Usuário Conecta',subtitle:providerSide?'Cliente':'Profissional'};
+    const uid=providerSide?thread.customerId:thread.providerId;
+    return {uid,name:name||'Usuário Conecta',subtitle:providerSide?'Cliente':'Profissional',photo:lookupProfilePhoto(uid)};
   }
   function renderThreads(){
     const list=$('#chatThreadList');if(!list)return;
     $('#chatThreadCount').textContent=threads.length;
     list.innerHTML=threads.length?threads.map(t=>{
       const p=getDisplayPerson(t);
-      return `<button class="thread-item ${activeChat?.id===t.id?'selected':''}" data-thread="${safe(t.id)}"><span class="thread-avatar">${safe(nick(p.name))}</span><span class="thread-copy"><span class="thread-copy-top"><strong>${safe(p.name)}</strong><em>${safe(p.subtitle)}</em></span><small>${safe(t.lastMessage||'Conversa iniciada')}</small>${t.status==='pending'?`<span class="v15-thread-state">${t.providerId===currentUid()?'Solicitação recebida':'Aguardando autorização'}</span>`:''}${t.status==='declined'?'<span class="v15-thread-state declined">Contato não autorizado</span>':''}</span></button>`;
+      return `<button class="thread-item ${activeChat?.id===t.id?'selected':''}" data-thread="${safe(t.id)}">${avatarHTML(p,'thread-avatar')}<span class="thread-copy"><span class="thread-copy-top"><strong>${safe(p.name)}</strong><em>${safe(p.subtitle)}</em></span><small>${safe(t.lastMessage||'Conversa iniciada')}</small>${t.status==='pending'?`<span class="v15-thread-state">${t.providerId===currentUid()?'Solicitação recebida':'Aguardando autorização'}</span>`:''}${t.status==='declined'?'<span class="v15-thread-state declined">Contato não autorizado</span>':''}</span></button>`;
     }).join(''):'<div class="thread-empty"><span class="v11-thread-empty-icon">✉</span><strong>Nenhuma conversa ainda</strong><p>Encontre um profissional para iniciar sua primeira conversa.</p><button data-route="explore">Ver profissionais ↗</button></div>';
   }
   function renderMessages(){
@@ -117,19 +153,22 @@
     if(!$('#chatThreadList'))return;
     renderThreads();
     const head=$('#chatHead'),input=$('#chatInput'),send=$('#chatSend');
-    if(!activeChat){head.innerHTML='<div class="chat-person-icon">C</div><div><strong>Suas conversas</strong><small>Escolha uma conversa para começar</small></div>'}
-    else {const person=getDisplayPerson(activeChat);head.innerHTML=`<div class="chat-person-icon">${safe(nick(person.name))}</div><div><strong>${safe(person.name)}</strong><small>${safe(person.subtitle)} · conversa privada</small></div>`}
+    if(!activeChat){head.innerHTML=`<div class="chat-head-main">${avatarHTML({name:'Conecta'},'chat-person-icon')}<div class="chat-head-copy"><strong>Suas conversas</strong><small>Escolha uma conversa para começar</small></div></div>`}
+    else {const person=getDisplayPerson(activeChat);head.innerHTML=`<div class="chat-head-main">${avatarHTML(person,'chat-person-icon')}<div class="chat-head-copy"><strong>${safe(person.name)}</strong><small>${safe(person.subtitle)}</small></div></div>`}
     const status=activeChat?.status || 'accepted';
     const isProvider=activeChat?.providerId===currentUid();
+    const pendingCount=Math.max(1,Number(activeChat?.pendingCount||1));
+    const remainingPending=Math.max(0,3-pendingCount);
     if(activeChat && status==='pending'){
-      const info=isProvider?'Esta pessoa enviou uma primeira mensagem. Autorize o contato para continuar conversando.':'Seu pedido de contato foi enviado. Aguarde a autorização do profissional.';
+      const info=isProvider?'Esta pessoa enviou mensagens iniciais. Autorize o contato para continuar conversando.':remainingPending>0?`Seu pedido de contato foi enviado. Você ainda pode enviar mais ${remainingPending} ${remainingPending===1?'mensagem':'mensagens'} antes da autorização.`:'Seu pedido de contato foi enviado. Aguarde a autorização do profissional para continuar.';
       head.insertAdjacentHTML('beforeend',`<div class="v15-contact-banner"><span>${safe(info)}</span>${isProvider?'<div class="v15-decision-actions"><button type="button" class="v15-accept" data-contact-decision="accepted">Aceitar contato</button><button type="button" class="v15-decline" data-contact-decision="declined">Recusar</button></div>':''}</div>`);
     }else if(activeChat && status==='declined'){
       head.insertAdjacentHTML('beforeend','<div class="v15-contact-banner declined">O pedido de contato foi recusado. Esta conversa está encerrada.</div>');
     }
-    const allowed=!!activeChat && (activeChat.newConversation || status==='accepted') && verified() && !waitingSend;
+    const allowed=!!activeChat && verified() && !waitingSend && (activeChat.newConversation || status==='accepted' || (status==='pending' && activeChat.customerId===currentUid() && remainingPending>0));
     input.disabled=send.disabled=!allowed;
-    input.placeholder=activeChat && status==='pending'?'Aguardando autorização para continuar...':activeChat && status==='declined'?'Conversa encerrada': 'Escreva sua mensagem...';
+    input.placeholder=activeChat && status==='pending'?(activeChat.customerId===currentUid() && remainingPending>0?`Você pode enviar mais ${remainingPending} ${remainingPending===1?'mensagem':'mensagens'} antes da autorização...`:'Aguardando autorização para continuar...'):activeChat && status==='declined'?'Conversa encerrada':'Escreva sua mensagem...';
+    maybeRequestNotifications();
     renderMessages();
   }
   function chooseThread(thread){
@@ -154,7 +193,9 @@
     event.preventDefault();
     if(!activeChat||waitingSend||!requireAuth('messages'))return;
     if(!activeChat.newConversation && activeChat.status && activeChat.status!=='accepted'){
-      window.ConectaUI?.dialog({title:'Aguarde a autorização',message:'Você já enviou a primeira mensagem. Só será possível continuar quando o profissional aceitar o contato.'});return;
+      const pendingCount=Math.max(1,Number(activeChat.pendingCount||1));
+      if(activeChat.customerId===currentUid() && activeChat.status==='pending' && pendingCount<3){}
+      else {window.ConectaUI?.dialog({title:'Aguarde a autorização',message:activeChat.status==='pending'?'Você já utilizou as 3 mensagens iniciais. Agora será possível continuar somente quando o profissional aceitar o contato.':'Esta conversa não pode receber novas mensagens.'});return;}
     }
     const input=$('#chatInput');const text=input.value.trim();if(!text)return;
     waitingSend=true;renderInbox();
@@ -164,7 +205,7 @@
         activeChat={...activeChat,id,status:'pending',newConversation:false};
         if(stopMessages)stopMessages();
         stopMessages=backend().subscribeMessages(id,list=>{messages=list;renderMessages()},e=>notify(authProblem(e)));
-      }else await backend().reply(activeChat,text);
+      }else {const result=await backend().reply(activeChat,text);if(activeChat.status==='pending'&&result?.pendingCount)activeChat={...activeChat,pendingCount:result.pendingCount};}
       input.value='';
     }catch(e){notify('Falha ao enviar: '+authProblem(e))}
     finally{waitingSend=false;renderInbox();if(!input.disabled)input.focus()}

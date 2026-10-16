@@ -16,11 +16,18 @@ const svgPaths={
   grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
   heart:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>',
   pin:'<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
-  arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>'
+  arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',
+  truck:'<path d="M3 7h11v8H3z"/><path d="M14 10h3l3 3v2h-6z"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+  wind:'<path d="M3 8h10a2 2 0 1 0-2-2"/><path d="M3 12h15a2.5 2.5 0 1 1-2.5 2.5"/><path d="M3 16h8a2 2 0 1 1-2 2"/>',
+  car:'<path d="M5 15l1.5-5h11L19 15"/><rect x="3" y="11" width="18" height="5" rx="1"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>',
+  paw:'<circle cx="8" cy="7" r="1.8"/><circle cx="14" cy="6.4" r="1.8"/><circle cx="18" cy="9.4" r="1.8"/><circle cx="6" cy="11" r="1.8"/><path d="M8.5 19c0-2.7 2-4.8 4.5-4.8s4.5 2.1 4.5 4.8c0 .9-.8 1.6-1.7 1.6H10.2c-.9 0-1.7-.7-1.7-1.6Z"/>',
+  shirt:'<path d="M9 4 7 6 4 7l2 4v9h12v-9l2-4-3-1-2-2-3 2-3-2Z"/>',
+  party:'<path d="M5 20 19 6"/><path d="m7 6 11 11"/><path d="m4 4 3 3"/><path d="M14 3h7v7"/>',
+  firstaid:'<path d="M9 4h6v4h4v8h-4v4H9v-4H5V8h4z"/>'
 };
-const categoryIcons={'Reformas':'hammer','Elétrica':'zap','Hidráulica':'droplets','Limpeza':'sparkles','Pintura':'paint','Jardinagem':'leaf','Montagem':'box','Tecnologia':'monitor','Beleza':'scissors','Fotografia':'camera','Aulas':'book','Outros':'grid'};
+const categoryIcons={'Reformas':'hammer','Elétrica':'zap','Hidráulica':'droplets','Limpeza':'sparkles','Pintura':'paint','Jardinagem':'leaf','Montagem':'box','Tecnologia':'monitor','Beleza':'scissors','Fotografia':'camera','Aulas':'book','Marcenaria':'hammer','Ar-condicionado':'wind','Fretes':'truck','Pet care':'paw','Costura':'shirt','Eventos':'party','Automotivo':'car','Saúde':'firstaid','Outros':'grid'};
 function icon(name,sz=23){return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${svgPaths[name]||svgPaths.grid}</svg>`}
-const categories=[['Reformas','▦','Pedreiros e reformas'],['Elétrica','ϟ','Instalações elétricas'],['Hidráulica','◉','Encanamentos'],['Limpeza','✧','Limpeza e faxina'],['Pintura','▧','Pintores'],['Jardinagem','❀','Jardins e plantas'],['Montagem','▤','Móveis e instalações'],['Tecnologia','⌘','Computadores e redes'],['Beleza','✦','Estética e beleza'],['Fotografia','▣','Fotos e vídeos'],['Aulas','⌁','Professores'],['Outros','···','Mais serviços']];
+const categories=[['Reformas','▦','Pedreiros e reformas'],['Elétrica','ϟ','Instalações elétricas'],['Hidráulica','◉','Encanamentos'],['Limpeza','✧','Limpeza e faxina'],['Pintura','▧','Pintores'],['Jardinagem','❀','Jardins e plantas'],['Montagem','▤','Móveis e instalações'],['Tecnologia','⌘','Computadores e redes'],['Beleza','✦','Estética e beleza'],['Fotografia','▣','Fotos e vídeos'],['Aulas','⌁','Professores'],['Marcenaria','▥','Móveis sob medida'],['Ar-condicionado','≈','Instalação e manutenção'],['Fretes','⇄','Mudanças e entregas'],['Pet care','◌','Banho, tosa e cuidados'],['Costura','✂','Ajustes e confecção'],['Eventos','✶','Festas e eventos'],['Automotivo','◈','Serviços para veículos'],['Saúde','＋','Cuidados e bem-estar'],['Outros','···','Mais serviços']];
 const categoryPictures={
 'Reformas':['https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=450&q=83','assets/category-reforms.jpg'],
 'Elétrica':['https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=450&q=83','assets/category-technology.jpg'],
@@ -33,6 +40,15 @@ const categoryPictures={
 'Beleza':['https://images.unsplash.com/photo-1560066984-138dadb4c035?w=450&q=83','assets/category-beauty.jpg'],
 'Fotografia':['https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=450&q=83','assets/category-beauty.jpg'],
 'Aulas':['https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=450&q=83','assets/category-cleaning.jpg'],
+
+'Marcenaria':['https://images.unsplash.com/photo-1504148455328-c376907d081c?w=450&q=83','assets/category-reforms.jpg'],
+'Ar-condicionado':['https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=450&q=83','assets/category-technology.jpg'],
+'Fretes':['https://images.unsplash.com/photo-1553413077-190dd305871c?w=450&q=83','assets/category-technology.jpg'],
+'Pet care':['https://images.unsplash.com/photo-1517849845537-4d257902454a?w=450&q=83','assets/category-beauty.jpg'],
+'Costura':['https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=450&q=83','assets/category-beauty.jpg'],
+'Eventos':['https://images.unsplash.com/photo-1511578314322-379afb476865?w=450&q=83','assets/category-cleaning.jpg'],
+'Automotivo':['https://images.unsplash.com/photo-1486006920555-c77dcf18193c?w=450&q=83','assets/category-technology.jpg'],
+'Saúde':['https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=450&q=83','assets/category-cleaning.jpg'],
 'Outros':['https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=450&q=83','assets/category-beauty.jpg']};
 
 const key='conecta.reconstruido.v1';
