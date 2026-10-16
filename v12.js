@@ -55,11 +55,17 @@
         offset=0;belt.style.transform='translate3d(0,0,0)';
       }
       const viewport=belt.parentElement;
-      viewport.addEventListener('mouseenter',()=>pause=true);
+      viewport.addEventListener('mouseenter',()=>{if(matchMedia('(hover:hover) and (pointer:fine)').matches && innerWidth>900)pause=true});
       viewport.addEventListener('mouseleave',()=>pause=false);
-      viewport.addEventListener('focusin',()=>pause=true);
+      viewport.addEventListener('focusin',e=>{if(e.target.matches(':focus-visible'))pause=true});
       viewport.addEventListener('focusout',()=>pause=false);
-      viewport.addEventListener('touchstart',()=>pause=true,{passive:true});
+      let touchX=0,touchOffset=0;
+      viewport.addEventListener('touchstart',e=>{pause=true;touchX=e.touches[0].clientX;touchOffset=offset},{passive:true});
+      viewport.addEventListener('touchmove',e=>{
+        if(!width)return;
+        offset=((touchOffset+touchX-e.touches[0].clientX)%width+width)%width;
+        belt.style.setProperty('transform',`translate3d(${-offset}px,0,0)`,'important');
+      },{passive:true});
       viewport.addEventListener('touchend',()=>pause=false,{passive:true});
       viewport.addEventListener('touchcancel',()=>pause=false,{passive:true});
       const original=window.renderHome;
@@ -69,7 +75,14 @@
       let lastSignature='';
       const mo=new MutationObserver(()=>{const count=belt.querySelectorAll('.category-item:not([data-v12-clone])').length;const sig=String(count)+'/'+belt.querySelectorAll('[data-v12-clone]').length;if(sig!==lastSignature&&count&&count!==belt.querySelectorAll('[data-v12-clone]').length){lastSignature=sig;prepare()}});
       mo.observe(belt,{childList:true});
-      function tick(t){if(last&&!pause&&width>0&&!matchMedia('(prefers-reduced-motion: reduce)').matches){offset+=(t-last)*.025;if(offset>=width)offset-=width;belt.style.transform=`translate3d(${-offset}px,0,0)`}last=t;requestAnimationFrame(tick)}
+      function tick(t){
+        if(last&&!pause&&width>0&&!document.hidden&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+          offset+=(Math.min(t-last,80))*.042;
+          if(offset>=width)offset%=width;
+          belt.style.setProperty('transform',`translate3d(${-offset}px,0,0)`,'important');
+        }
+        last=t;requestAnimationFrame(tick)
+      }
       requestAnimationFrame(tick);
       document.querySelectorAll('[data-category-scroll]').forEach(b=>b.addEventListener('click',()=>{offset=(offset+(b.dataset.categoryScroll==='next'?230:-230)+width)%width},{capture:true}));
     }
