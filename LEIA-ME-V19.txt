@@ -1,0 +1,64 @@
+CONECTA V19 | MOBILE FIRST
+
+Esta entrega é a etapa visual mobile. Mantém a versão desktop e aproveita a estrutura e a autenticação da V18.
+
+MUDANÇAS
+
+- Barra de navegação fixa embaixo com Início, Explorar, Pedidos, Chat e Perfil.
+- Cabeçalho de celular simplificado, menu de opções e atalho para área da conta.
+- Home adaptada: busca em destaque, categorias em grade com ícones e profissionais com rolagem lateral.
+- Seleção manual de cidade na home, usando o mesmo filtro de cidades da busca.
+- Busca mobile mais enxuta, cartões revisados e filtros em painel deslizante.
+- Contador visual dos filtros ativos e botão para exibir os resultados.
+- Apresentação mobile dos perfis mais legível e contato preservado.
+- Ajustes de espaçamento/tipografia das telas Pedidos, Chat e Meu espaço.
+- Respeito à configuração de movimento reduzido do aparelho.
+
+NÃO ALTERADO
+
+- Firebase Auth, Firestore, regras de acesso, login e verificação de e-mail.
+- Lógica de filtragem de cidade, bairro e categoria.
+- Funções de mensagens, cadastro, pedidos e avaliação.
+- Dados de usuários já existentes. Não requer migração de banco de dados.
+
+ATENÇÃO
+
+Pedidos, favoritos e fotos de portfólio ainda possuem limitações de armazenamento local na base original.
+Esta versão NÃO transforma o Conecta em um app nativo nem adiciona notificações push.
+Perfis marcados como demonstrativos são fictícios. Não crie avaliações fictícias.
+
+PUBLICAÇÃO
+
+1. Faça uma cópia da pasta principal atual do projeto.
+2. Extraia este ZIP e copie seu conteúdo para a raiz do repositório local.
+3. Se seu firebase-config.js atual foi alterado depois da V18, mantenha sua versão atual.
+4. Nunca apague a pasta oculta .git ou as configurações da sua hospedagem.
+5. Execute no terminal da pasta principal:
+
+   git status
+   git add .
+   git commit -m "Conecta V19 - Interface Mobile First"
+   git push origin main
+
+6. Teste no celular real, inclusive login, filtro de cidade/bairro, favoritos e chat.
+
+ARQUIVOS V19
+
+mobile-v19.css     Camada visual responsiva (sem alterar desktop)
+mobile-v19.js      Interações das novas abas e dos filtros no celular
+index.html         Barra de abas, painel de cidade, filtros e ligações aos arquivos novos
+app.js             Ícones das categorias no mobile; lógica existente preservada
+
+SUGESTÃO DE TESTE RÁPIDO
+
+- Abra Início em celular; confira barra fixa, menu e categorias.
+- Escolha Jacareí no seletor de cidade; a busca deve ir para Profissionais.
+- Abra Filtros; filtre por categoria/bairro, confirme e limpe.
+- Favorite um perfil demonstrativo, entre em Meus salvos e confira o resultado.
+- Abra um perfil e confira apresentação e aviso de demonstração.
+- Faça login com conta existente e confira Mensagens e Meu espaço.
+- Confira um Android e um iPhone antes de publicar amplamente.
+
+A revisão automática validou sintaxe dos arquivos, integridade dos IDs e presença de recursos.
+O navegador de teste do ambiente impediu uma checagem visual automatizada, por isso
+os testes finais de interface, Firebase e responsividade dependem de teste manual.
