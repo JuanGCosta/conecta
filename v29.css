@@ -1,0 +1,65 @@
+
+/* V29 — categorias e pedidos */
+#sidebarCategories{display:grid;grid-template-columns:1fr;gap:12px}
+.sidebar-category{
+  min-height:74px;padding:14px 16px;border-radius:18px;
+  border:1px solid #dbe7df;background:#fff;display:grid;
+  grid-template-columns:56px minmax(0,1fr);align-items:center;gap:14px;
+  color:#28553f;font-weight:700;font-size:18px;line-height:1.15;
+  box-shadow:0 8px 22px rgba(20,67,45,.04);transition:.18s ease;
+}
+.sidebar-category:hover{transform:translateY(-1px);border-color:#bdd3c3;background:#fbfdfb}
+.sidebar-category.active{background:#eef6ef;border-color:#cfe2d3;color:#174e38}
+.sidebar-category small{display:none}
+.sidebar-category-square{
+  width:56px;height:56px;border-radius:18px;display:grid;place-items:center;
+  background:linear-gradient(180deg,#edf6ef 0%,#e4f0e6 100%);border:1px solid #d8e6db;
+  color:#2e8157;box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
+}
+.sidebar-category-square svg{width:25px;height:25px;stroke-width:2.05}
+#page-requests .v29-stage-requests{background:#f4f8f4}
+#page-requests .v29-requests-board{padding-top:24px}
+#page-requests .v29-requests-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;padding-bottom:22px;border-bottom:1px solid #e6efe7}
+#page-requests .v29-request-heading-actions{display:flex;gap:12px;flex-wrap:wrap}
+#page-requests .v29-request-secondary{min-height:48px;padding:0 18px;border-radius:14px}
+#page-requests .v29-request-primary{min-height:48px;padding:0 18px;border-radius:14px;background:#16563c;color:#fff;border:none;box-shadow:none}
+#page-requests .v29-filter-panel{margin-top:26px;background:#fbfdfb;border:1px solid #e3ece5;box-shadow:none}
+#page-requests .v29-filterbar{align-items:stretch}
+#page-requests .v29-request-chips{margin-top:20px;padding-top:18px;border-top:1px solid #e8efea}
+#page-requests .v29-request-chips .v11-request-chip{border-radius:999px;padding:11px 16px;font-weight:700}
+#page-requests .v29-request-chips .v11-request-chip.active{background:#16563c;border-color:#16563c;color:#fff}
+#page-requests .v29-board-lower{padding-top:18px}
+#page-requests .v29-list-heading{align-items:flex-end;margin-bottom:20px}
+#page-requests .v29-requests-layout{grid-template-columns:minmax(0,1fr) 320px;gap:24px}
+#page-requests .v29-opportunities-aside{position:sticky;top:110px;align-self:start}
+#page-requests .v29-guide{background:#fff;border:1px solid #e3ece5;box-shadow:none;padding:24px;border-radius:26px}
+#page-requests .v29-guide-points{display:grid;gap:15px;margin-top:18px}
+#page-requests .v29-guide-point{display:grid;grid-template-columns:38px minmax(0,1fr);gap:12px;align-items:start}
+#page-requests .v29-guide-point>span{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#eef6ef;color:#16563c;font-weight:800}
+#page-requests .v29-guide-point strong{display:block;color:#153e2e;margin-bottom:3px}
+#page-requests .v29-guide-point small{color:#6a8576;line-height:1.45}
+#page-requests .v29-guide-action{margin-top:22px;min-height:48px;border-radius:14px;background:#16563c;color:#fff}
+#page-requests .request-grid{gap:18px}
+#page-requests .v11-request-card{border:1px solid #e4ece6;box-shadow:0 10px 28px rgba(15,48,34,.05)}
+#page-requests .v11-request-card-mark{background:linear-gradient(180deg,#eef6ef 0%,#e5f0e7 100%);color:#236847}
+#page-requests .v11-request-card h3{font-size:28px}
+#page-requests .v11-request-card .chip{font-weight:700}
+@media(max-width:1100px){
+  #page-requests .v29-requests-layout{grid-template-columns:1fr}
+  #page-requests .v29-opportunities-aside{position:static}
+}
+@media(max-width:900px){
+  .sidebar-category{min-height:70px;font-size:17px;padding:13px 14px;grid-template-columns:54px minmax(0,1fr)}
+  .sidebar-category-square{width:54px;height:54px;border-radius:17px}
+  .sidebar-category-square svg{width:24px;height:24px}
+  #page-requests .v29-requests-heading{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:720px){
+  .sidebar-category{font-size:16px;gap:12px}
+  .sidebar-category-square{width:52px;height:52px;border-radius:16px}
+  #page-requests .v29-requests-board{padding-top:10px}
+  #page-requests .v29-filter-panel{padding:18px;border-radius:22px}
+  #page-requests .v29-request-heading-actions{width:100%}
+  #page-requests .v29-request-heading-actions>*{flex:1}
+  #page-requests .v11-request-card h3{font-size:23px}
+}
