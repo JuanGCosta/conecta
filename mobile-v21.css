@@ -131,3 +131,11 @@
 #page-professional .subpage>.back-link{background:#185b40!important;color:white!important;border-color:#185b40!important;box-shadow:0 9px 22px #16472e2b!important}
 #page-professional .subpage>.back-link .back-arrow{background:#ffffff27!important;color:#fff!important}
 #page-professional .subpage>.back-link:hover{background:#0c3e2c!important}
+/* Publicações de pré-lançamento */
+.v24-offers{margin-top:17px;padding:16px;background:#f1f6f1;border-radius:16px}
+.v24-offers>strong{font-size:13px;color:#24583f}
+.v24-offer{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:12px;background:white;border:1px solid #e1eae1;border-radius:13px;padding:13px}
+.v24-offer>div{min-width:0;flex:1}
+.v24-offer strong{color:#153f2f;font-size:14px}
+.v24-offer p{margin:5px 0 0;color:#567063;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+@media(max-width:690px){.v24-offer{align-items:stretch;flex-direction:column}.v24-offer .btn{width:100%}}

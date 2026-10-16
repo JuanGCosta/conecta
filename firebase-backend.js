@@ -157,6 +157,118 @@
         batch.set(doc(collection(db,'chats',thread.id,'messages')),{senderId:u.uid,text:content,createdAt:serverTimestamp()});
         await batch.commit();
       };
+      // V24: dados compartilhados e sincronizados entre contas/dispositivos.
+      const storageModule = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-storage.js`);
+      const storage = storageModule.getStorage(app);
+      const ownVerified = () => {
+        if (!auth.currentUser?.emailVerified) throw Error('Entre e confirme seu e-mail para publicar.');
+        return auth.currentUser;
+      };
+      const remoteDate = value => value?.toMillis?.() || (typeof value === 'number' ? value : 0);
+      const cleanImage = src => typeof src === 'string' && src.startsWith('data:image/jpeg;base64,');
+      async function uploadPhotos(group,id,images) {
+        const u = ownVerified();
+        const saved=[];
+        try {
+          for (let i=0; i<images.length; i++) {
+            if (!cleanImage(images[i]) || images[i].length>900000) throw Error('Uma das fotos é inválida ou muito grande.');
+            const path=`${group}/${u.uid}/${id}/${i}.jpg`;
+            const file=storageModule.ref(storage,path);
+            await storageModule.uploadString(file,images[i],'data_url',{contentType:'image/jpeg'});
+            saved.push(file);
+          }
+          return {urls:await Promise.all(saved.map(file=>storageModule.getDownloadURL(file))),saved};
+        } catch(e) {
+          await Promise.allSettled(saved.map(file=>storageModule.deleteObject(file)));
+          throw e;
+        }
+      }
+      const deletePhotos = async (group,id,count) => {
+        const u=ownVerified();
+        await Promise.allSettled(Array.from({length:count},(_,i)=>storageModule.deleteObject(storageModule.ref(storage,`${group}/${u.uid}/${id}/${i}.jpg`))));
+      };
+      backend.subscribeRequests = (success,failure) => onSnapshot(
+        query(collection(db,'requests'),orderBy('createdAt','desc'),limit(150)),
+        snap=>success(snap.docs.map(d=>({id:d.id,...d.data(),created:remoteDate(d.data().createdAt)}))),failure
+      );
+      backend.createRequest = async (input,images=[]) => {
+        const u=ownVerified(), ref=doc(collection(db,'requests'));
+        if(images.length>4)throw Error('No máximo quatro fotos.');
+        let photos=[];
+        try {
+          if(images.length) photos=(await uploadPhotos('request-images',ref.id,images)).urls;
+          await setDoc(ref,{
+            ownerUid:u.uid,owner:(u.displayName||'Cliente Conecta').trim().slice(0,70),
+            title:input.title.trim(),category:input.category,city:input.city.trim(),
+            description:input.description.trim(),photos,status:'open',createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+          });
+          return ref.id;
+        } catch(e) {if(photos.length)await deletePhotos('request-images',ref.id,photos.length);throw e}
+      };
+      backend.deleteRequest = async record => {
+        const u=ownVerified();
+        if(record.ownerUid!==u.uid)throw Error('Você não pode excluir esse pedido.');
+        // Remove proposals before deleting the parent (Firestore doesn't cascade).
+        const offers=await getDocs(collection(db,'requests',record.id,'offers'));
+        if(offers.size>450)throw Error('Existem muitas propostas neste pedido. Contate o suporte antes de excluir.');
+        const batch=writeBatch(db);
+        offers.docs.forEach(d=>batch.delete(d.ref));
+        batch.delete(doc(db,'requests',record.id));
+        await batch.commit();
+        if(record.photos?.length)await deletePhotos('request-images',record.id,record.photos.length);
+      };
+      backend.subscribeWorks = (ownerUid,success,failure) => {
+        if(!ownerUid)return ()=>{};
+        return onSnapshot(query(collection(db,'works'),where('ownerUid','==',ownerUid),limit(100)),
+          snap=>success(snap.docs.map(d=>({id:d.id,...d.data(),created:remoteDate(d.data().createdAt)})).sort((a,b)=>b.created-a.created)),failure);
+      };
+      backend.createWork = async (input,images=[]) => {
+        const u=ownVerified();
+        if(images.length>6)throw Error('No máximo seis fotos.');
+        if(!(await getDoc(doc(db,'profiles',u.uid))).exists())throw Error('Publique seu perfil profissional antes de adicionar trabalhos.');
+        const ref=doc(collection(db,'works'));
+        let photos=[];
+        try {
+          if(images.length)photos=(await uploadPhotos('work-images',ref.id,images)).urls;
+          await setDoc(ref,{ownerUid:u.uid,title:input.title.trim(),description:input.description.trim(),photos,createdAt:serverTimestamp()});
+          return ref.id;
+        }catch(e){if(photos.length)await deletePhotos('work-images',ref.id,photos.length);throw e}
+      };
+      backend.deleteWork = async record => {
+        const u=ownVerified();
+        if(record.ownerUid!==u.uid)throw Error('Você não pode excluir esse trabalho.');
+        await dbm.deleteDoc(doc(db,'works',record.id));
+        if(record.photos?.length)await deletePhotos('work-images',record.id,record.photos.length);
+      };
+      backend.subscribeOffers = (requestId,success,failure) => {
+        ownVerified();
+        return onSnapshot(collection(db,'requests',requestId,'offers'),snap=>success(snap.docs.map(d=>({id:d.id,...d.data()}))),failure);
+      };
+      backend.createOffer = async (requestId,message) => {
+        const u=ownVerified(),content=String(message||'').trim();
+        if(content.length<15||content.length>400)throw Error('A proposta deve ter de 15 a 400 caracteres.');
+        const [job,profile]=await Promise.all([
+          getDoc(doc(db,'requests',requestId)),getDoc(doc(db,'profiles',u.uid))
+        ]);
+        if(!job.exists()||job.data().status!=='open')throw Error('Este pedido não está mais disponível.');
+        if(job.data().ownerUid===u.uid)throw Error('Você não pode responder ao próprio pedido.');
+        if(!profile.exists())throw Error('Publique seu perfil profissional para enviar uma proposta.');
+        await setDoc(doc(db,'requests',requestId,'offers',u.uid),{
+          providerUid:u.uid,providerName:profile.data().name,message:content,createdAt:serverTimestamp()
+        });
+      };
+      backend.subscribeFavorites = (success,failure) => {
+        const u=ownVerified();
+        return onSnapshot(collection(db,'users',u.uid,'favorites'),
+          snap=>success(snap.docs.map(d=>'user:'+d.id)),failure);
+      };
+      backend.setFavorite = async (providerUid,enabled) => {
+        const u=ownVerified();
+        if(!providerUid||providerUid===u.uid)throw Error('Não é possível salvar seu próprio perfil.');
+        const ref=doc(db,'users',u.uid,'favorites',providerUid);
+        if(enabled)await setDoc(ref,{createdAt:serverTimestamp()});
+        else await dbm.deleteDoc(ref);
+      };
       finished();
     } catch (e) {
       backend.error='Não foi possível inicializar o Firebase: '+e.message;

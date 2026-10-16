@@ -19,6 +19,84 @@ service cloud.firestore {
         && p.photo is string && p.photo.size() <= 350000
         && p.updatedAt == request.time;
     }
+    // V24: só conteúdo publicado de verdade fica visível aos visitantes.
+    function imageURLs(p, maximum) {
+      return p is list && p.size() <= maximum
+        && (p.size()<1 || validPhotoURL(p[0]))
+        && (p.size()<2 || validPhotoURL(p[1]))
+        && (p.size()<3 || validPhotoURL(p[2]))
+        && (p.size()<4 || validPhotoURL(p[3]))
+        && (p.size()<5 || validPhotoURL(p[4]))
+        && (p.size()<6 || validPhotoURL(p[5]));
+    }
+    function validPhotoURL(src) {
+      return src is string && src.size() < 1200
+        && src.matches('^https://firebasestorage\\.googleapis\\.com/.*');
+    }
+    function validRequest(p) {
+      return p.keys().hasOnly(['ownerUid','owner','title','category','city','description','photos','status','createdAt','updatedAt'])
+        && p.ownerUid == request.auth.uid
+        && p.owner is string && p.owner.size() > 0 && p.owner.size() <= 70
+        && p.title is string && p.title.size() >= 5 && p.title.size() <= 90
+        && p.category in ['Reformas','Elétrica','Hidráulica','Limpeza','Pintura','Jardinagem','Montagem','Tecnologia','Beleza','Fotografia','Aulas','Outros']
+        && p.city is string && p.city.size() > 1 && p.city.size() <= 60
+        && p.description is string && p.description.size() >= 10 && p.description.size() <= 1000
+        && imageURLs(p.photos,4)
+        && p.status == 'open'
+        && p.createdAt == request.time && p.updatedAt == request.time;
+    }
+    match /requests/{requestId} {
+      allow get, list: if true;
+      allow create: if verified() && validRequest(request.resource.data);
+      allow delete: if verified() && resource.data.ownerUid == request.auth.uid;
+      allow update: if false;
+      match /offers/{providerId} {
+        allow get: if verified() && (
+          request.auth.uid == providerId ||
+          get(/databases/$(database)/documents/requests/$(requestId)).data.ownerUid == request.auth.uid
+        );
+        allow list: if verified() &&
+          get(/databases/$(database)/documents/requests/$(requestId)).data.ownerUid == request.auth.uid;
+        allow create: if verified() && request.auth.uid == providerId
+          && exists(/databases/$(database)/documents/profiles/$(providerId))
+          && get(/databases/$(database)/documents/requests/$(requestId)).data.ownerUid != request.auth.uid
+          && get(/databases/$(database)/documents/requests/$(requestId)).data.status == 'open'
+          && request.resource.data.keys().hasOnly(['providerUid','providerName','message','createdAt'])
+          && request.resource.data.providerUid == providerId
+          && request.resource.data.providerName == get(/databases/$(database)/documents/profiles/$(providerId)).data.name
+          && request.resource.data.message is string
+          && request.resource.data.message.size() >= 15
+          && request.resource.data.message.size() <= 400
+          && request.resource.data.createdAt == request.time;
+        allow update: if false;
+        allow delete: if verified() && (
+          request.auth.uid == providerId ||
+          get(/databases/$(database)/documents/requests/$(requestId)).data.ownerUid == request.auth.uid
+        );
+      }
+    }
+    match /works/{workId} {
+      allow get, list: if true;
+      allow create: if verified()
+        && request.resource.data.keys().hasOnly(['ownerUid','title','description','photos','createdAt'])
+        && request.resource.data.ownerUid == request.auth.uid
+        && exists(/databases/$(database)/documents/profiles/$(request.auth.uid))
+        && request.resource.data.title is string && request.resource.data.title.size() >= 3 && request.resource.data.title.size() <= 90
+        && request.resource.data.description is string && request.resource.data.description.size() >= 5 && request.resource.data.description.size() <= 650
+        && imageURLs(request.resource.data.photos,6)
+        && request.resource.data.createdAt == request.time;
+      allow delete: if verified() && resource.data.ownerUid == request.auth.uid;
+      allow update: if false;
+    }
+    match /users/{userId}/favorites/{providerId} {
+      allow get, list: if verified() && request.auth.uid == userId;
+      allow create: if verified() && request.auth.uid == userId && providerId != userId
+        && exists(/databases/$(database)/documents/profiles/$(providerId))
+        && request.resource.data.keys().hasOnly(['createdAt'])
+        && request.resource.data.createdAt == request.time;
+      allow delete: if verified() && request.auth.uid == userId;
+      allow update: if false;
+    }
     match /profiles/{userId} {
       allow read: if true;
       allow create: if verified() && userId == request.auth.uid && profileValid(request.resource.data);

@@ -18,7 +18,7 @@
     'auth/unauthorized-domain':'Adicione o domínio do site em Authentication > Settings > Authorized domains.',
     'permission-denied':'Acesso negado pelo Firestore. Confira se a conta confirmou o e-mail e se as regras foram publicadas.'
   }[e?.code] || e?.message || 'Não foi possível concluir a operação.');
-  function showSetup(){modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">CONTA CONECTA</span><h2>Ative o cadastro real</h2><p>A navegação da plataforma já é pública. Para criar contas e trocar mensagens entre computadores, é necessário conectar seu projeto Firebase.</p><div class="auth-notice">Configure <strong>firebase-config.js</strong>, ative Authentication e publique as regras do Firestore. As instruções estão no <strong>README.md</strong> do ZIP.</div><button class="btn btn-green" data-action="close-modal">Entendi</button></div>`)}
+  function showSetup(){modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">CONTA CONECTA</span><h2>Ative o cadastro real</h2><p>A navegação da plataforma já é pública. Para criar contas e trocar mensagens entre computadores, é necessário conectar seu projeto Firebase.</p><div class="auth-notice">Configure <strong>firebase-config.js</strong>, ative Authentication e publique as regras do Firestore. As regras do Firestore e do Storage precisam ser publicadas no console do Firebase.</div><button class="btn btn-green" data-action="close-modal">Entendi</button></div>`)}
   function openAuth(mode='login'){
     if(!configured()){showSetup();return}
     if(user && !verified())mode='verify';
@@ -42,8 +42,8 @@
     updateProfileUI();
   }
   function profilesForCatalog(){
-    if(configured())return [...realProfiles.map(p=>({...p,id:p.ownerUid===currentUid()?'mine':'user:'+p.ownerUid,initials:nick(p.name),demo:false})),...demoPros];
-    return demoPros;
+    if(configured())return realProfiles.map(p=>({...p,id:p.ownerUid===currentUid()?'mine':'user:'+p.ownerUid,initials:nick(p.name),demo:false}));
+    return [];
   }
   function requireAuth(reason){
     if(!configured()){showSetup();return false}
@@ -53,6 +53,7 @@
   }
   async function handleAuth(u){
     const serial=++authSerial;user=u;state.profile=null;activeChat=null;messages=[];threads=[];
+    window.ConectaLaunch?.onAuth(u);
     if(stopThreads)stopThreads();stopThreads=null;
     if(stopMessages)stopMessages();stopMessages=null;
     updateHeaders();renderHome();renderExplore();
@@ -72,6 +73,7 @@
     if(!configured()){state.profile=null;updateHeaders();refreshCatalog();return}
     const b=backend();
     if(b.error){notify(b.error);return}
+    window.ConectaLaunch?.onReady(b);
     stopPros=b.subscribeProfiles(list=>{realProfiles=list;refreshCatalog()},e=>notify('Catálogo: '+authProblem(e)));
     b.subscribeAuth(handleAuth);
   }
