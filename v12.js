@@ -51,6 +51,8 @@
         const cards=[...belt.children];if(!cards.length)return;
         cards.forEach(card=>{const clone=card.cloneNode(true);clone.dataset.v12Clone='';clone.setAttribute('aria-hidden','true');clone.tabIndex=-1;clone.querySelectorAll('button,a,input').forEach(c=>c.tabIndex=-1);belt.appendChild(clone)});
         width=cards[0]&&belt.children[cards.length]?belt.children[cards.length].offsetLeft-cards[0].offsetLeft:0;
+        if(!width && cards.length)width=cards.reduce((sum,card)=>sum+card.getBoundingClientRect().width+16,0);
+        offset=0;belt.style.transform='translate3d(0,0,0)';
       }
       const viewport=belt.parentElement;
       viewport.addEventListener('mouseenter',()=>pause=true);
@@ -58,6 +60,8 @@
       viewport.addEventListener('focusin',()=>pause=true);
       viewport.addEventListener('focusout',()=>pause=false);
       viewport.addEventListener('touchstart',()=>pause=true,{passive:true});
+      viewport.addEventListener('touchend',()=>pause=false,{passive:true});
+      viewport.addEventListener('touchcancel',()=>pause=false,{passive:true});
       const original=window.renderHome;
       if(typeof original==='function')window.renderHome=function(...args){const out=original.apply(this,args);prepare();return out};
       prepare();
