@@ -13,6 +13,7 @@
       <h2 id="v34PrivacyHeading">Central de Privacidade</h2>
       <p>Consulte como seus dados são usados e solicite acesso ou exclusão. Informações públicas do perfil continuam visíveis enquanto publicadas.</p>
       <div class="v34-privacy-links"><a href="privacidade.html" target="_blank" rel="noopener noreferrer">Política de Privacidade</a><a href="termos.html" target="_blank" rel="noopener noreferrer">Termos de Uso</a></div>
+      <p class="v35-privacy-contact">Contato de suporte e privacidade: <a href="mailto:conectacontato@outlook.com">conectacontato@outlook.com</a></p>
       ${!logged?'<div class="v34-privacy-notice">Entre com uma conta e confirme seu e-mail para acessar os recursos abaixo.</div>':''}
       <div class="v34-privacy-section"><h3>Baixar dados disponíveis</h3><p>Gere um arquivo JSON com seu perfil, contato privado, favoritos, pedidos, trabalhos, conversas e alguns outros registros associados à conta. Uma cópia integral pode precisar de atendimento adicional.</p><button type="button" data-privacy-export>Baixar meus dados</button></div>
       <div class="v34-privacy-section"><h3>Solicitar uma cópia completa</h3><p>Registre uma solicitação de acesso para conferência e atendimento pelo responsável do Conecta.</p><button type="button" data-privacy-request="access">Solicitar meus dados</button></div>

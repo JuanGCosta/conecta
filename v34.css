@@ -23,3 +23,5 @@
 @media(max-width:700px){.v34-privacy-section{padding:15px}.v30-header-side{flex-wrap:wrap}}
 #modal:has(.v34-privacy-modal) .modal{width:min(700px,calc(100vw - 24px));max-width:700px;max-height:min(90dvh,900px);padding:32px 28px;overflow-x:hidden;overflow-y:auto;border-radius:22px;background:#fff}
 @media(max-width:700px){#modal:has(.v34-privacy-modal) .modal{max-height:calc(100dvh - 26px);padding:25px 16px}}
+
+.v35-privacy-contact{margin:10px 0 18px!important;color:#547365!important;font-size:13px!important}.v35-privacy-contact a{color:#145c40!important;text-decoration:underline!important;font-weight:800!important;overflow-wrap:anywhere}

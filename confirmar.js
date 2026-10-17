@@ -23,7 +23,7 @@ function status(kind, label, heading, body, opts = {}) {
   passwordSection.hidden = !opts.showPassword;
   primary.hidden = !opts.showReturn;
   primary.href = SITE_URL;
-  support.textContent = opts.note || 'Sua segurança vem em primeiro lugar.';
+  support.textContent = opts.note || 'Precisa de ajuda? Entre em contato com nosso suporte.';
 }
 function errorMessage(error) {
   switch (error?.code) {
@@ -45,7 +45,7 @@ function clearCodeFromUrl() {
 }
 async function run() {
   if (!mode || !code) {
-    status('error','LINK INCOMPLETO','Não encontramos a confirmação','Abra o link completo recebido no seu e-mail. Se ele estiver incompleto, solicite outro pelo Conecta.',{showReturn:true});
+    status('info','CENTRAL DE CONFIRMAÇÃO','Sua conta, com a cara do Conecta','Para confirmar seu e-mail, abra o link recebido na sua caixa de entrada. Esta página completa a verificação automaticamente quando o link é válido.',{showReturn:true,note:'Não recebeu o e-mail? Verifique Spam ou peça o reenvio no Conecta.'});
     return;
   }
   if (!config?.apiKey || !config?.projectId || !config?.authDomain) {
@@ -64,7 +64,7 @@ async function run() {
     if (mode === 'verifyEmail' || mode === 'verifyAndChangeEmail') {
       await authSDK.applyActionCode(auth, code);
       clearCodeFromUrl();
-      status('success','TUDO CERTO!','Seu e-mail foi confirmado!','Sua conta Conecta está verificada. Agora você pode entrar, criar seu perfil e conversar com profissionais.',{showReturn:true,note:'Sua conta está pronta para novas conexões.'});
+      status('success','TUDO CERTO!','Seu e-mail foi confirmado!','Sua conta Conecta está verificada. Volte ao site e clique em “Já confirmei meu e-mail” para atualizar a sua sessão.',{showReturn:true,note:'Sua conta está pronta para novas conexões.'});
     } else if (mode === 'resetPassword') {
       await authSDK.verifyPasswordResetCode(auth, code);
       status('success','RECUPERAÇÃO DE CONTA','Crie sua nova senha','Escolha uma senha segura para voltar a acessar sua conta Conecta.',{showPassword:true,note:'Use uma senha exclusiva para sua conta.'});
@@ -89,7 +89,7 @@ async function run() {
       status('error','AÇÃO NÃO RECONHECIDA','Link não reconhecido','Essa ação não é compatível com esta página. Acesse o Conecta para continuar.',{showReturn:true});
     }
   } catch (e) {
-    console.warn('Conecta email action:',e?.code||e?.message||'unknown');
+    console.warn('Conecta email action:',e?.code||'unknown');
     status('error','NÃO FOI POSSÍVEL CONFIRMAR','Não conseguimos concluir',errorMessage(e),{showReturn:true,note:'Por segurança, links de confirmação só podem ser utilizados uma vez.'});
   }
 }
