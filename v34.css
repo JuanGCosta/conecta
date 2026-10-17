@@ -3,7 +3,7 @@
 .v34-privacy-action{border:1px solid #c7d9cb!important;background:#edf5ee!important;color:#16563c!important}
 .v34-auth-policy{display:flex!important;flex-direction:row!important;align-items:flex-start!important;gap:11px!important;background:#f5faf5;border:1px solid #e0ece2;padding:13px!important;border-radius:12px;font-weight:500!important;line-height:1.5;font-size:12px!important}
 .v34-auth-policy input{width:17px!important;height:17px!important;min-width:17px!important;margin:2px 0 0!important;accent-color:#15583d;flex:none;box-shadow:none!important}
-.v34-auth-policy a,.footer-bottom a{color:#b9ecae;text-decoration:underline;text-underline-offset:3px}
+.v34-auth-policy a,.footer-bottom a{color:#b9ecae !important;text-decoration:underline;text-underline-offset:3px}
 .footer-bottom span:last-child{display:flex;flex-wrap:wrap;gap:18px}
 .v34-privacy-modal{max-width:610px;color:#163c2c}
 .v34-privacy-modal .v34-overline{display:block;font-size:11px;font-weight:850;color:#338258;letter-spacing:.14em;text-transform:uppercase;margin-bottom:11px}

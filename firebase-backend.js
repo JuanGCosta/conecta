@@ -63,6 +63,14 @@
         batch.set(doc(db,'contacts',u.uid), {ownerUid:u.uid,phone:phone||'',updatedAt:serverTimestamp()});
         await batch.commit();
       };
+      backend.deleteProfile = async () => {
+        const u=auth.currentUser;
+        if (!u?.emailVerified) throw Error('Confirme seu e-mail primeiro.');
+        const batch=writeBatch(db);
+        batch.delete(doc(db,'profiles',u.uid));
+        batch.delete(doc(db,'contacts',u.uid));
+        await batch.commit();
+      };
       backend.getContact = async uid => {
         if (!auth.currentUser?.emailVerified) throw Error('Confirme o e-mail primeiro.');
         const snap=await getDoc(doc(db,'contacts',uid));

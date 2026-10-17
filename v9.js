@@ -324,9 +324,22 @@
     finally{if(button?.isConnected)button.disabled=false}
   });
   $('#chatComposer').addEventListener('submit',e=>{ /* handled by delegated submit above */ });
+  async function deleteProfile(){
+    if(!requireAuth('profile'))return;
+    if(!state.profile?.name){notify('Você ainda não tem perfil publicado.');return}
+    const ok=window.confirm('Deseja realmente deletar seu perfil? Seus dados públicos e o contato serão removidos.');
+    if(!ok)return;
+    try{
+      await backend().deleteProfile();
+      state.profile=null;
+      renderDashboard();renderHome();renderExplore();updateHeaders();
+      notify('Perfil removido com sucesso.');
+      route('dashboard');
+    }catch(ex){notify('Não foi possível remover o perfil: '+authProblem(ex))}
+  }
   // The online account is authoritative; no personal profile backups are created in localStorage.
   state.profile=null;
-  window.ConectaV9={profilesForCatalog,requireAuth,saveProfile,renderInbox,openAuth,startConversation};
+  window.ConectaV9={profilesForCatalog,requireAuth,saveProfile,deleteProfile,renderInbox,openAuth,startConversation};
   updateHeaders();
   if(backend()?.ready)onReady();
   else window.addEventListener('conecta-backend-ready',onReady,{once:true});

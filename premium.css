@@ -337,3 +337,10 @@ footer{background:#092e25;padding:55px max(30px,calc((100vw - 1260px)/2)) 22px;c
   .footer-bottom{gap:10px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+
+.v38-own-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-end}
+.v38-delete-profile{border:1px solid #e2c9c9;background:#fff5f5;color:#aa4b4b;border-radius:14px;padding:14px 18px;font-weight:800}
+.v38-delete-profile:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(170,75,75,.12)}
+.footer-bottom a{color:#b9ecae !important}
+@media(max-width:750px){.v38-own-actions{width:100%}.v38-own-actions button{width:100%}}
