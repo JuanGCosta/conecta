@@ -55,10 +55,11 @@ const key='conecta.reconstruido.v1';
 function load(){try{return {...{profile:null,works:[],requests:[],favorites:[]},...JSON.parse(localStorage.getItem(key))}}catch{return {profile:null,works:[],requests:[],favorites:[]}}}
 let photosBusy=false, uploadGeneration=0;
 let publicRequests=[],offersByRequest=new Map();
+let coverImage=null, coverBusy=false;
 let state=load(), currentPage='home',selectedPro=null, stagedImages=[],profileImage=null,toastTimer,exploreTab='all';
 function save(){return true} // Publicações e salvos não usam mais o navegador.
 const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function safePhoto(url){const value=String(url||'');return /^https:\/\/firebasestorage\.googleapis\.com\//.test(value)?esc(value):''}
+function safePhoto(url){const value=String(url||'');return (/^https:\/\/firebasestorage\.googleapis\.com\//.test(value)||(/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(value)&&value.length<=85000))?esc(value):''}
 function notify(message){const t=$('#toast');t.textContent=message;t.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('visible'),3200)}
 function dialog(opts){const cfg=typeof opts==='string'?{message:opts}:opts||{};const tone=cfg.tone||'info';const title=cfg.title||'Aviso';const eyebrow=cfg.eyebrow||'CONECTA';const message=cfg.message||'';const button=cfg.buttonLabel||'Entendi';modal(`<div class="conecta-dialog conecta-dialog-${tone}"><div class="conecta-dialog-badge">${tone==='success'?'✓':tone==='error'?'!':'i'}</div><span class="conecta-dialog-eyebrow">${eyebrow}</span><h2>${esc(title)}</h2><p>${esc(message)}</p><div class="conecta-dialog-actions"><button type="button" class="btn btn-green" data-action="close-modal">${esc(button)}</button></div></div>`)}
 function allPros(){return window.ConectaV9?.profilesForCatalog?.() ?? []}
@@ -113,19 +114,28 @@ function updateProfileUI(){
   $('#profileFormDescription').textContent=created?'Mantenha seus dados em dia para receber novos contatos.':'Preencha seus dados para os clientes conhecerem seu trabalho.';
   $('#profileSubmitText').textContent=created?'Salvar alterações':'Criar perfil';
 }
+function updateCoverPreview(){
+  const target=$('#profileCoverPreview'),remove=$('[data-action="remove-profile-cover"]');
+  if(!target)return;
+  const src=safePhoto(coverImage||'');
+  target.innerHTML=src?`<img src="${src}" alt="Sua foto de capa">`:'<div class="v32-cover-empty"><strong>Sua capa, sua identidade</strong><small>Escolha uma imagem horizontal para destacar seu trabalho</small></div>';
+  if(remove)remove.hidden=!src;
+}
 function renderDashboard(){
   const p=state.profile||{};
   const f=$('#profileForm');
   for(const key of ['name','category','city','neighborhood','phone','bio']) f.elements[key].value=key==='city'?'São José dos Campos':(p[key]||'');
   profileImage=p.photo||null;
   $('#profilePreview').innerHTML=profileImage?`<img src="${profileImage}" alt="Foto de perfil">`:'';
+  coverImage=p.cover||'';
+  updateCoverPreview();
   updateProfileUI();
   $('#myWorks').innerHTML=state.works.length?state.works.map(w=>workCard(w,true)).join(''):empty('Nenhum trabalho ainda','Adicione trabalhos e mostre suas fotos para futuros clientes.');
   $('#myRequests').innerHTML=state.requests.length?state.requests.map(requestCard).join(''):empty('Você ainda não publicou pedidos','Publique o primeiro pedido e ele aparecerá aqui.');
   f.dispatchEvent(new Event('input'));
 }
-function workCard(w,manage=false){return `<article class="work-card"><div class="work-photos">${w.photos?.[0]&&safePhoto(w.photos[0])?`<img src="${safePhoto(w.photos[0])}" alt="${esc(w.title)}" data-workphoto="${esc(w.id)}:0">`:''}</div><div class="work-content"><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p><small>${w.photos?.length||0} fotos</small>${manage?`<div style="margin-top:12px"><button data-delete-work="${esc(w.id)}">Excluir trabalho</button></div>`:''}</div></article>`}
-function renderProfessional(){const p=allPros().find(x=>x.id===selectedPro)||(selectedPro==='mine' && state.profile?.name?{...state.profile,id:'mine',initials:initials(state.profile.name)}:null);if(!p){route('explore');return}let works=window.ConectaLaunch?.worksFor(p.ownerUid)||[];window.ConectaLaunch?.observeWorks(p.ownerUid);const own=p.id==='mine';const example=p.id.startsWith('demo-');const real=!own&&!example&&!!p.ownerUid;let contact=own?'<p class="modal-help">Este é seu perfil público.</p>':example?'<p class="modal-help">Este é um perfil ilustrativo. Não é possível enviar mensagens.</p>':real?(p.hasWhatsapp?`<button class="btn btn-green" data-whatsapp-pro="${esc(p.id)}">Conversar no WhatsApp</button><button class="btn btn-chat-light" data-chat-pro="${esc(p.id)}">Enviar mensagem pelo Conecta</button>`:`<button class="btn btn-green" data-chat-pro="${esc(p.id)}">Enviar mensagem no Conecta</button><small>Este profissional prefere conversar pelo aplicativo.</small>`):'<p class="modal-help">Contato indisponível.</p>';$('#professionalDetail').innerHTML=`<div class="detail-banner"><div class="detail-avatar">${p.photo?`<img src="${esc(p.photo)}" ${p.upgrade?`data-upgrade-src="${esc(p.upgrade)}"`:""} alt="">`:esc(p.initials||initials(p.name))}</div></div><div class="detail-main"><div><span class="overline">${own?'SEU PERFIL':example?'PERFIL DEMONSTRATIVO':'PROFISSIONAL DO CONECTA'}</span><h1>${esc(p.name)}</h1><span class="chip">${esc(p.category)}</span><p>${esc(p.bio||'Sem apresentação ainda.')}</p><p>⌖ ${esc(p.city)}${p.neighborhood?' · '+esc(p.neighborhood):''}</p>${p.ownerUid?`<section id="v12ReviewsSection" class="v12-reviews" data-reviews-for="${esc(p.ownerUid)}"><div class="v13-review-head"><h2>Avaliações de clientes</h2>${real?'<button type="button" class="btn btn-green" data-action="jump-review">Avaliar profissional ★</button>':''}</div><div class="v12-reviews-content">Carregando avaliações...</div></section>`:'<div class="v12-reviews-demo">Perfil demonstrativo, ainda sem avaliações reais.</div>'}</div><aside class="detail-aside"><h3>${own?'Seu perfil':'Vamos conversar?'}</h3><p>${own?'Confira como seu perfil aparece aos clientes.':example?'Dados fictícios para demonstração.':'Conte ao profissional sobre o serviço de que você precisa.'}</p>${contact}</aside></div><div class="detail-portfolio"><h2>Trabalhos realizados</h2><div class="portfolio-grid">${works.length?works.map(w=>workCard(w)).join(''):empty('Sem trabalhos publicados','Este perfil ainda não publicou fotos de trabalhos.')}</div></div>`}
+function workCard(w,manage=false){return `<article class="work-card"><div class="work-photos">${w.photos?.[0]&&safePhoto(w.photos[0])?`<img src="${safePhoto(w.photos[0])}" alt="${esc(w.title)}" data-workphoto="${esc(w.id)}:0">`:''}</div><div class="work-content"><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p><small>${w.photos?.length?`${w.photos.length} foto${w.photos.length===1?'':'s'}`:'Trabalho publicado'}</small>${manage?`<div style="margin-top:12px"><button data-delete-work="${esc(w.id)}">Excluir trabalho</button></div>`:''}</div></article>`}
+function renderProfessional(){const p=allPros().find(x=>x.id===selectedPro)||(selectedPro==='mine' && state.profile?.name?{...state.profile,id:'mine',initials:initials(state.profile.name)}:null);if(!p){route('explore');return}let works=window.ConectaLaunch?.worksFor(p.ownerUid)||[];window.ConectaLaunch?.observeWorks(p.ownerUid);const own=p.id==='mine'||(!!p.ownerUid&&p.ownerUid===window.ConectaBackend?.user?.uid);const example=p.id.startsWith('demo-');const real=!own&&!example&&!!p.ownerUid;let contact=own?'<p class="modal-help">Este é seu perfil público.</p>':example?'<p class="modal-help">Este é um perfil ilustrativo. Não é possível enviar mensagens.</p>':real?(p.hasWhatsapp?`<button class="btn btn-green" data-whatsapp-pro="${esc(p.id)}">Conversar no WhatsApp</button><button class="btn btn-chat-light" data-chat-pro="${esc(p.id)}">Enviar mensagem pelo Conecta</button>`:`<button class="btn btn-green" data-chat-pro="${esc(p.id)}">Enviar mensagem no Conecta</button><small>Este profissional prefere conversar pelo aplicativo.</small>`):'<p class="modal-help">Contato indisponível.</p>';$('#professionalDetail').innerHTML=`<div class="detail-banner ${safePhoto(p.cover)?'has-cover':''}">${safePhoto(p.cover)?`<img class="v32-public-cover" src="${safePhoto(p.cover)}" alt="Capa do perfil de ${esc(p.name)}">`:''}<div class="detail-avatar">${p.photo?`<img src="${esc(p.photo)}" ${p.upgrade?`data-upgrade-src="${esc(p.upgrade)}"`:""} alt="">`:esc(p.initials||initials(p.name))}</div></div><div class="detail-main"><div><span class="overline">${own?'SEU PERFIL':example?'PERFIL DEMONSTRATIVO':'PROFISSIONAL DO CONECTA'}</span><h1>${esc(p.name)}</h1><span class="chip">${esc(p.category)}</span><p>${esc(p.bio||'Sem apresentação ainda.')}</p><p>⌖ ${esc(p.city)}${p.neighborhood?' · '+esc(p.neighborhood):''}</p>${!own&&p.ownerUid?`<section id="v12ReviewsSection" class="v12-reviews" data-reviews-for="${esc(p.ownerUid)}"><div class="v13-review-head"><h2>Avaliações de clientes</h2></div><div class="v12-reviews-content">Carregando avaliações...</div></section>`:''}</div><aside class="detail-aside"><h3>${own?'Seu perfil':'Vamos conversar?'}</h3><p>${own?'Confira como seu perfil aparece aos clientes.':example?'Dados fictícios para demonstração.':'Conte ao profissional sobre o serviço de que você precisa.'}</p>${contact}</aside></div><div class="detail-portfolio"><h2>Trabalhos realizados</h2><div class="portfolio-grid">${works.length?works.map(w=>workCard(w)).join(''):empty('Sem trabalhos publicados','Este perfil ainda não publicou fotos de trabalhos.')}</div></div>`}
 function openOwnProfile(){
   if(!window.ConectaV9?.requireAuth('profile'))return;
   if(!state.profile?.name){route('dashboard');return}
@@ -136,26 +146,55 @@ function route(page){if(['dashboard','inbox'].includes(page) && !window.ConectaV
 function modal(html){uploadGeneration++;photosBusy=false;$('#modalBody').innerHTML=html;$('#modal').classList.add('show');$('#modal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
 function closeModal(){uploadGeneration++;photosBusy=false;$('#modal').classList.remove('show');$('#modal').setAttribute('aria-hidden','true');document.body.style.overflow='';stagedImages=[]}
 function options(selected=''){return categories.map(([name])=>`<option ${selected===name?'selected':''}>${esc(name)}</option>`).join('')}
-function openRequest(){if(!window.ConectaV9?.requireAuth('request'))return;stagedImages=[];modal(`<div class="v11-modal-request"><div class="v11-modal-rail"><div class="v11-modal-rail-brand"><span class="v11-rail-mark">✳</span> conecta.</div><span class="v11-rail-kicker">NOVO PEDIDO</span><h2>Uma ideia. <br> Um pedido. <br><em>O começo <br> de tudo.</em></h2><p>Conte o que você precisa e organize as informações do serviço com clareza.</p><div class="v11-modal-rail-illustration"><span class="v11-rail-circle"></span><div class="v11-rail-card one"><b>01</b><span>Descreva o trabalho</span></div><div class="v11-rail-card two"><b>02</b><span>Informe os detalhes</span></div><div class="v11-rail-card three"><b>03</b><span>Salve seu pedido</span></div></div><small>Conecta · Pessoas certas, projetos reais.</small></div><div class="v11-modal-main"><div class="v11-modal-heading"><span class="v11-eyebrow">NOVO PEDIDO DE SERVIÇO</span><h2>O que você precisa?</h2><p>Preencha os dados abaixo para organizar sua solicitação.</p></div><form id="requestForm" class="modal-form modal-form-request"><div class="v11-modal-field"><div class="v11-modal-field-title"><span>01</span><div><h3>Sobre o serviço</h3><p>Comece contando o que precisa ser feito.</p></div></div><label>Título do pedido<input name="title" required minlength="5" maxlength="90" placeholder="Ex.: Instalação de ventilador"></label><div class="modal-grid-two"><label>Categoria<select name="category">${options()}</select></label><label>Cidade<input name="city" required maxlength="60" value="São José dos Campos" readonly aria-readonly="true"></label></div></div><div class="v11-modal-field"><div class="v11-modal-field-title"><span>02</span><div><h3>Explique os detalhes</h3><p>Uma boa descrição facilita o entendimento.</p></div></div><label>Descrição do serviço<textarea name="description" required minlength="10" maxlength="1000" rows="4" placeholder="Descreva o que precisa, medidas, materiais e outros detalhes importantes..."></textarea></label></div><div class="v11-modal-field"><div class="v11-modal-field-title"><span>03</span><div><h3>Adicione fotos <em>opcional</em></h3><p>Imagens ajudam a entender melhor o pedido.</p></div></div><label class="upload-dropzone"><span class="upload-icon">＋</span><strong>Selecionar imagens</strong><small>JPG, PNG ou WEBP · até quatro fotos</small><input id="requestPhotos" type="file" accept="image/jpeg,image/png,image/webp" multiple></label><div id="uploadPreview" class="image-preview"></div></div><p class="modal-help">Pedidos e fotos são públicos para quem acessa o Conecta. Não informe endereço residencial nem dados sensíveis.</p><div class="modal-actions"><button type="button" class="btn btn-light" data-action="close-modal">Cancelar</button><button type="submit" class="btn btn-green">Publicar pedido</button></div></form></div></div>`)}
-function openWork(){if(!window.ConectaV9?.requireAuth('profile'))return;if(!state.profile?.name){notify('Crie seu perfil antes de publicar trabalhos.');route('dashboard');return}stagedImages=[];modal(`<div class="request-modal-shell"><div class="request-modal-intro"><span class="overline">PORTFÓLIO</span><h2>Adicionar trabalho</h2><p>Mostre um projeto que você realizou e valorize seus resultados com imagens e contexto.</p></div><form id="workForm" class="modal-form modal-form-request"><div class="modal-section"><h3>Apresentação do trabalho</h3><label>Nome do trabalho<input name="title" required maxlength="90" placeholder="Ex.: Reforma de cozinha"></label><label>Descrição<textarea name="description" rows="4" minlength="5" maxlength="650" required placeholder="O que foi feito neste serviço?"></textarea></label></div><div class="modal-section"><h3>Galeria</h3><label class="upload-dropzone"><span class="upload-icon">＋</span><strong>Selecionar fotos</strong><small>Até seis imagens para compor seu portfólio</small><input id="workPhotos" type="file" accept="image/jpeg,image/png,image/webp" multiple></label><div id="uploadPreview" class="image-preview"></div></div><p class="modal-help">Trabalhos e imagens do portfólio serão públicos no seu perfil profissional.</p><div class="modal-actions"><button type="button" class="btn btn-light" data-action="close-modal">Cancelar</button><button type="submit" class="btn btn-green">Publicar trabalho</button></div></form></div>`)}
-async function compress(file,max=720){
-  if(!file.type.startsWith('image/')||file.size>12*1024*1024)throw Error('Use uma imagem JPG, PNG ou WEBP de até 12 MB.');
-  // Decode asynchronously and resize before storing, so requests remain responsive.
-  if(typeof createImageBitmap==='function'){
-    const bitmap=await createImageBitmap(file);
-    try{
-      const scale=Math.min(1,max/Math.max(bitmap.width,bitmap.height));
-      const canvas=document.createElement('canvas');
-      canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
-      canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);
-      return canvas.toDataURL('image/jpeg',.60);
-    }finally{bitmap.close()}
-  }
-  return new Promise((resolve,reject)=>{
-    const img=new Image(),reader=new FileReader();
-    reader.onload=()=>{img.onload=()=>{const scale=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext('2d').drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.60))};img.onerror=()=>reject(Error('Imagem inválida'));img.src=reader.result};
-    reader.onerror=()=>reject(Error('Falha ao ler a foto'));reader.readAsDataURL(file);
+function openRequest(){
+  if(!window.ConectaV9?.requireAuth('request'))return;
+  stagedImages=[];
+  modal(`<div class="v32-form-modal v32-request-modal"><div class="v32-modal-heading"><span class="v32-eyebrow">NOVO PEDIDO</span><h2>O que você precisa?</h2><p>Conte o serviço que deseja contratar. Profissionais de São José dos Campos poderão enviar propostas.</p></div>
+    <form id="requestForm" class="modal-form v32-publish-form">
+      <label class="v32-field">Título do serviço<input name="title" required minlength="5" maxlength="90" placeholder="Ex.: Instalar ventilador de teto" autofocus></label>
+      <div class="v32-modal-two"><label class="v32-field">Categoria<select name="category" required>${options()}</select></label><label class="v32-field">Cidade<input name="city" required value="São José dos Campos" readonly aria-readonly="true"></label></div>
+      <label class="v32-field">Descreva o que precisa<textarea name="description" required minlength="10" maxlength="1000" rows="5" placeholder="Explique o serviço, os detalhes importantes e o que espera do profissional."></textarea></label>
+      <div class="v32-photos-row"><div><strong>Fotos do serviço <span>opcional</span></strong><p>Até 4 fotos pequenas. As imagens serão comprimidas para manter tudo gratuito.</p></div><label class="v32-pick-files"><input id="requestPhotos" type="file" accept="image/jpeg,image/png,image/webp" multiple>Adicionar fotos</label></div>
+      <div id="uploadPreview" class="image-preview v32-image-preview" aria-live="polite"></div>
+      <p class="v32-privacy-tip">Não informe endereço residencial, telefone ou dados pessoais na descrição. O pedido será público.</p>
+      <div class="modal-actions v32-modal-actions"><button type="button" class="btn btn-light" data-action="close-modal">Cancelar</button><button type="submit" class="btn btn-green">Publicar pedido</button></div>
+    </form></div>`);
+}
+function openWork(){
+  if(!window.ConectaV9?.requireAuth('profile'))return;
+  if(!state.profile?.name){notify('Crie seu perfil antes de publicar trabalhos.');route('dashboard');return}
+  stagedImages=[];
+  modal(`<div class="v32-form-modal v32-work-modal"><div class="v32-modal-heading"><span class="v32-eyebrow">SEU PORTFÓLIO</span><h2>Adicionar trabalho</h2><p>Mostre o que você realizou para quem está procurando seus serviços.</p></div>
+    <form id="workForm" class="modal-form v32-publish-form">
+      <label class="v32-field">Nome do trabalho<input name="title" required minlength="3" maxlength="90" placeholder="Ex.: Reforma de cozinha" autofocus></label>
+      <label class="v32-field">Como foi o serviço?<textarea name="description" required minlength="5" maxlength="650" rows="5" placeholder="Explique o que foi feito e o resultado entregue."></textarea></label>
+      <div class="v32-photos-row"><div><strong>Galeria de fotos <span>opcional</span></strong><p>Compartilhe até 4 imagens leves do trabalho.</p></div><label class="v32-pick-files"><input id="workPhotos" type="file" accept="image/jpeg,image/png,image/webp" multiple>Escolher fotos</label></div>
+      <div id="uploadPreview" class="image-preview v32-image-preview" aria-live="polite"></div>
+      <p class="v32-privacy-tip">Publique apenas imagens próprias ou autorizadas. Seus trabalhos aparecerão para visitantes.</p>
+      <div class="modal-actions v32-modal-actions"><button type="button" class="btn btn-light" data-action="close-modal">Cancelar</button><button type="submit" class="btn btn-green">Publicar trabalho</button></div>
+    </form></div>`);
+}
+async function compress(file,max=720,limit=81000,aspect=null){
+  if(!/^image\/(jpeg|png|webp)$/.test(file.type)||file.size>12*1024*1024)throw Error('Use uma foto JPG, PNG ou WEBP de até 12 MB.');
+  const img=await new Promise((resolve,reject)=>{
+    const image=new Image(),url=URL.createObjectURL(file);
+    image.onload=()=>{URL.revokeObjectURL(url);resolve(image)};
+    image.onerror=()=>{URL.revokeObjectURL(url);reject(Error('Não foi possível abrir a imagem.'))};
+    image.src=url;
   });
+  let maxSide=max;
+  for(let attempt=0;attempt<9;attempt++){
+    let sourceW=img.naturalWidth,sourceH=img.naturalHeight,sourceX=0,sourceY=0;
+    if(aspect){if(sourceW/sourceH>aspect){sourceW=sourceH*aspect;sourceX=(img.naturalWidth-sourceW)/2}else{sourceH=sourceW/aspect;sourceY=(img.naturalHeight-sourceH)/2}}
+    const scale=Math.min(1,maxSide/sourceW);
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.max(1,Math.round(sourceW*scale));canvas.height=Math.max(1,Math.round(sourceH*scale));
+    canvas.getContext('2d').drawImage(img,sourceX,sourceY,sourceW,sourceH,0,0,canvas.width,canvas.height);
+    const data=canvas.toDataURL('image/jpeg',Math.max(.30,.67-attempt*.045));
+    if(data.length<=limit)return data;
+    maxSide=Math.max(220,Math.floor(maxSide*.84));
+  }
+  throw Error('A imagem ainda ficou grande. Experimente outra foto.');
 }
 async function readPhotos(input,max){
   const files=[...input.files], form=input.closest('form'), preview=form?.querySelector('#uploadPreview');
@@ -167,7 +206,7 @@ async function readPhotos(input,max){
     const processed=[];
     for(let i=0;i<files.length;i++){
       await new Promise(resolve=>requestAnimationFrame(resolve));
-      const image=await compress(files[i],640);
+      const image=await compress(files[i],600,81000);
       if(token!==uploadGeneration||!input.isConnected)return;
       processed.push(image);
       if(preview)preview.innerHTML=`<p class="upload-status" role="status">Preparando fotos: ${i+1} de ${files.length}</p>`;
@@ -234,7 +273,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button,a,[data-i
   const isSaved=(state.favorites||[]).includes(id);
   b.disabled=true;
   backend.setFavorite(id.slice(5),!isSaved).catch(err=>notify('Não foi possível atualizar seus salvos: '+(err?.message||'erro de conexão'))).finally(()=>{if(b.isConnected)b.disabled=false});
-}else if(b.dataset.category){exploreTab='all';$('#categoryFilter').value=b.dataset.category;route('explore')}else if(b.dataset.filterCategory){$('#categoryFilter').value=$('#categoryFilter').value===b.dataset.filterCategory?'':b.dataset.filterCategory;renderExplore()}else if(b.dataset.exploreTab){exploreTab=b.dataset.exploreTab;renderExplore()}else if(b.dataset.categoryScroll){$('#categories').scrollBy({left:b.dataset.categoryScroll==='next'?490:-490,behavior:'smooth'})}else if(b.dataset.pro){selectedPro=b.dataset.pro;route('professional')}else if(b.dataset.offerRequest)openOffer(b.dataset.offerRequest);else if(b.dataset.action==='open-request')openRequest();else if(b.dataset.action==='open-work')openWork();else if(b.dataset.action==='view-my-profile'){if(state.profile?.name){selectedPro='mine';route('professional')}}else if(b.dataset.action==='close-modal')closeModal();else if(b.dataset.dash)dash(b.dataset.dash);else if(b.dataset.deleteRequest){
+}else if(b.dataset.category){exploreTab='all';$('#categoryFilter').value=b.dataset.category;route('explore')}else if(b.dataset.filterCategory){$('#categoryFilter').value=$('#categoryFilter').value===b.dataset.filterCategory?'':b.dataset.filterCategory;renderExplore()}else if(b.dataset.exploreTab){exploreTab=b.dataset.exploreTab;renderExplore()}else if(b.dataset.categoryScroll){$('#categories').scrollBy({left:b.dataset.categoryScroll==='next'?490:-490,behavior:'smooth'})}else if(b.dataset.pro){selectedPro=b.dataset.pro;route('professional')}else if(b.dataset.offerRequest)openOffer(b.dataset.offerRequest);else if(b.dataset.action==='open-request')openRequest();else if(b.dataset.action==='open-work')openWork();else if(b.dataset.action==='remove-profile-cover'){coverImage='';const input=$('#profileCoverPicture');if(input)input.value='';updateCoverPreview();notify('Capa removida da prévia. Salve o perfil para confirmar.')}else if(b.dataset.action==='view-my-profile'){if(state.profile?.name){selectedPro='mine';route('professional')}}else if(b.dataset.action==='close-modal')closeModal();else if(b.dataset.dash)dash(b.dataset.dash);else if(b.dataset.deleteRequest){
   const r=state.requests.find(r=>r.id===b.dataset.deleteRequest);
   if(!r||!confirm('Excluir este pedido publicado?'))return;
   b.disabled=true;
@@ -246,7 +285,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button,a,[data-i
   window.ConectaBackend.deleteWork(w).then(()=>notify('Trabalho removido do portfólio.')).catch(err=>{notify('Erro ao excluir trabalho: '+err.message);b.disabled=false});
 }else if(b.dataset.image){const [id,n]=b.dataset.image.split(':');const r=publicRequests.find(r=>r.id===id);if(r?.photos[+n]&&safePhoto(r.photos[+n]))showImage(safePhoto(r.photos[+n]))}else if(b.dataset.workphoto){const [id,n]=b.dataset.workphoto.split(':');const selected=allPros().find(p=>p.id===selectedPro);const w=(window.ConectaLaunch?.worksFor(selected?.ownerUid)||[]).find(w=>w.id===id);if(w?.photos[+n]&&safePhoto(w.photos[+n]))showImage(safePhoto(w.photos[+n]))}});
 document.addEventListener('submit',e=>{if(e.target.id==='heroSearch'){e.preventDefault();$('#searchPros').value=$('#heroQuery').value;$('#categoryFilter').value=$('#heroCategory').value;exploreTab='all';route('explore')}else if(e.target.id==='topMarketplaceSearch'){e.preventDefault();$('#searchPros').value=$('#topSearchQuery').value;$('#categoryFilter').value='';exploreTab='all';route('explore')}else if(e.target.id==='profileForm'){e.preventDefault();window.ConectaV9?.saveProfile(e.target)}else if(e.target.id==='requestForm'){e.preventDefault();saveRequest(e.target)}else if(e.target.id==='workForm'){e.preventDefault();saveWork(e.target)}else if(e.target.id==='offerForm'){e.preventDefault();saveOffer(e.target)}});
-document.addEventListener('change',async e=>{if(e.target.id==='requestPhotos')await readPhotos(e.target,4);else if(e.target.id==='workPhotos')await readPhotos(e.target,6);else if(e.target.id==='profilePicture'&&e.target.files[0]){try{profileImage=await compress(e.target.files[0],600);$('#profilePreview').innerHTML=`<img src="${profileImage}" alt="Prévia">`}catch{notify('Erro ao ler foto de perfil')}}});
+document.addEventListener('change',async e=>{if(e.target.id==='requestPhotos')await readPhotos(e.target,4);else if(e.target.id==='workPhotos')await readPhotos(e.target,4);else if(e.target.id==='profileCoverPicture'&&e.target.files[0]){coverBusy=true;$('#profileSubmit').disabled=true;try{coverImage=await compress(e.target.files[0],1000,93000,3.2);updateCoverPreview()}catch(err){notify(err.message||'Não foi possível preparar a capa.')}finally{coverBusy=false;$('#profileSubmit').disabled=false}}else if(e.target.id==='profilePicture'&&e.target.files[0]){try{profileImage=await compress(e.target.files[0],600,115000);$('#profilePreview').innerHTML=`<img src="${profileImage}" alt="Prévia">`}catch{notify('Erro ao ler foto de perfil')}}});
 ['searchPros','cityFilter','neighborhoodFilter'].forEach(id=>$('#'+id).addEventListener('input',renderExplore));$('#categoryFilter').addEventListener('change',renderExplore);$('#proSort').addEventListener('change',renderExplore);['requestSearch','requestCategory','requestSort'].forEach(id=>$('#'+id).addEventListener(id==='requestSearch'?'input':'change',renderRequests));$('#clearFilters').addEventListener('click',()=>{$('#searchPros').value='';$('#categoryFilter').value='';$('#cityFilter').value='São José dos Campos';$('#neighborhoodFilter').value='';$('#proSort').value='default';exploreTab='all';$('#neighborhoodFilter').dispatchEvent(new Event('input',{bubbles:true}))});$('#closeModal').addEventListener('click',closeModal);$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});$('#menuBtn').addEventListener('click',()=>{const opened=$('#mobileNav').classList.toggle('open');$('#menuBtn').setAttribute('aria-expanded',String(opened))});
 state.requests=[];state.works=[];state.favorites=[];
 setupSelects();updateProfileUI();route('home');

@@ -1,0 +1,78 @@
+/* Conecta V32: edição do perfil, capa e formulários diretos */
+#page-professional .detail-banner{position:relative;isolation:isolate;overflow:visible;background:#d9e9d8;border-radius:28px 28px 0 0;min-height:220px}
+#page-professional .detail-banner.has-cover{background:#143c2d;}
+#page-professional .v32-public-cover{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:-1;border-radius:inherit;}
+#page-professional .detail-banner.has-cover:before{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(90deg,rgba(8,44,29,.12),transparent 70%);pointer-events:none}
+#page-professional .detail-banner .detail-avatar{z-index:2}
+#page-dashboard .v32-cover-section .v32-cover-upload{display:grid;grid-template-columns:minmax(0,1fr) 235px;gap:18px;align-items:center}
+#page-dashboard .v32-cover-preview{width:100%;aspect-ratio:3.2/1;border:1px dashed #bed7c5;background:linear-gradient(130deg,#dfeede,#eff7ed);border-radius:19px;display:grid;place-items:center;position:relative;overflow:hidden;}
+#page-dashboard .v32-cover-preview img{width:100%;height:100%;object-fit:cover;display:block;position:absolute;inset:0}
+#page-dashboard .v32-cover-empty{text-align:center;display:flex;flex-direction:column;gap:6px;padding:22px}
+#page-dashboard .v32-cover-empty strong{font-size:14px;color:#18513b;font-weight:800}
+#page-dashboard .v32-cover-empty small{font-size:11px;color:#698779;line-height:1.5}
+#page-dashboard .v32-cover-control{display:flex;align-items:flex-start;flex-direction:column;gap:13px}
+#page-dashboard .v32-cover-control>small{font-size:11px;line-height:1.55;color:#769082}
+#page-dashboard .v32-photo-picker{cursor:pointer!important;display:inline-flex;align-items:center;justify-content:center;min-height:43px;padding:12px 17px!important;border-radius:12px;background:#18583e;color:#fff!important;font-weight:800;font-size:12px;margin:0!important;max-width:100%}
+#page-dashboard .v32-photo-picker:focus-within{outline:3px solid #7dcc9c;outline-offset:2px}
+#page-dashboard .v32-photo-picker input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+#page-dashboard .v32-cover-remove{font-size:11px;font-weight:750;color:#a64a4a;border:0;background:none;padding:3px;cursor:pointer}
+#page-dashboard .v32-cover-remove[hidden]{display:none!important}
+/* Portfolio: works are compact with purposeful image fallback. */
+#page-dashboard #myWorks.portfolio-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+#page-dashboard #myWorks .work-card{display:flex;flex-direction:column;overflow:hidden;border:1px solid #dfebe2;border-radius:20px;box-shadow:0 8px 30px rgba(25,66,42,.045);background:#fff}
+#page-dashboard #myWorks .work-photos{height:190px;min-height:190px;background:linear-gradient(140deg,#e4f1e4,#c8e0cc);display:grid;place-items:center;position:relative;overflow:hidden}
+#page-dashboard #myWorks .work-photos:empty:after{content:'Portfólio';color:#55876b;text-transform:uppercase;font-size:12px;letter-spacing:.14em;font-weight:800}
+#page-dashboard #myWorks .work-photos img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+#page-dashboard #myWorks .work-content{padding:21px;display:flex;flex-direction:column;align-items:flex-start;flex:1}
+#page-dashboard #myWorks .work-content h3{margin:0 0 10px;font-weight:800;font-size:20px;line-height:1.25}
+#page-dashboard #myWorks .work-content p{font-size:12px;line-height:1.65;color:#6e8678}
+#page-dashboard #myWorks .work-content small{margin-top:auto;font-size:11px;color:#2f7952}
+#page-dashboard #myWorks [data-delete-work]{border:1px solid #e7d8d3;background:#fff9f7;color:#98584a;padding:9px 13px;border-radius:10px;font-size:11px;font-weight:800}
+/* Both publishing dialogs are narrow, readable and mobile-friendly. */
+#modal:has(.v32-form-modal) .modal{width:min(620px,calc(100vw - 28px));max-width:620px;max-height:min(92dvh,880px);padding:0;border-radius:25px;overflow-y:auto;background:#fff;box-shadow:0 28px 90px rgba(18,58,37,.19)}
+#modal:has(.v32-form-modal) .modal-close{position:sticky;float:right;top:13px;right:12px;margin:13px 13px -55px 0;z-index:5;background:#edf5ee;color:#174f38;box-shadow:none}
+#modal:has(.v32-form-modal) #modalBody{padding:0;min-width:0}
+.v32-form-modal{padding:40px 40px 32px;color:#153d2d;}
+.v32-modal-heading{margin:0 0 24px;padding:0 30px 0 0}
+.v32-eyebrow{font-size:10px;letter-spacing:.18em;font-weight:800;color:#298859}
+.v32-modal-heading h2{font:800 clamp(28px,3vw,38px)/1.13 'Plus Jakarta Sans',Manrope,sans-serif;letter-spacing:-.055em;margin:9px 0 9px;color:#173f30}
+.v32-modal-heading p{color:#6e8578;font-size:13px;line-height:1.65;max-width:490px;margin:0}
+.v32-publish-form{display:flex;flex-direction:column;gap:19px}
+.v32-publish-form .v32-field{display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:800;color:#284b39;margin:0;min-width:0}
+.v32-publish-form .v32-field input,.v32-publish-form .v32-field select,.v32-publish-form .v32-field textarea{width:100%;min-width:0;box-sizing:border-box;border:1px solid #dbe8df;background:#f8fbf9;color:#173e2e;padding:14px 15px;border-radius:13px;font-size:13px;outline:none;box-shadow:none;line-height:1.45;resize:vertical}
+.v32-publish-form .v32-field input:focus,.v32-publish-form .v32-field select:focus,.v32-publish-form .v32-field textarea:focus{background:#fff;border-color:#399866;box-shadow:0 0 0 3px rgba(57,152,102,.10)}
+.v32-publish-form .v32-field input[readonly]{background:#eff6f0;color:#536e5e;cursor:default}
+.v32-modal-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.v32-photos-row{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px dashed #c9ddce;border-radius:17px;background:#f5faf6;padding:16px 18px;flex-wrap:wrap}
+.v32-photos-row strong{font-size:13px;display:block;margin-bottom:5px;color:#184531}
+.v32-photos-row strong span{font-size:11px;font-weight:600;color:#8ba295}
+.v32-photos-row p{font-size:11px;line-height:1.45;color:#718a7b;max-width:335px;margin:0}
+.v32-pick-files{position:relative;white-space:nowrap;background:#e2f0e4;color:#1d6847;border:1px solid #cbe1ce;border-radius:12px;padding:12px 14px;font-size:11px;font-weight:800;cursor:pointer}
+.v32-pick-files input{position:absolute;width:100%;height:100%;top:0;left:0;opacity:0;cursor:pointer}
+.v32-image-preview{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:0!important;min-height:0}
+.v32-image-preview:empty{display:none}
+.v32-image-preview img{width:82px!important;height:82px!important;object-fit:cover;border-radius:12px}
+.v32-privacy-tip{padding:12px 14px;background:#f5f8f5;border-radius:10px;color:#6c8576;font-size:10px;line-height:1.6;margin:0}
+.v32-modal-actions{display:flex;align-items:center;justify-content:flex-end;gap:11px;padding:2px 0 0!important;margin:0!important;border:0!important;background:transparent!important}
+.v32-modal-actions button{min-height:47px;border-radius:12px!important;padding:11px 19px!important}
+.v32-modal-actions .btn-green{background:#16563c;color:white}
+@media(max-width:800px){
+  #page-dashboard .v32-cover-section .v32-cover-upload{grid-template-columns:1fr;gap:15px}
+  #page-dashboard .v32-cover-control{flex-direction:row;align-items:center;flex-wrap:wrap}
+  #page-dashboard #myWorks.portfolio-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  #page-professional .detail-banner{min-height:180px;border-radius:20px 20px 0 0}
+  #modal:has(.v32-form-modal) .modal{width:calc(100vw - 18px);max-height:calc(100dvh - 30px);border-radius:19px}
+  .v32-form-modal{padding:32px 20px 24px}
+  .v32-modal-heading h2{font-size:30px}
+  .v32-modal-two{grid-template-columns:1fr;gap:16px}
+  .v32-photos-row{align-items:stretch}
+  .v32-pick-files{text-align:center;width:100%}
+  .v32-modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .v32-modal-actions button{padding:12px 9px!important;white-space:normal}
+  #page-dashboard .v32-cover-preview{aspect-ratio:2.4/1}
+}
+/* Evita que os anéis decorativos antigos fiquem sobre a foto de capa. */
+#page-professional .detail-banner.has-cover::before{width:auto!important;height:auto!important;border:0!important;margin:0!important;transform:none!important;display:block!important;inset:0!important;position:absolute!important;background:linear-gradient(0deg,rgba(10,51,33,.10),transparent 70%)!important}
+#page-professional .detail-banner.has-cover::after{display:none!important}

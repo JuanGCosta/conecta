@@ -8,7 +8,7 @@ service cloud.firestore {
       return signed() && request.auth.token.email_verified == true;
     }
     function profileValid(p) {
-      return p.keys().hasOnly(['ownerUid','name','category','city','neighborhood','hasWhatsapp','bio','photo','updatedAt'])
+      return p.keys().hasOnly(['ownerUid','name','category','city','neighborhood','hasWhatsapp','bio','photo','cover','updatedAt'])
         && p.ownerUid == request.auth.uid
         && p.name is string && p.name.size() > 1 && p.name.size() <= 80
         && p.category is string && p.category.size() > 1 && p.category.size() <= 40
@@ -17,6 +17,8 @@ service cloud.firestore {
         && p.hasWhatsapp is bool
         && p.bio is string && p.bio.size() <= 500
         && p.photo is string && p.photo.size() <= 350000
+        && p.get('cover','') is string && p.get('cover','').size() <= 95000
+        && (p.get('cover','') == '' || p.get('cover','').matches('^data:image/jpeg;base64,[A-Za-z0-9+/=]+$'))
         && p.updatedAt == request.time;
     }
     // V24: só conteúdo publicado de verdade fica visível aos visitantes.
@@ -30,8 +32,9 @@ service cloud.firestore {
         && (p.size()<6 || validPhotoURL(p[5]));
     }
     function validPhotoURL(src) {
-      return src is string && src.size() < 1200
-        && src.matches('^https://firebasestorage\\.googleapis\\.com/.*');
+      return src is string && ((src.size() < 1200
+        && src.matches('^https://firebasestorage\\.googleapis\\.com/.*'))
+        || (src.size() <= 81000 && src.matches('^data:image/jpeg;base64,[A-Za-z0-9+/=]+$')));
     }
     function validRequest(p) {
       return p.keys().hasOnly(['ownerUid','owner','title','category','city','description','photos','status','createdAt','updatedAt'])
@@ -39,7 +42,6 @@ service cloud.firestore {
         && p.owner is string && p.owner.size() > 0 && p.owner.size() <= 70
         && p.title is string && p.title.size() >= 5 && p.title.size() <= 90
         && p.category in ['Reformas','Elétrica','Hidráulica','Limpeza','Pintura','Jardinagem','Montagem','Tecnologia','Beleza','Fotografia','Aulas','Marcenaria','Ar-condicionado','Fretes','Pet care','Costura','Eventos','Automotivo','Saúde','Outros']
-        && p.city == 'São José dos Campos'
         && p.city == 'São José dos Campos'
         && p.description is string && p.description.size() >= 10 && p.description.size() <= 1000
         && imageURLs(p.photos,4)

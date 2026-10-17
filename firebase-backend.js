@@ -181,45 +181,29 @@
         throw Error('Aguarde a autorização do contato.');
       };
       // V24: dados compartilhados e sincronizados entre contas/dispositivos.
-      const storageModule = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-storage.js`);
-      const storage = storageModule.getStorage(app);
+      // Lançamento gratuito: imagens JPEG pequenas dentro dos próprios documentos
+      // Firestore. Limite por foto e por publicação. Migrar para Storage quando escalar.
       const ownVerified = () => {
         if (!auth.currentUser?.emailVerified) throw Error('Entre e confirme seu e-mail para publicar.');
         return auth.currentUser;
       };
       const remoteDate = value => value?.toMillis?.() || (typeof value === 'number' ? value : 0);
-      const cleanImage = src => typeof src === 'string' && src.startsWith('data:image/jpeg;base64,');
-      async function uploadPhotos(group,id,images) {
-        const u = ownVerified();
-        const saved=[];
-        try {
-          for (let i=0; i<images.length; i++) {
-            if (!cleanImage(images[i]) || images[i].length>900000) throw Error('Uma das fotos é inválida ou muito grande.');
-            const path=`${group}/${u.uid}/${id}/${i}.jpg`;
-            const file=storageModule.ref(storage,path);
-            await storageModule.uploadString(file,images[i],'data_url',{contentType:'image/jpeg'});
-            saved.push(file);
-          }
-          return {urls:await Promise.all(saved.map(file=>storageModule.getDownloadURL(file))),saved};
-        } catch(e) {
-          await Promise.allSettled(saved.map(file=>storageModule.deleteObject(file)));
-          throw e;
-        }
+      const cleanImage = src => typeof src === 'string' && src.length<=81000 && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(src);
+      function checkPhotos(images,max=4) {
+        if(!Array.isArray(images)||images.length>max||images.some(x=>!cleanImage(x)))throw Error('Escolha até quatro fotos pequenas. Aguarde a compressão terminar.');
+        return images;
       }
-      const deletePhotos = async (group,id,count) => {
-        const u=ownVerified();
-        await Promise.allSettled(Array.from({length:count},(_,i)=>storageModule.deleteObject(storageModule.ref(storage,`${group}/${u.uid}/${id}/${i}.jpg`))));
-      };
+      const deletePhotos=async()=>{}; // Sem objetos separados nesta versão gratuita.
       backend.subscribeRequests = (success,failure) => onSnapshot(
         query(collection(db,'requests'),orderBy('createdAt','desc'),limit(150)),
         snap=>success(snap.docs.map(d=>({id:d.id,...d.data(),created:remoteDate(d.data().createdAt)}))),failure
       );
       backend.createRequest = async (input,images=[]) => {
         const u=ownVerified(), ref=doc(collection(db,'requests'));
-        if(images.length>4)throw Error('No máximo quatro fotos.');
+        checkPhotos(images,4);
         let photos=[];
         try {
-          if(images.length) photos=(await uploadPhotos('request-images',ref.id,images)).urls;
+          photos=images;
           await setDoc(ref,{
             ownerUid:u.uid,owner:(u.displayName||'Cliente Conecta').trim().slice(0,70),
             title:input.title.trim(),category:input.category,city:input.city.trim(),
@@ -247,12 +231,12 @@
       };
       backend.createWork = async (input,images=[]) => {
         const u=ownVerified();
-        if(images.length>6)throw Error('No máximo seis fotos.');
+        checkPhotos(images,4);
         if(!(await getDoc(doc(db,'profiles',u.uid))).exists())throw Error('Publique seu perfil profissional antes de adicionar trabalhos.');
         const ref=doc(collection(db,'works'));
         let photos=[];
         try {
-          if(images.length)photos=(await uploadPhotos('work-images',ref.id,images)).urls;
+          photos=images;
           await setDoc(ref,{ownerUid:u.uid,title:input.title.trim(),description:input.description.trim(),photos,createdAt:serverTimestamp()});
           return ref.id;
         }catch(e){if(photos.length)await deletePhotos('work-images',ref.id,photos.length);throw e}

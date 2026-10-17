@@ -151,9 +151,9 @@
   async function saveProfile(form){
     if(!requireAuth('profile'))return;
     const fields=form.elements;
-    const data={name:fields.name.value.trim(),category:fields.category.value,city:fields.city.value.trim(),neighborhood:fields.neighborhood.value.trim(),phone:fields.phone.value.replace(/[^\d]/g,''),bio:fields.bio.value.trim(),photo:profileImage||''};
+    const data={name:fields.name.value.trim(),category:fields.category.value,city:fields.city.value.trim(),neighborhood:fields.neighborhood.value.trim(),phone:fields.phone.value.replace(/[^\d]/g,''),bio:fields.bio.value.trim(),photo:profileImage||'',cover:coverImage||''};
     if(!data.name||!data.category||!data.city){notify('Preencha os campos obrigatórios.');return}
-    if(data.photo.length>340000){notify('Esta foto é muito grande. Escolha uma foto menor.');return}
+    if(coverBusy){notify('Aguarde a foto de capa terminar de carregar.');return}if(data.photo.length>340000||data.cover.length>95000){notify('Uma das fotos ficou muito grande. Tente outra imagem.');return}
     const existed=!!state.profile?.name;
     const btn=$('#profileSubmit');btn.disabled=true;$('#profileSubmitText').textContent='Publicando...';
     try{
