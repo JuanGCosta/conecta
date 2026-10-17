@@ -1,0 +1,163 @@
+/* Conecta V39 — capa institucional padrão, sem camadas sobre os controles */
+#page-professional .v33-own-toolbar {
+  position: relative;
+  z-index: 10;
+  isolation: isolate;
+}
+#page-professional .v38-own-actions,
+#page-professional .v38-own-actions button,
+#page-professional .v33-edit-profile {
+  position: relative;
+  z-index: 11;
+  pointer-events: auto;
+}
+/* Os anéis antigos extrapolavam a faixa e capturavam cliques no botão Editar perfil. */
+#page-professional .detail-banner::before,
+#page-professional .detail-banner::after {
+  content: none !important;
+  display: none !important;
+  pointer-events: none !important;
+}
+#page-professional .detail-banner {
+  z-index: 0;
+}
+#page-professional .detail-banner.v39-has-default-cover {
+  background: #154a37 !important;
+}
+/* O fundo institucional é decorativo e não intercepta qualquer interação. */
+.v39-cover-default {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+  color: #fff;
+  background: #154a37;
+  isolation: isolate;
+}
+.v39-cover-content {
+  position: relative;
+  z-index: 1;
+  padding: 35px 44px;
+  max-width: min(68%, 640px);
+}
+.v39-cover-brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.v39-brand-mark {
+  width: 53px;
+  height: 53px;
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  grid-template-rows: repeat(2,1fr);
+  gap: 5px;
+  flex: none;
+  transform: rotate(-20deg);
+}
+.v39-brand-mark i,
+.v39-cover-emblem i {
+  display: block;
+  background: #94d9ae;
+  border-radius: 6px;
+}
+.v39-brand-mark i:nth-child(2),
+.v39-brand-mark i:nth-child(3) { background: #d6f3d0; }
+.v39-brand-mark i:nth-child(4) { background: #38b27c; }
+.v39-brand-name {
+  color: #f8fff8;
+  font: 800 clamp(30px,3.3vw,43px)/1.12 'Plus Jakarta Sans', 'Manrope', sans-serif;
+  letter-spacing: -.07em;
+}
+.v39-brand-name span { color: #bdeaa3; }
+.v39-cover-content p {
+  margin: 15px 0 0;
+  color: #daeddf;
+  font-size: 13px;
+  font-weight: 550;
+  letter-spacing: .01em;
+  line-height: 1.5;
+}
+.v39-cover-emblem {
+  width: 230px;
+  height: 230px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 20px;
+  position: absolute;
+  top: -24px;
+  right: 10%;
+  transform: rotate(-20deg);
+  opacity: .22;
+}
+.v39-cover-emblem i { background: #86cf98; border-radius: 29px; }
+.v39-cover-emblem i:nth-child(2),
+.v39-cover-emblem i:nth-child(3) { background: #d5f0d0; }
+.v39-cover-emblem i:nth-child(4) { background: #2aa777; }
+/* Na edição, a mesma capa padrão é exibida sem ocupar o lugar da foto enviada. */
+#page-dashboard .v32-cover-preview:has(.v39-cover-default) {
+  background: #154a37;
+  border: 1px solid #b5d9bf;
+}
+#page-dashboard .v32-cover-preview .v39-cover-content { padding: 22px 25px; max-width: 77%; }
+#page-dashboard .v32-cover-preview .v39-brand-mark { width: 37px; height: 37px; gap: 4px; }
+#page-dashboard .v32-cover-preview .v39-brand-mark i { border-radius: 5px; }
+#page-dashboard .v32-cover-preview .v39-brand-name { font-size: 27px; }
+#page-dashboard .v32-cover-preview .v39-cover-content p { font-size: 10px; margin-top: 9px; }
+#page-dashboard .v32-cover-preview .v39-cover-emblem { width: 155px; height: 155px; gap: 13px; right: 6%; }
+#page-dashboard .v32-cover-preview .v39-cover-emblem i { border-radius: 18px; }
+@media (max-width:750px) {
+  #page-professional .detail-banner.v39-has-default-cover { background: #154a37 !important; }
+  #page-professional .v39-cover-content { padding: 20px 24px; max-width: 81%; }
+  #page-professional .v39-brand-mark { width: 37px; height: 37px; gap: 4px; }
+  #page-professional .v39-brand-mark i { border-radius: 5px; }
+  #page-professional .v39-cover-brand { gap: 10px; }
+  #page-professional .v39-brand-name { font-size: 29px; }
+  #page-professional .v39-cover-content p { font-size: 10px; margin-top: 11px; max-width: 220px; }
+  #page-professional .v39-cover-emblem { width: 132px; height: 132px; gap: 12px; right: -12px; top: 13px; opacity: .18; }
+  #page-professional .v39-cover-emblem i { border-radius: 17px; }
+  #page-professional .v33-own-toolbar { margin-bottom: 22px; }
+  #page-dashboard .v32-cover-preview .v39-cover-content { padding: 15px; }
+  #page-dashboard .v32-cover-preview .v39-brand-mark { width: 27px; height: 27px; }
+  #page-dashboard .v32-cover-preview .v39-brand-name { font-size: 19px; }
+  #page-dashboard .v32-cover-preview .v39-cover-content p { font-size: 9px; }
+  #page-dashboard .v32-cover-preview .v39-cover-emblem { width: 100px; height: 100px; gap: 9px; }
+}
+/* Controles mais claros e área de ações respirando no telefone. */
+#page-dashboard .v32-cover-control .v32-photo-picker {
+  color: #fff !important;
+  background: #15553d !important;
+  border: 1px solid #15553d !important;
+}
+#page-dashboard .v32-cover-control .v32-photo-picker span { color: #fff !important; }
+@media (max-width: 750px) {
+  #page-professional .v33-own-toolbar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 13px !important;
+    margin: 7px 0 18px !important;
+    padding: 0 2px !important;
+  }
+  #page-professional .v33-own-title strong { font-size: 24px !important; }
+  #page-professional .v38-own-actions {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+    width: 100%;
+  }
+  #page-professional .v38-own-actions button {
+    width: 100% !important;
+    min-height: 46px;
+    padding: 10px 9px;
+    font-size: 12px;
+    white-space: normal;
+  }
+}
+@media(max-width:340px) {
+  #page-professional .v38-own-actions { grid-template-columns: 1fr; }
+}
