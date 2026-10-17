@@ -29,27 +29,27 @@ const categoryIcons={'Reformas':'hammer','Elétrica':'zap','Hidráulica':'drople
 function icon(name,sz=23){return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${svgPaths[name]||svgPaths.grid}</svg>`}
 const categories=[['Reformas','▦','Pedreiros e reformas'],['Elétrica','ϟ','Instalações elétricas'],['Hidráulica','◉','Encanamentos'],['Limpeza','✧','Limpeza e faxina'],['Pintura','▧','Pintores'],['Jardinagem','❀','Jardins e plantas'],['Montagem','▤','Móveis e instalações'],['Tecnologia','⌘','Computadores e redes'],['Beleza','✦','Estética e beleza'],['Fotografia','▣','Fotos e vídeos'],['Aulas','⌁','Professores'],['Marcenaria','▥','Móveis sob medida'],['Ar-condicionado','≈','Instalação e manutenção'],['Fretes','⇄','Mudanças e entregas'],['Pet care','◌','Banho, tosa e cuidados'],['Costura','✂','Ajustes e confecção'],['Eventos','✶','Festas e eventos'],['Automotivo','◈','Serviços para veículos'],['Saúde','＋','Cuidados e bem-estar'],['Outros','···','Mais serviços']];
 const categoryPictures={
-'Reformas':['https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=450&q=83','assets/category-reforms.jpg'],
-'Elétrica':['https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=450&q=83','assets/category-technology.jpg'],
-'Hidráulica':['https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=450&q=83','assets/category-reforms.jpg'],
-'Limpeza':['https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=450&q=83','assets/category-cleaning.jpg'],
-'Pintura':['https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=450&q=83','assets/category-reforms.jpg'],
-'Jardinagem':['https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=450&q=83','assets/category-cleaning.jpg'],
-'Montagem':['https://images.unsplash.com/photo-1503602642458-232111445657?w=450&q=83','assets/category-technology.jpg'],
-'Tecnologia':['https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=450&q=83','assets/category-technology.jpg'],
-'Beleza':['https://images.unsplash.com/photo-1560066984-138dadb4c035?w=450&q=83','assets/category-beauty.jpg'],
-'Fotografia':['https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=450&q=83','assets/category-beauty.jpg'],
-'Aulas':['https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=450&q=83','assets/category-cleaning.jpg'],
+'Reformas':['https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=450&q=83','assets/category-reformas.svg'],
+'Elétrica':['https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=450&q=83','assets/category-el-trica.svg'],
+'Hidráulica':['https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=450&q=83','assets/category-hidr-ulica.svg'],
+'Limpeza':['https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=450&q=83','assets/category-limpeza.svg'],
+'Pintura':['https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=450&q=83','assets/category-pintura.svg'],
+'Jardinagem':['https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=450&q=83','assets/category-jardinagem.svg'],
+'Montagem':['https://images.unsplash.com/photo-1503602642458-232111445657?w=450&q=83','assets/category-montagem.svg'],
+'Tecnologia':['https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=450&q=83','assets/category-tecnologia.svg'],
+'Beleza':['https://images.unsplash.com/photo-1560066984-138dadb4c035?w=450&q=83','assets/category-beleza.svg'],
+'Fotografia':['https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=450&q=83','assets/category-fotografia.svg'],
+'Aulas':['https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=450&q=83','assets/category-aulas.svg'],
 
-'Marcenaria':['https://images.unsplash.com/photo-1504148455328-c376907d081c?w=450&q=83','assets/category-reforms.jpg'],
-'Ar-condicionado':['https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=450&q=83','assets/category-technology.jpg'],
-'Fretes':['https://images.unsplash.com/photo-1553413077-190dd305871c?w=450&q=83','assets/category-technology.jpg'],
-'Pet care':['https://images.unsplash.com/photo-1517849845537-4d257902454a?w=450&q=83','assets/category-beauty.jpg'],
-'Costura':['https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=450&q=83','assets/category-beauty.jpg'],
-'Eventos':['https://images.unsplash.com/photo-1511578314322-379afb476865?w=450&q=83','assets/category-cleaning.jpg'],
-'Automotivo':['https://images.unsplash.com/photo-1486006920555-c77dcf18193c?w=450&q=83','assets/category-technology.jpg'],
-'Saúde':['https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=450&q=83','assets/category-cleaning.jpg'],
-'Outros':['https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=450&q=83','assets/category-beauty.jpg']};
+'Marcenaria':['https://images.unsplash.com/photo-1504148455328-c376907d081c?w=450&q=83','assets/category-marcenaria.svg'],
+'Ar-condicionado':['https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=450&q=83','assets/category-ar-condicionado.svg'],
+'Fretes':['https://images.unsplash.com/photo-1553413077-190dd305871c?w=450&q=83','assets/category-fretes.svg'],
+'Pet care':['https://images.unsplash.com/photo-1517849845537-4d257902454a?w=450&q=83','assets/category-pet-care.svg'],
+'Costura':['https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=450&q=83','assets/category-costura.svg'],
+'Eventos':['https://images.unsplash.com/photo-1511578314322-379afb476865?w=450&q=83','assets/category-eventos.svg'],
+'Automotivo':['https://images.unsplash.com/photo-1486006920555-c77dcf18193c?w=450&q=83','assets/category-automotivo.svg'],
+'Saúde':['assets/category-health.webp','assets/category-health.webp'],
+'Outros':['https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=450&q=83','assets/category-outros.svg']};
 
 const key='conecta.reconstruido.v1';
 function load(){return {profile:null,works:[],requests:[],favorites:[]}} // Account data comes from Firebase. Legacy local entries are not read.
@@ -65,11 +65,32 @@ function dialog(opts){const cfg=typeof opts==='string'?{message:opts}:opts||{};c
 function allPros(){return window.ConectaV9?.profilesForCatalog?.() ?? []}
 function initials(n){return String(n||'').split(' ').filter(Boolean).slice(0,2).map(s=>s[0].toUpperCase()).join('')||'CO'}
 function proCard(p){const saved=(state.favorites||[]).includes(p.id);return `<article class="pro-card"><div class="pro-card-cover"><span class="cover-badge">${icon(categoryIcons[p.category],15)} ${esc(p.category)}</span><div class="cover-art" aria-hidden="true">${icon(categoryIcons[p.category],102)}</div><div class="pro-avatar">${p.photo?`<img src="${esc(p.photo)}" ${p.upgrade?`data-upgrade-src="${esc(p.upgrade)}"`:""} ${p.fallback?`onerror="this.onerror=null;this.src='${esc(p.fallback)}'"`:''} alt="Foto ilustrativa de ${esc(p.name)}">`:esc(p.initials||initials(p.name))}</div></div><button class="save-badge ${saved?'is-saved':''}" type="button" data-favorite="${esc(p.id)}" aria-pressed="${saved}" aria-label="${saved?'Remover dos salvos':'Salvar perfil de '+esc(p.name)}">${icon('heart',19)}</button><div class="pro-content"><span class="pro-label">${p.id==='mine'?'MEU PERFIL':'CONHEÇA O PROFISSIONAL'}</span><h3>${esc(p.name)}</h3><p>${esc(p.bio||'Profissional da comunidade Conecta.')}</p><div class="pro-meta"><span>${icon('pin',15)} ${esc(p.city)}${p.neighborhood?' · '+esc(p.neighborhood):''}</span><span class="verified">${p.id==='mine'?'Seu perfil':p.id.startsWith('demo-')?'Perfil de exemplo':'Perfil publicado'}</span></div>${p.ownerUid?`<span class="v12-rating-chip" data-rating-for="${esc(p.ownerUid)}">Ainda sem avaliações</span>`:''}<div class="pro-footer"><span class="pro-availability"><span class="contact-dot"></span> Ver apresentação</span><button class="btn btn-green" data-pro="${esc(p.id)}">Ver perfil ${icon('arrow',17)}</button></div></div></article>`}
-function upgradeImages(){ $$('img[data-upgrade-src]:not([data-upgrade-started])').forEach(img=>{img.dataset.upgradeStarted='true';const candidate=new Image();candidate.onload=()=>{if(img.isConnected)img.src=candidate.src};candidate.src=img.dataset.upgradeSrc;});}
+const conectaUpgradedImages = new Map();
+function upgradeImages(){
+  $$('img[data-upgrade-src]:not([data-upgrade-started])').forEach(img=>{
+    const src=img.dataset.upgradeSrc;
+    img.dataset.upgradeStarted='true';
+    if(!src || src===img.getAttribute('src'))return;
+    const updateMatches=()=>{
+      // Covers the original cards, the animation clones, and cards created by later renders.
+      $$('img[data-upgrade-src]').forEach(other=>{
+        if(other.dataset.upgradeSrc===src && other.isConnected && other.getAttribute('src')!==src)other.src=src;
+      });
+    };
+    const existing=conectaUpgradedImages.get(src);
+    if(existing==='loaded'){updateMatches();return}
+    if(existing==='loading'||existing==='error')return;
+    conectaUpgradedImages.set(src,'loading');
+    const loader=new Image();
+    loader.onload=()=>{conectaUpgradedImages.set(src,'loaded');updateMatches()};
+    loader.onerror=()=>conectaUpgradedImages.set(src,'error');
+    loader.src=src;
+  });
+}
 function setupSelects(){const opt='<option value="">Todas as categorias</option>'+categories.map(([c])=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('#categoryFilter').innerHTML=opt;$('#heroCategory').innerHTML=opt;$('#requestCategory').innerHTML=opt;$('#profileCategory').innerHTML='<option value="">Selecione o serviço</option>'+categories.map(([c])=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('#sidebarCategories').innerHTML=categories.map(([c])=>`<button class="sidebar-category" type="button" data-filter-category="${esc(c)}"><span class="sidebar-category-square">${icon(categoryIcons[c],19)}</span>${esc(c)}<small></small></button>`).join('')}
 function renderHome(){
   $('#categories').innerHTML=categories.map(([name,_,subtitle])=>{
-    const pic=categoryPictures[name];return `<button class="category-item" data-category="${esc(name)}"><span class="v19-category-icon" aria-hidden="true">${icon(categoryIcons[name],23)}</span><span class="category-picture"><img src="${pic[1]}" data-upgrade-src="${pic[0]}" loading="lazy" alt=""></span><span class="category-words"><strong>${esc(name)}</strong><small>${esc(subtitle)}</small></span></button>`
+    const pic=categoryPictures[name];return `<button class="category-item" data-category="${esc(name)}"><span class="v19-category-icon" aria-hidden="true">${icon(categoryIcons[name],23)}</span><span class="category-picture"><img src="${pic[1]}" data-upgrade-src="${pic[0]}" data-category-image="${esc(name)}" loading="eager" decoding="async" alt=""></span><span class="category-words"><strong>${esc(name)}</strong><small>${esc(subtitle)}</small></span></button>`
   }).join('');
   $('#featured').innerHTML=allPros().length?allPros().slice(0,3).map(proCard).join(''):empty('Profissionais chegando em breve','Se você oferece serviços, crie seu perfil gratuitamente e participe do Conecta.');
   $('#heroProCount').textContent=allPros().length;
