@@ -161,6 +161,7 @@
       state.profile={...data,ownerUid:currentUid(),id:'mine'};
       renderDashboard();renderHome();renderExplore();updateHeaders();
       notify(existed?'Alterações publicadas para todos!':'Perfil criado e publicado para todos!');
+      if(typeof openOwnProfile==='function')openOwnProfile();
     }catch(e){notify('Não foi possível publicar: '+authProblem(e));renderDashboard()}
     finally{btn.disabled=false;updateHeaders()}
   }
