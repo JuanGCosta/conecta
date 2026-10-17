@@ -106,15 +106,15 @@ function renderRequests(){const q=$('#requestSearch').value.toLowerCase(),cat=$(
 function empty(title,body){return `<div class="empty"><h3>${esc(title)}</h3><p>${esc(body)}</p></div>`}
 function updateProfileUI(){
   const created=!!state.profile?.name;
-  $$('[data-profile-cta]').forEach(button=>button.textContent=created?'Meu perfil':'Criar perfil');
+  $$('[data-profile-cta]').forEach(button=>button.textContent='Perfil profissional');
   const navMyProfile=$('.desktop-nav [data-open-my-profile]');if(navMyProfile)navMyProfile.style.display=created?'none':'';
-  const label=$('#profileTabLabel .v30-tab-text');if(label)label.textContent=created?'Editar perfil':'Criar perfil';
+  const label=$('#profileTabLabel .v30-tab-text');if(label)label.textContent=created?'Editar perfil':'Perfil profissional';
   const backToProfile=$('.v33-back-to-profile');if(backToProfile)backToProfile.hidden=!created;
-  $('#dashboardTitle').innerHTML='Editar perfil<span class="v30-title-dot">.</span>';
-  $('#dashboardSubtitle').textContent=created?'Atualize suas informações e organize seu portfólio e pedidos.':'Crie seu perfil profissional para começar.';
+  $('#dashboardTitle').innerHTML=(created?'Editar perfil':'Perfil profissional')+'<span class="v30-title-dot">.</span>';
+  $('#dashboardSubtitle').textContent=created?'Atualize suas informações e organize seu portfólio e pedidos.':'Apresente seus serviços e crie seu perfil no Conecta.';
   $('#profileFormTitle').textContent=created?'Atualize sua apresentação.':'Seu perfil, do seu jeito.';
   $('#profileFormDescription').textContent=created?'Mantenha seus dados em dia para receber novos contatos.':'Preencha seus dados para os clientes conhecerem seu trabalho.';
-  $('#profileSubmitText').textContent=created?'Salvar alterações':'Criar perfil';
+  $('#profileSubmitText').textContent=created?'Salvar alterações':'Publicar perfil';
 }
 function updateCoverPreview(){
   const target=$('#profileCoverPreview'),remove=$('[data-action="remove-profile-cover"]');
@@ -140,11 +140,45 @@ function workCard(w,manage=false){return `<article class="work-card"><div class=
 function defaultCoverMarkup(){return `<div class="v39-cover-default" aria-label="Capa padrão Conecta"><div class="v39-cover-content"><div class="v39-cover-brand"><span class="v39-brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="v39-brand-name">conecta<span>.</span></span></div><p>Conectando pessoas a boas oportunidades.</p></div><div class="v39-cover-emblem" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>`}
 function renderProfessional(){const p=allPros().find(x=>x.id===selectedPro)||(selectedPro==='mine' && state.profile?.name?{...state.profile,id:'mine',initials:initials(state.profile.name)}:null);if(!p){route('explore');return}let works=window.ConectaLaunch?.worksFor(p.ownerUid)||[];window.ConectaLaunch?.observeWorks(p.ownerUid);const own=p.id==='mine'||(!!p.ownerUid&&p.ownerUid===window.ConectaBackend?.user?.uid);document.body.classList.toggle('v33-own-profile',own);$('#page-professional').classList.toggle('v33-is-own',own);$$('.desktop-nav [data-open-my-profile]').forEach(b=>b.classList.toggle('current',own));const example=p.id.startsWith('demo-');const real=!own&&!example&&!!p.ownerUid;const reviews=!own&&p.ownerUid?`<section id="v12ReviewsSection" class="v12-reviews v36-reviews" data-reviews-for="${esc(p.ownerUid)}"><div class="v13-review-head"><h2>Avaliações de clientes</h2></div><div class="v12-reviews-content">Carregando avaliações...</div></section>`:'';let contact='';if(own){contact='<p class="modal-help">Este é seu perfil público.</p>'}else if(example){contact='<p class="modal-help">Este é um perfil ilustrativo. Não é possível enviar mensagens.</p>'}else if(real){contact=`<div class="v36-contact-stack"><button class="btn btn-green v36-chat-highlight" data-chat-pro="${esc(p.id)}">Vamos conversar</button>${p.hasWhatsapp?`<button class="btn v36-contact-secondary" data-whatsapp-pro="${esc(p.id)}">Solicitar WhatsApp</button>`:''}</div>`}else{contact='<p class="modal-help">Contato indisponível.</p>'}$('#professionalDetail').innerHTML=`${own?`<div class="v33-own-toolbar"><div class="v33-own-title"><span class="v33-own-eyebrow">MINHA CONTA</span><strong>Meu perfil</strong></div><div class="v38-own-actions"><button class="v33-edit-profile" type="button" data-action="edit-own-profile" aria-label="Editar meu perfil"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 4 4 4-12 12H4v-4L16 4Z"/><path d="m14 6 4 4"/></svg>Editar perfil</button><button class="v38-delete-profile" type="button" data-action="delete-own-profile" aria-label="Deletar meu perfil">Deletar perfil</button></div></div>`:''}<div class="detail-banner ${safePhoto(p.cover)?'has-cover':'v39-has-default-cover'}">${safePhoto(p.cover)?`<img class="v32-public-cover" src="${safePhoto(p.cover)}" alt="Capa do perfil de ${esc(p.name)}">`:defaultCoverMarkup()}<div class="detail-avatar">${p.photo?`<img src="${esc(p.photo)}" ${p.upgrade?`data-upgrade-src="${esc(p.upgrade)}"`:""} alt="">`:esc(p.initials||initials(p.name))}</div></div><div class="detail-main ${own?'v33-own-detail':''}"><div class="v36-profile-copy"><span class="overline">${own?'SEU PERFIL':example?'PERFIL DEMONSTRATIVO':'PROFISSIONAL DO CONECTA'}</span><h1>${esc(p.name)}</h1><span class="chip">${esc(p.category)}</span><p>${esc(p.bio||'Sem apresentação ainda.')}</p><p>⌖ ${esc(p.city)}${p.neighborhood?' · '+esc(p.neighborhood):''}</p></div><aside class="detail-aside v36-contact-card"><span class="v36-contact-kicker">${own?'PERFIL VISÍVEL':'FALAR COM O PROFISSIONAL'}</span><h3>${own?'Seu perfil':example?'Vamos conversar?':'Gostou deste perfil?'}</h3><p>${own?'Confira como seu perfil aparece aos clientes.':example?'Dados fictícios para demonstração.':`Fale agora com ${esc(p.name)} e explique o serviço que você precisa.`}</p>${contact}</aside></div><div class="detail-portfolio"><div class="v33-portfolio-heading"><h2>Trabalhos realizados</h2>${own?'<button type="button" class="v33-manage-portfolio" data-action="manage-own-portfolio">Gerenciar portfólio</button>':''}</div><div class="portfolio-grid">${works.length?works.map(w=>workCard(w)).join(''):empty('Sem trabalhos publicados','Este perfil ainda não publicou fotos de trabalhos.')}</div></div>${reviews}`}
 
-function openOwnProfile(){
+let ownProfileLookupInProgress=false;
+async function openOwnProfile(){
   if(!window.ConectaV9?.requireAuth('profile'))return;
-  if(!state.profile?.name){route('dashboard');return}
-  selectedPro='mine';
-  route('professional');
+  if(state.profile?.name){
+    selectedPro='mine';
+    route('professional');
+    return;
+  }
+  // Firebase auth state and the private profile can finish loading at different times.
+  // Do not mistake a published profile for a missing one while the network is responding.
+  const backend=window.ConectaBackend;
+  const account=backend?.user;
+  if(ownProfileLookupInProgress)return;
+  if(!account?.uid || typeof backend.getOwnProfile!=='function'){
+    notify('Aguarde o carregamento da sua conta e tente abrir seu perfil novamente.');
+    return;
+  }
+  ownProfileLookupInProgress=true;
+  const actionButtons=[...document.querySelectorAll('[data-open-my-profile]')];
+  actionButtons.forEach(button=>button.setAttribute('aria-busy','true'));
+  const requestedUid=account.uid;
+  try{
+    const profile=await backend.getOwnProfile();
+    if(window.ConectaBackend?.user?.uid!==requestedUid)return;
+    if(profile?.name){
+      state.profile={...profile,id:'mine'};
+      selectedPro='mine';
+      route('professional');
+    }else{
+      route('dashboard');
+      dash('profile');
+    }
+  }catch(err){
+    notify('Não foi possível consultar seu perfil. Confira sua conexão e tente novamente.');
+    console.warn('Erro ao carregar o perfil profissional:',err);
+  }finally{
+    ownProfileLookupInProgress=false;
+    actionButtons.forEach(button=>button.removeAttribute('aria-busy'));
+  }
 }
 function route(page){if(['dashboard','inbox'].includes(page) && !window.ConectaV9?.requireAuth(page==='dashboard'?'profile':'messages'))return;currentPage=page;$$('.page').forEach(el=>el.classList.toggle('active',el.id===`page-${page}`));$$('.navlink').forEach(b=>b.classList.toggle('current',b.dataset.route===page||(b.hasAttribute('data-open-my-profile') && (page==='dashboard'||(page==='professional'&&selectedPro==='mine')))));$('#mobileNav').classList.remove('open');$('#menuBtn').setAttribute('aria-expanded','false');window.scrollTo({top:0});document.body.dataset.page=page;if(page==='home')renderHome();if(page==='explore')renderExplore();if(page==='requests')renderRequests();if(page==='dashboard')renderDashboard();if(page==='professional'){renderProfessional();upgradeImages()}if(page==='inbox')window.ConectaV9?.renderInbox?.()}
 function modal(html){uploadGeneration++;photosBusy=false;$('#modalBody').innerHTML=html;$('#modal').classList.add('show');$('#modal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}

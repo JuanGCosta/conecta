@@ -1,0 +1,15 @@
+/* V40 — navegação de perfil unificada e acesso discreto à privacidade. */
+#page-dashboard .v30-header-side:empty{display:none}
+#page-dashboard .v30-header-side{flex-wrap:wrap}
+#page-dashboard .v33-back-to-profile{display:inline-flex;align-items:center}
+#page-dashboard .v33-back-to-profile[hidden]{display:none!important}
+.footer-bottom a[data-privacy-open]{color:#c6ebc4!important;text-decoration:underline;text-underline-offset:3px}
+.footer-bottom a[data-privacy-open]:hover,.footer-bottom a[data-privacy-open]:focus-visible{color:white!important}
+[data-open-my-profile][aria-busy="true"]{cursor:progress;opacity:.72}
+/* A área de edição é exclusiva de 'Editar perfil'; o atalho de perfil no mobile abre a página pública. */
+@media(max-width:900px){
+  body[data-page="professional"].v33-own-profile #page-professional .v33-own-toolbar{position:relative;z-index:20}
+  body[data-page="professional"].v33-own-profile #page-professional .v38-own-actions{z-index:21}
+  #page-dashboard .v30-header-side{margin-top:4px}
+  .footer-bottom span:last-child{align-items:center;justify-content:flex-start;row-gap:12px}
+}
