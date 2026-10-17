@@ -269,6 +269,53 @@
         return onSnapshot(collection(db,'users',u.uid,'favorites'),
           snap=>success(snap.docs.map(d=>'user:'+d.id)),failure);
       };
+      // Data-rights request. This stores a request for manual administrative processing.
+      backend.requestPrivacy = async kind => {
+        const u=ownVerified();
+        if(!['access','deletion'].includes(kind))throw Error('Solicitação inválida.');
+        await setDoc(doc(db,'privacyRequests',u.uid),{
+          ownerUid:u.uid,email:u.email,kind,status:'pending',createdAt:serverTimestamp()
+        });
+      };
+      // Browser-side self-service copy of records accessible to the signed-in user.
+      // It is not a claim that ALL retained records are exported. A full copy can be requested.
+      backend.exportMyData = async () => {
+        const u=ownVerified();
+        const uid=u.uid;
+        const [prof,contact,favorites,works,requests,chats,reviewedProfile] = await Promise.all([
+          getDoc(doc(db,'profiles',uid)),
+          getDoc(doc(db,'contacts',uid)),
+          getDocs(collection(db,'users',uid,'favorites')),
+          getDocs(query(collection(db,'works'),where('ownerUid','==',uid))),
+          getDocs(query(collection(db,'requests'),where('ownerUid','==',uid))),
+          getDocs(query(collection(db,'chats'),where('participants','array-contains',uid))),
+          getDocs(collection(db,'profiles',uid,'reviews'))
+        ]);
+        const serialize = obj => JSON.parse(JSON.stringify(obj,(key,value)=>{
+          if(value && typeof value.toDate==='function')return value.toDate().toISOString();
+          return value;
+        }));
+        const rows=snaps=>snaps.docs.map(snap=>({id:snap.id,...serialize(snap.data())}));
+        const threads=[];
+        for(const thread of chats.docs){
+          const msgs=await getDocs(collection(db,'chats',thread.id,'messages'));
+          threads.push({id:thread.id,...serialize(thread.data()),messages:rows(msgs)});
+        }
+        const offers=[];
+        for(const req of requests.docs){
+          const reqOffers=await getDocs(collection(db,'requests',req.id,'offers'));
+          offers.push({requestId:req.id,offers:rows(reqOffers)});
+        }
+        return {
+          notice:'Cópia dos registros acessíveis nesta sessão. Não inclui necessariamente avaliações feitas em perfis de terceiros, registros de suporte ou dados eventualmente retidos em serviços externos. Solicite uma cópia completa na Central de Privacidade.',
+          exportedAt:new Date().toISOString(),
+          account:{uid,email:u.email,displayName:u.displayName,emailVerified:u.emailVerified},
+          profile:prof.exists()?serialize(prof.data()):null,
+          privateContact:contact.exists()?serialize(contact.data()):null,
+          favorites:rows(favorites),works:rows(works),requests:rows(requests),
+          proposalsReceived:offers,reviewsReceived:rows(reviewedProfile),chats:threads
+        };
+      };
       backend.setFavorite = async (providerUid,enabled) => {
         const u=ownVerified();
         if(!providerUid||providerUid===u.uid)throw Error('Não é possível salvar seu próprio perfil.');

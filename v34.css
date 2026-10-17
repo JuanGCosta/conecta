@@ -1,0 +1,25 @@
+
+/* Central de Privacidade — V34 */
+.v34-privacy-action{border:1px solid #c7d9cb!important;background:#edf5ee!important;color:#16563c!important}
+.v34-auth-policy{display:flex!important;flex-direction:row!important;align-items:flex-start!important;gap:11px!important;background:#f5faf5;border:1px solid #e0ece2;padding:13px!important;border-radius:12px;font-weight:500!important;line-height:1.5;font-size:12px!important}
+.v34-auth-policy input{width:17px!important;height:17px!important;min-width:17px!important;margin:2px 0 0!important;accent-color:#15583d;flex:none;box-shadow:none!important}
+.v34-auth-policy a,.footer-bottom a{color:#135e40;text-decoration:underline;text-underline-offset:3px}
+.footer-bottom span:last-child{display:flex;flex-wrap:wrap;gap:18px}
+.v34-privacy-modal{max-width:610px;color:#163c2c}
+.v34-privacy-modal .v34-overline{display:block;font-size:11px;font-weight:850;color:#338258;letter-spacing:.14em;text-transform:uppercase;margin-bottom:11px}
+.v34-privacy-modal h2{font-size:clamp(25px,4vw,34px);margin:0 0 10px;letter-spacing:-.04em;line-height:1.12}
+.v34-privacy-modal>p{color:#688373;font-size:13px;line-height:1.6;margin:0 0 20px}
+.v34-privacy-links{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+.v34-privacy-links a{display:inline-flex;align-items:center;justify-content:center;padding:12px 15px;border:1px solid #cee2d1;border-radius:13px;color:#135338!important;font-weight:800;text-decoration:none;background:#f4faf5;font-size:12px}
+.v34-privacy-section{padding:18px;border:1px solid #e2eae3;border-radius:17px;margin:10px 0;background:#fff}
+.v34-privacy-section h3{font-size:15px;color:#153d2c;margin:0 0 6px}
+.v34-privacy-section p{font-size:12px;color:#6b8073;line-height:1.6;margin:0 0 11px}
+.v34-privacy-section button{border-radius:12px;padding:11px 15px;font-weight:800;cursor:pointer;border:1px solid #cfe2d2;background:#edf6ef;color:#15523a;font-size:12px}
+.v34-privacy-section button:disabled{opacity:.55;cursor:wait}
+.v34-privacy-section.danger{background:#fffbfa;border-color:#f0dad6}
+.v34-privacy-section.danger button{background:#fff2ef;color:#963e30;border-color:#ecc7c1}
+.v34-privacy-notice{padding:13px 15px;border-radius:13px;background:#fff6e6;border:1px solid #eedaba;color:#7b5c27;font-size:12px;line-height:1.6;margin:12px 0}
+.v34-privacy-feedback{min-height:23px;margin-top:9px;font-size:12px;color:#235940;font-weight:700}
+@media(max-width:700px){.v34-privacy-section{padding:15px}.v30-header-side{flex-wrap:wrap}}
+#modal:has(.v34-privacy-modal) .modal{width:min(700px,calc(100vw - 24px));max-width:700px;max-height:min(90dvh,900px);padding:32px 28px;overflow-x:hidden;overflow-y:auto;border-radius:22px;background:#fff}
+@media(max-width:700px){#modal:has(.v34-privacy-modal) .modal{max-height:calc(100dvh - 26px);padding:25px 16px}}

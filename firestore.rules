@@ -17,6 +17,7 @@ service cloud.firestore {
         && p.hasWhatsapp is bool
         && p.bio is string && p.bio.size() <= 500
         && p.photo is string && p.photo.size() <= 350000
+        && (p.photo == '' || p.photo.matches('^data:image/jpeg;base64,[A-Za-z0-9+/=]+$'))
         && p.get('cover','') is string && p.get('cover','').size() <= 95000
         && (p.get('cover','') == '' || p.get('cover','').matches('^data:image/jpeg;base64,[A-Za-z0-9+/=]+$'))
         && p.updatedAt == request.time;
@@ -126,8 +127,15 @@ service cloud.firestore {
     }
     // Phone numbers are not part of the publicly-readable professional profile.
     // Verified accounts can look up a specific professional's contact; bulk listing is blocked.
+    // Phone belongs only to its owner or to a client explicitly approved by the professional.
+    function approvedContact(providerId) {
+      return verified() && exists(/databases/$(database)/documents/chats/$(request.auth.uid + '_' + providerId))
+        && get(/databases/$(database)/documents/chats/$(request.auth.uid + '_' + providerId)).data.customerId == request.auth.uid
+        && get(/databases/$(database)/documents/chats/$(request.auth.uid + '_' + providerId)).data.providerId == providerId
+        && get(/databases/$(database)/documents/chats/$(request.auth.uid + '_' + providerId)).data.status == 'accepted';
+    }
     match /contacts/{userId} {
-      allow get: if verified();
+      allow get: if verified() && (request.auth.uid == userId || approvedContact(userId));
       allow list: if false;
       allow create, update: if verified() && request.auth.uid == userId
         && request.resource.data.keys().hasOnly(['ownerUid','phone','updatedAt'])
@@ -244,5 +252,23 @@ service cloud.firestore {
       }
     }
 
+
+    // Requests made by the data subject. This records a request, not an automatic deletion.
+    // Administrative fulfillment requires verified identity and a separate cleanup workflow.
+    function validPrivacyRequest(r, userId) {
+      return r.keys().hasOnly(['ownerUid','email','kind','status','createdAt'])
+        && r.ownerUid == userId
+        && r.email == request.auth.token.email
+        && r.kind in ['access','deletion']
+        && r.status == 'pending'
+        && r.createdAt == request.time;
+    }
+    match /privacyRequests/{userId} {
+      allow get: if verified() && request.auth.uid == userId;
+      allow list: if false;
+      allow create, update: if verified() && request.auth.uid == userId
+        && validPrivacyRequest(request.resource.data, userId);
+      allow delete: if false;
+    }
   }
 }

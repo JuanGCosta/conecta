@@ -30,7 +30,7 @@
       modal(`<div class="auth-shell"><div class="auth-symbol">✉</div><h2>Recuperar senha</h2><p>Enviaremos um link para você definir uma nova senha.</p><form id="resetAuthForm" class="auth-form"><label>E-mail<input name="email" type="email" required autocomplete="email" placeholder="voce@exemplo.com"></label><button type="submit" class="btn btn-green">Enviar link</button><p id="authFeedback" class="auth-feedback" role="status"></p></form><div class="auth-inline"><button data-auth-mode="login">Voltar ao login</button></div></div>`);return;
     }
     const create=mode==='register';
-    modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">BEM-VINDO AO CONECTA</span><h2>${create?'Crie sua conta':'Entre na sua conta'}</h2><p>${create?'Cadastre-se gratuitamente para conversar e, se desejar, oferecer seus serviços.':'Acesse suas mensagens e gerencie seu perfil profissional.'}</p><div class="auth-tabs"><button type="button" data-auth-mode="login" class="${!create?'active':''}">Entrar</button><button type="button" data-auth-mode="register" class="${create?'active':''}">Criar conta</button></div><form id="${create?'registerAuthForm':'loginAuthForm'}" class="auth-form">${create?'<label>Seu nome<input type="text" name="name" maxlength="70" minlength="2" required autocomplete="name" placeholder="Como podemos chamar você?"></label>':''}<label>E-mail<input type="email" name="email" required autocomplete="email" placeholder="voce@exemplo.com"></label><label>Senha<input type="password" name="password" minlength="${create?'8':'6'}" required autocomplete="${create?'new-password':'current-password'}" placeholder="${create?'Mínimo de 8 caracteres':'Sua senha'}"></label>${create?'<p class="auth-small">Enviaremos um e-mail para validar o endereço. Se não encontrar, confira Spam e Lixo eletrônico.</p>':''}<button type="submit" class="btn btn-green">${create?'Criar conta':'Entrar'}</button><p class="auth-feedback" id="authFeedback" role="status"></p></form><div class="auth-inline">${!create?'<button data-auth-mode="reset">Esqueci minha senha</button>':''}<span>Explorar profissionais é grátis e não exige login.</span></div></div>`);
+    modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">BEM-VINDO AO CONECTA</span><h2>${create?'Crie sua conta':'Entre na sua conta'}</h2><p>${create?'Cadastre-se gratuitamente para conversar e, se desejar, oferecer seus serviços.':'Acesse suas mensagens e gerencie seu perfil profissional.'}</p><div class="auth-tabs"><button type="button" data-auth-mode="login" class="${!create?'active':''}">Entrar</button><button type="button" data-auth-mode="register" class="${create?'active':''}">Criar conta</button></div><form id="${create?'registerAuthForm':'loginAuthForm'}" class="auth-form">${create?'<label>Seu nome<input type="text" name="name" maxlength="70" minlength="2" required autocomplete="name" placeholder="Como podemos chamar você?"></label>':''}<label>E-mail<input type="email" name="email" required autocomplete="email" placeholder="voce@exemplo.com"></label><label>Senha<input type="password" name="password" minlength="${create?'8':'6'}" required autocomplete="${create?'new-password':'current-password'}" placeholder="${create?'Mínimo de 8 caracteres':'Sua senha'}"></label>${create?'<p class="auth-small">Enviaremos um e-mail para validar o endereço. Se não encontrar, confira Spam e Lixo eletrônico.</p><label class="v34-auth-policy"><input type="checkbox" name="privacyAcknowledged" required><span>Li a <a href="privacidade.html" target="_blank" rel="noopener noreferrer">Política de Privacidade</a> e os <a href="termos.html" target="_blank" rel="noopener noreferrer">Termos de Uso</a>.</span></label>':''}<button type="submit" class="btn btn-green">${create?'Criar conta':'Entrar'}</button><p class="auth-feedback" id="authFeedback" role="status"></p></form><div class="auth-inline">${!create?'<button data-auth-mode="reset">Esqueci minha senha</button>':''}<span>Explorar profissionais é grátis e não exige login.</span></div></div>`);
   }
   function errorAtAuth(msg){const t=$('#authFeedback');if(t)t.textContent=msg;else notify(msg)}
 
@@ -258,6 +258,11 @@
       if(!requireAuth('messages'))return;
       const p=allPros().find(x=>x.id===b.dataset.whatsappPro);
       if(!p?.ownerUid)return;
+      const approved=threads.find(t=>t.customerId===currentUid()&&t.providerId===p.ownerUid&&t.status==='accepted');
+      if(!approved){
+        window.ConectaUI?.dialog({title:'Contato protegido',message:'Para proteger o telefone do profissional, converse primeiro pelo Conecta. O WhatsApp estará disponível depois que ele autorizar o contato.'});
+        return;
+      }
       try{
         const digits=String(await backend().getContact(p.ownerUid)).replace(/\D/g,'');
         if(!digits){notify('WhatsApp indisponível. Use o chat do Conecta.');return}
@@ -319,8 +324,7 @@
     finally{if(button?.isConnected)button.disabled=false}
   });
   $('#chatComposer').addEventListener('submit',e=>{ /* handled by delegated submit above */ });
-  // Prevent V8's locally stored profile from being shown as a published Firebase profile.
-  if(state.profile){try{localStorage.setItem('conecta.v8-profile-backup',JSON.stringify(state.profile))}catch{}}
+  // The online account is authoritative; no personal profile backups are created in localStorage.
   state.profile=null;
   window.ConectaV9={profilesForCatalog,requireAuth,saveProfile,renderInbox,openAuth,startConversation};
   updateHeaders();
