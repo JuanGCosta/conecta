@@ -227,7 +227,7 @@ footer{background:#092e25;padding:55px max(30px,calc((100vw - 1260px)/2)) 22px;c
 .footer-main p{font-size:12px;line-height:1.8;color:#a9c8b6}
 .footer-main button{color:#cbe0d0;font-size:12px}
 .footer-main button:hover{color:#fff}
-.footer-bottom{border-color:#ffffff25;color:#8cb09d;margin-top:40px;padding-top:20px}
+.footer-bottom{border-color:#ffffff25;color:#b9ecae;margin-top:40px;padding-top:20px}
 
 @media(max-width:1320px){
   .header{padding:0 28px}
