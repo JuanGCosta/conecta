@@ -1,0 +1,110 @@
+/* Conecta V43 | Cadastro acessível em telas pequenas.
+   Modal externo não rola; conteúdo interno rola e continua visível ao digitar. */
+#modal.show:has(.auth-shell){
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:12px!important;
+  overflow:hidden!important;
+  box-sizing:border-box;
+  height:100dvh;
+  min-height:0;
+}
+#modal .modal:has(.auth-shell){
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  flex:0 1 472px!important;
+  min-height:0!important;
+  max-height:calc(100dvh - 24px)!important;
+  width:min(472px,100%)!important;
+  max-width:100%!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:24px!important;
+  overflow:hidden!important;
+  background:#fff!important;
+  transform:none!important;
+  box-shadow:0 25px 65px rgba(8,36,23,.25)!important;
+}
+#modal .modal:has(.auth-shell) #modalBody{
+  flex:1 1 auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-height:calc(100dvh - 24px)!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  touch-action:pan-y;
+  padding:0!important;
+  scroll-padding-bottom:18px;
+  scrollbar-width:thin;
+  scrollbar-color:#accbbb #f3f7f2;
+}
+#modal .modal:has(.auth-shell) #modalBody::-webkit-scrollbar{width:6px}
+#modal .modal:has(.auth-shell) #modalBody::-webkit-scrollbar-thumb{border-radius:9px;background:#a9c6b1}
+#modal .modal:has(.auth-shell) .modal-close{
+  position:absolute!important;
+  top:12px!important;
+  right:12px!important;
+  left:auto!important;
+  z-index:10!important;
+  width:38px!important;
+  height:38px!important;
+  background:#e9f4ed!important;
+  color:#22563c!important;
+}
+#modal .auth-shell{
+  max-width:none!important;
+  min-width:0!important;
+  width:100%;
+  box-sizing:border-box;
+  padding:25px 24px 28px!important;
+  gap:13px!important;
+  display:flex!important;
+  flex-direction:column;
+  transform:none!important;
+}
+#modal .auth-symbol{width:48px;height:48px;border-radius:16px;font-size:22px}
+#modal .auth-shell h2{font-size:clamp(28px,4vw,37px);line-height:1.1;margin:0}
+#modal .auth-shell>p{font-size:13px;line-height:1.55}
+#modal .auth-tabs{border-radius:14px;gap:3px;padding:4px}
+#modal .auth-tabs button{min-height:41px!important;font-size:14px!important;padding:9px!important}
+#modal .auth-form{gap:10px!important}
+#modal .auth-form label{gap:6px!important;font-size:12px!important}
+#modal .auth-form input:not([type=checkbox]){width:100%;min-height:46px!important;font-size:16px!important;padding:10px 13px!important;box-sizing:border-box}
+#modal .auth-form .btn{min-height:48px!important;flex:none!important;font-size:14px!important}
+#modal .auth-small{font-size:11px;line-height:1.45}
+#modal .v34-auth-policy{margin:0!important;padding:11px 12px!important;flex-shrink:0;line-height:1.5}
+#modal .v34-auth-policy a{color:#155c40!important}
+#modal .auth-inline{padding-top:9px;gap:7px}
+#modal .auth-feedback{min-height:0}
+@media(max-width:600px){
+  #modal.show:has(.auth-shell){padding:8px!important}
+  #modal .modal:has(.auth-shell){width:100%!important;max-height:calc(100dvh - 16px)!important;border-radius:20px!important}
+  #modal .modal:has(.auth-shell) #modalBody{max-height:calc(100dvh - 16px)!important}
+  #modal .auth-shell{padding:19px 17px 23px!important;gap:11px!important}
+  #modal .auth-shell h2{font-size:29px}
+  #modal .auth-shell>p{font-size:12.5px}
+  #modal .auth-symbol{width:44px;height:44px}
+}
+@media(max-height:650px){
+  #modal .auth-shell{padding-top:15px!important;gap:9px!important}
+  #modal .auth-symbol{width:40px;height:40px}
+  #modal .auth-shell h2{font-size:28px}
+}
+
+/* Cadastro compacto em aparelhos baixos: mostrar o envio sem zoom. */
+@media (max-width:600px) and (max-height:740px){
+  #modal .auth-shell:has(#registerAuthForm){padding:16px 17px 19px!important;gap:8px!important}
+  #modal .auth-shell:has(#registerAuthForm) .auth-symbol{display:none!important}
+  #modal .auth-shell:has(#registerAuthForm) h2{font-size:28px!important}
+  #modal .auth-shell:has(#registerAuthForm)>p{font-size:12px;line-height:1.45}
+  #modal .auth-shell:has(#registerAuthForm) .auth-tabs button{min-height:39px!important}
+  #modal .auth-shell:has(#registerAuthForm) .auth-form{gap:7px!important}
+  #modal .auth-shell:has(#registerAuthForm) .auth-form input:not([type=checkbox]){min-height:43px!important}
+  #modal .auth-shell:has(#registerAuthForm) .v34-auth-policy{padding:9px 10px!important;font-size:11px!important}
+  #modal .auth-shell:has(#registerAuthForm) .auth-small{font-size:11px;line-height:1.35}
+  #modal .auth-shell:has(#registerAuthForm) .auth-inline{display:none!important}
+}
