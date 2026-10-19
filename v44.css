@@ -1,0 +1,14 @@
+/* V44 · Nome da conta no botão verde do cabeçalho. */
+.header .header-right [data-profile-cta]{
+  min-width:0;
+  max-width:200px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  display:inline-block;
+  line-height:43px;
+  text-align:center;
+}
+@media(min-width:901px) and (max-width:1200px){
+  .header .header-right [data-profile-cta]{max-width:145px}
+}

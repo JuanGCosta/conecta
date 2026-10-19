@@ -127,7 +127,14 @@ function renderRequests(){const q=$('#requestSearch').value.toLowerCase(),cat=$(
 function empty(title,body){return `<div class="empty"><h3>${esc(title)}</h3><p>${esc(body)}</p></div>`}
 function updateProfileUI(){
   const created=!!state.profile?.name;
-  $$('[data-profile-cta]').forEach(button=>button.textContent='Perfil profissional');
+  // O nome vem do Firebase Authentication, mesmo se a conta ainda não publicou um perfil profissional.
+  const account=window.ConectaBackend?.user;
+  const accountName=account?(String(account.displayName||'').trim()||String(state.profile?.name||'').trim()||'Minha conta'):'Perfil profissional';
+  $$('[data-profile-cta]').forEach(button=>{
+    button.textContent=accountName;
+    button.title=accountName;
+    button.setAttribute('aria-label',account?'Abrir perfil de '+accountName:'Abrir perfil profissional');
+  });
   const navMyProfile=$('.desktop-nav [data-open-my-profile]');if(navMyProfile)navMyProfile.style.display=created?'none':'';
   const label=$('#profileTabLabel .v30-tab-text');if(label)label.textContent=created?'Editar perfil':'Perfil profissional';
   const backToProfile=$('.v33-back-to-profile');if(backToProfile)backToProfile.hidden=!created;
