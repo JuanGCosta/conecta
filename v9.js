@@ -327,13 +327,13 @@
   async function deleteProfile(){
     if(!requireAuth('profile'))return;
     if(!state.profile?.name){notify('Você ainda não tem perfil publicado.');return}
-    const ok=window.confirm('Deseja realmente deletar seu perfil? Seus dados públicos e o contato serão removidos.');
+    const ok=window.confirm('Remover seu perfil profissional, WhatsApp e trabalhos publicados? Sua conta, mensagens, pedidos e avaliações não serão apagados automaticamente. Para solicitar exclusão integral, acesse Meus dados no rodapé.');
     if(!ok)return;
     try{
       await backend().deleteProfile();
       state.profile=null;
       renderDashboard();renderHome();renderExplore();updateHeaders();
-      notify('Perfil removido com sucesso.');
+      notify('Perfil e trabalhos públicos removidos. A conta e as conversas continuam existentes.');
       route('dashboard');
     }catch(ex){notify('Não foi possível remover o perfil: '+authProblem(ex))}
   }

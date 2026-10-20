@@ -8,3 +8,6 @@ window.CONECTA_FIREBASE_CONFIG = {
   messagingSenderId: "709373004225",
   appId: "1:709373004225:web:9d144da826740d60dc4740"
 };
+
+// App Check (opcional): informe a chave pública do reCAPTCHA v3 após registrar o app no console.
+window.CONECTA_APP_CHECK_SITE_KEY = window.CONECTA_APP_CHECK_SITE_KEY || "";

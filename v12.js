@@ -23,6 +23,17 @@
       target._conectaReviewData=values;
       target.dataset.state='ready';
       target.innerHTML=`<div class="v12-review-summary"><strong>${n?'★ '+avg.toFixed(1).replace('.',','):'Sem avaliações ainda'}</strong><span>${n?`${n} avaliação${n!==1?'ões':''}`:'Sem avaliações publicadas'}</span></div><div class="v12-review-list">${values.slice().sort((a,b)=>(b.updatedAt?.seconds||0)-(a.updatedAt?.seconds||0)).slice(0,12).map(r=>`<article class="v12-review"><div><strong>${esc(r.authorName)}</strong><span aria-label="Nota ${r.rating} de 5">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span></div><p>${esc(r.comment)}</p></article>`).join('')}</div><form id="v12ReviewForm" class="v12-review-form" data-review-form="${esc(uid)}"><h3>Deixe sua avaliação</h3><label>Nota<select name="rating" required><option value="5">★★★★★ · 5</option><option value="4">★★★★☆ · 4</option><option value="3">★★★☆☆ · 3</option><option value="2">★★☆☆☆ · 2</option><option value="1">★☆☆☆☆ · 1</option></select></label><label>Comentário<textarea name="comment" required maxlength="500" rows="3" placeholder="Conte sua experiência com este profissional"></textarea></label><button class="btn btn-green" type="submit">Enviar avaliação</button></form>`;
+      // Só habilite o formulário quando houver uma conversa autorizada.
+      // O bloqueio decisivo permanece nas regras do Firestore.
+      const form=target.querySelector('[data-review-form]');
+      const backend=window.ConectaBackend;
+      const note='<p class="v45-review-notice">Para avaliar, primeiro converse pelo Conecta e aguarde o profissional autorizar o contato.</p>';
+      if(form && (!backend?.user?.emailVerified || backend.user.uid===uid))form.outerHTML=note;
+      else if(form && backend?.canReview){
+        backend.canReview(uid).then(ok=>{
+          if(!ok && form.isConnected)form.outerHTML=note;
+        }).catch(()=>{if(form.isConnected)form.outerHTML=note});
+      }
     });
   }
   function followVisible(){

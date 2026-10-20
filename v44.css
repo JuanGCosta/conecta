@@ -12,3 +12,5 @@
 @media(min-width:901px) and (max-width:1200px){
   .header .header-right [data-profile-cta]{max-width:145px}
 }
+
+.v45-review-notice{padding:14px 18px;color:#526c5b;background:#f1f7ef;border-radius:12px;font-size:13px;line-height:1.5}

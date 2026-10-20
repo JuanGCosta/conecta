@@ -25,6 +25,16 @@
         import(`https://www.gstatic.com/firebasejs/${v}/firebase-firestore.js`)
       ]);
       const app = initializeApp(c);
+      // App Check só é inicializado quando uma chave pública do site é configurada.
+      // Ative a fiscalização no console APENAS após validar os dispositivos reais.
+      const appCheckKey=String(window.CONECTA_APP_CHECK_SITE_KEY||'').trim();
+      if(appCheckKey){
+        try{
+          const ac=await import(`https://www.gstatic.com/firebasejs/${v}/firebase-app-check.js`);
+          ac.initializeAppCheck(app,{provider:new ac.ReCaptchaV3Provider(appCheckKey),isTokenAutoRefreshEnabled:true});
+          backend.appCheckEnabled=true;
+        }catch(e){console.warn('[Conecta] Não foi possível iniciar App Check:',e)}
+      }
       const auth = authm.getAuth(app), db = dbm.getFirestore(app);
       auth.languageCode = 'pt-BR';
       const {collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where, orderBy, limit, onSnapshot, serverTimestamp, writeBatch} = dbm;
@@ -63,10 +73,16 @@
         batch.set(doc(db,'contacts',u.uid), {ownerUid:u.uid,phone:phone||'',updatedAt:serverTimestamp()});
         await batch.commit();
       };
+      // Exclui a apresentação pública, telefone e portfólio do proprietário.
+      // Não representa exclusão integral da conta: mensagens, pedidos,
+      // avaliações e registros legais têm processo próprio de privacidade.
       backend.deleteProfile = async () => {
         const u=auth.currentUser;
         if (!u?.emailVerified) throw Error('Confirme seu e-mail primeiro.');
+        const works=await getDocs(query(collection(db,'works'),where('ownerUid','==',u.uid),limit(451)));
+        if(works.size>450)throw Error('Há muitos trabalhos para exclusão em lote. Contate o suporte.');
         const batch=writeBatch(db);
+        works.docs.forEach(work=>batch.delete(work.ref));
         batch.delete(doc(db,'profiles',u.uid));
         batch.delete(doc(db,'contacts',u.uid));
         await batch.commit();
@@ -77,12 +93,29 @@
         return snap.exists()?snap.data().phone:'';
       };
       backend.subscribeReviews = (providerId,success,failure) => onSnapshot(collection(db,'profiles',providerId,'reviews'),snap=>success(snap.docs.map(d=>({id:d.id,...d.data()}))),failure);
+      backend.canReview = async providerId => {
+        const u=auth.currentUser;
+        if(!u?.emailVerified || !providerId || providerId===u.uid)return false;
+        try{
+          const snap=await getDoc(doc(db,'chats',`${u.uid}_${providerId}`));
+          return snap.exists() && snap.data().customerId===u.uid && snap.data().providerId===providerId && snap.data().status==='accepted';
+        }catch(e){return false}
+      };
+      const chatCooldownMs=3000;
+      const assertChatCooldown = thread => {
+        const last=thread?.updatedAt?.toMillis?.();
+        if(Number.isFinite(last) && Date.now()-last < chatCooldownMs){
+          throw Error('Aguarde 3 segundos entre mensagens para evitar spam.');
+        }
+      };
       backend.saveReview = async (providerId,rating,comment) => {
         const u=auth.currentUser;
         if (!u?.emailVerified) throw Error('Confirme seu e-mail primeiro.');
         if (!providerId||u.uid===providerId) throw Error('Você não pode avaliar seu próprio perfil.');
         if (!Number.isInteger(rating)||rating<1||rating>5) throw Error('Nota inválida.');
         if (!comment.trim()||comment.trim().length>500) throw Error('Escreva um comentário de até 500 caracteres.');
+        if(!(await backend.canReview(providerId)))throw Error('Só é possível avaliar após o profissional aceitar a conversa pelo Conecta.');
+        await u.getIdToken(true); // Atualiza o nome presente no token de autenticação.
         await setDoc(doc(db,'profiles',providerId,'reviews',u.uid),{
           authorUid:u.uid, authorName:(u.displayName||'Cliente Conecta').slice(0,70),
           rating, comment:comment.trim(), updatedAt:serverTimestamp()
@@ -111,6 +144,7 @@
         if (!providerId || providerId===u.uid) throw Error('Você não pode conversar consigo mesmo.');
         const content=text.trim();
         if (!content || content.length>1000) throw Error('A mensagem deve conter de 1 a 1000 caracteres.');
+        await u.getIdToken(true);
         const threadId=`${u.uid}_${providerId}`;
         const chatRef=doc(db,'chats',threadId);
         const messageData={senderId:u.uid,text:content,createdAt:serverTimestamp()};
@@ -169,6 +203,7 @@
         const snap=await getDoc(threadRef);
         if(!snap.exists()) throw Error('Conversa não encontrada.');
         const live={id:thread.id,...snap.data()};
+        if(live.status==='accepted' || (live.status==='pending' && live.customerId===u.uid))assertChatCooldown(live);
         const batch=writeBatch(db);
         const messageRef=doc(collection(db,'chats',thread.id,'messages'));
         if(live.status==='accepted'){
@@ -208,6 +243,7 @@
       );
       backend.createRequest = async (input,images=[]) => {
         const u=ownVerified(), ref=doc(collection(db,'requests'));
+        await u.getIdToken(true);
         checkPhotos(images,4);
         let photos=[];
         try {
