@@ -33,9 +33,8 @@ service cloud.firestore {
         && (p.size()<6 || validPhotoURL(p[5]));
     }
     function validPhotoURL(src) {
-      return src is string && ((src.size() < 1200
-        && src.matches('^https://firebasestorage\\.googleapis\\.com/.*'))
-        || (src.size() <= 81000 && src.matches('^data:image/jpeg;base64,[A-Za-z0-9+/=]+$')));
+      return src is string && src.size() <= 81000
+        && src.matches('^data:image/jpeg;base64,[A-Za-z0-9+/=]+$');
     }
     function validRequest(p) {
       return p.keys().hasOnly(['ownerUid','owner','title','category','city','description','photos','status','createdAt','updatedAt'])
@@ -54,7 +53,12 @@ service cloud.firestore {
       allow get, list: if true;
       allow create: if verified() && validRequest(request.resource.data);
       allow delete: if verified() && resource.data.ownerUid == request.auth.uid;
-      allow update: if false;
+      allow update: if verified()
+        && resource.data.ownerUid == request.auth.uid
+        && resource.data.status == 'open'
+        && request.resource.data.status == 'closed'
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','updatedAt']);
       match /offers/{providerId} {
         allow get: if verified() && (
           request.auth.uid == providerId ||
@@ -116,7 +120,9 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/chats/$(customerId + '_' + providerId))
         && get(/databases/$(database)/documents/chats/$(customerId + '_' + providerId)).data.customerId == customerId
         && get(/databases/$(database)/documents/chats/$(customerId + '_' + providerId)).data.providerId == providerId
-        && get(/databases/$(database)/documents/chats/$(customerId + '_' + providerId)).data.status == 'accepted';
+        && get(/databases/$(database)/documents/chats/$(customerId + '_' + providerId)).data.status == 'accepted'
+        && (!exists(/databases/$(database)/documents/chats/$(providerId + '_' + customerId))
+          || get(/databases/$(database)/documents/chats/$(providerId + '_' + customerId)).data.get('status','accepted') != 'blocked');
     }
     match /profiles/{userId}/reviews/{reviewId} {
       allow read: if true;
@@ -143,7 +149,9 @@ service cloud.firestore {
       return verified() && exists(/databases/$(database)/documents/chats/$(request.auth.uid + '_' + providerId))
         && get(/databases/$(database)/documents/chats/$(request.auth.uid + '_' + providerId)).data.customerId == request.auth.uid
         && get(/databases/$(database)/documents/chats/$(request.auth.uid + '_' + providerId)).data.providerId == providerId
-        && get(/databases/$(database)/documents/chats/$(request.auth.uid + '_' + providerId)).data.status == 'accepted';
+        && get(/databases/$(database)/documents/chats/$(request.auth.uid + '_' + providerId)).data.status == 'accepted'
+        && (!exists(/databases/$(database)/documents/chats/$(providerId + '_' + request.auth.uid))
+          || get(/databases/$(database)/documents/chats/$(providerId + '_' + request.auth.uid)).data.get('status','accepted') != 'blocked');
     }
     match /contacts/{userId} {
       allow get: if verified() && (request.auth.uid == userId || approvedContact(userId));
@@ -159,6 +167,12 @@ service cloud.firestore {
     function participant(data) {
       return verified() && request.auth.uid in data.participants;
     }
+    // If either account has blocked the reverse conversation, do not allow
+    // a second thread to bypass that block (both parties may publish a profile).
+    function reverseThreadBlocked(data) {
+      return exists(/databases/$(database)/documents/chats/$(data.providerId + '_' + data.customerId))
+        && get(/databases/$(database)/documents/chats/$(data.providerId + '_' + data.customerId)).data.get('status','accepted') == 'blocked';
+    }
     function threadStatus(data) {
       return data.get('status','accepted');
     }
@@ -173,7 +187,7 @@ service cloud.firestore {
         && data.providerName == get(/databases/$(database)/documents/profiles/$(data.providerId)).data.name
         && data.lastMessage is string && data.lastMessage.size() > 0 && data.lastMessage.size() <= 1000
         && data.lastSenderId == request.auth.uid && data.updatedAt == request.time
-        && threadStatus(data) in ['pending','accepted','declined']
+        && threadStatus(data) in ['pending','accepted','declined','blocked']
         && (!('pendingCount' in data) || (data.pendingCount is int && data.pendingCount >= 1 && data.pendingCount <= 3));
     }
     function stableThread(before,after) {
@@ -190,17 +204,20 @@ service cloud.firestore {
         && request.auth.uid == request.resource.data.customerId
         && exists(/databases/$(database)/documents/profiles/$(request.resource.data.providerId))
         && validThread(request.resource.data)
+        && !reverseThreadBlocked(request.resource.data)
         && request.resource.data.status == 'pending'
         && request.resource.data.pendingCount == 1
         && request.resource.data.createdAt == request.time;
       allow update: if participant(resource.data)
-        && request.resource.data.keys().hasOnly(['customerId','providerId','participants','customerName','providerName','lastMessage','lastSenderId','createdAt','updatedAt','status','pendingCount'])
+        && request.resource.data.keys().hasOnly(['customerId','providerId','participants','customerName','providerName','lastMessage','lastSenderId','createdAt','updatedAt','status','pendingCount','blockerId'])
         && stableThread(resource.data,request.resource.data)
         && request.resource.data.updatedAt == request.time
         && (
           // Only the professional may authorize or refuse the request.
           (request.auth.uid == resource.data.providerId
             && threadStatus(resource.data) == 'pending'
+            && !('blockerId' in request.resource.data)
+            && (!reverseThreadBlocked(resource.data) || threadStatus(request.resource.data) == 'declined')
             && threadStatus(request.resource.data) in ['accepted','declined']
             && request.resource.data.lastMessage == resource.data.lastMessage
             && request.resource.data.lastSenderId == resource.data.lastSenderId
@@ -209,6 +226,8 @@ service cloud.firestore {
           // The customer may send up to 3 initial messages while the request is pending.
           (threadStatus(resource.data) == 'pending'
             && threadStatus(request.resource.data) == 'pending'
+            && !('blockerId' in request.resource.data)
+            && !reverseThreadBlocked(resource.data)
             && request.auth.uid == resource.data.customerId
             && request.resource.data.lastSenderId == request.auth.uid
             && request.resource.data.lastMessage is string
@@ -222,12 +241,27 @@ service cloud.firestore {
           // Once authorized, both participants can send ordinary messages.
           (threadStatus(resource.data) == 'accepted'
             && threadStatus(request.resource.data) == 'accepted'
+            && !('blockerId' in request.resource.data)
+            && !reverseThreadBlocked(resource.data)
             && request.resource.data.lastSenderId == request.auth.uid
             && request.resource.data.lastMessage is string
             && request.resource.data.lastMessage.size() > 0
             && request.resource.data.lastMessage.size() <= 1000
             && request.resource.data.get('pendingCount',1) == resource.data.get('pendingCount',1)
             && request.time >= resource.data.updatedAt + duration.value(3, 's'))
+          ||
+          // Either participant can block an accepted conversation.
+          (threadStatus(resource.data) == 'accepted'
+            && threadStatus(request.resource.data) == 'blocked'
+            && request.resource.data.blockerId == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','blockerId','updatedAt']))
+          ||
+          // Only the person who blocked can restore an accepted conversation.
+          (threadStatus(resource.data) == 'blocked'
+            && resource.data.blockerId == request.auth.uid
+            && threadStatus(request.resource.data) == 'accepted'
+            && !('blockerId' in request.resource.data)
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','blockerId','updatedAt']))
         );
       allow delete: if false;
       match /messages/{messageId} {

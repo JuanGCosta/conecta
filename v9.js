@@ -18,7 +18,7 @@
     'auth/unauthorized-domain':'Adicione o domínio do site em Authentication > Settings > Authorized domains.',
     'permission-denied':'Acesso negado pelo Firestore. Confira se a conta confirmou o e-mail e se as regras foram publicadas.'
   }[e?.code] || e?.message || 'Não foi possível concluir a operação.');
-  function showSetup(){modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">CONTA CONECTA</span><h2>Ative o cadastro real</h2><p>A navegação da plataforma já é pública. Para criar contas e trocar mensagens entre computadores, é necessário conectar seu projeto Firebase.</p><div class="auth-notice">Configure <strong>firebase-config.js</strong>, ative Authentication e publique as regras do Firestore. As regras do Firestore e do Storage precisam ser publicadas no console do Firebase.</div><button class="btn btn-green" data-action="close-modal">Entendi</button></div>`)}
+  function showSetup(){modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">CONTA CONECTA</span><h2>Ative o cadastro real</h2><p>A navegação da plataforma já é pública. Para criar contas e trocar mensagens entre computadores, é necessário conectar seu projeto Firebase.</p><div class="auth-notice">Configure <strong>firebase-config.js</strong>, ative Authentication e publique as regras do Firestore. Publique apenas as regras do Firestore deste projeto no console do Firebase.</div><button class="btn btn-green" data-action="close-modal">Entendi</button></div>`)}
   function openAuth(mode='login'){
     if(!configured()){showSetup();return}
     if(user && !verified())mode='verify';
@@ -171,12 +171,17 @@
     const uid=providerSide?thread.customerId:thread.providerId;
     return {uid,name:name||'Usuário Conecta',subtitle:providerSide?'Cliente':'Profissional',photo:lookupProfilePhoto(uid)};
   }
+  function isRelationshipBlocked(thread){
+    if(!thread)return false;
+    return thread.status==='blocked' || threads.some(t=>t.status==='blocked'
+      && t.customerId===thread.providerId && t.providerId===thread.customerId);
+  }
   function renderThreads(){
     const list=$('#chatThreadList');if(!list)return;
     $('#chatThreadCount').textContent=threads.length;
     list.innerHTML=threads.length?threads.map(t=>{
       const p=getDisplayPerson(t);
-      return `<button class="thread-item ${activeChat?.id===t.id?'selected':''}" data-thread="${safe(t.id)}">${avatarHTML(p,'thread-avatar')}<span class="thread-copy"><span class="thread-copy-top"><strong>${safe(p.name)}</strong><em>${safe(p.subtitle)}</em></span><small>${safe(t.lastMessage||'Conversa iniciada')}</small>${t.status==='pending'?`<span class="v15-thread-state">${t.providerId===currentUid()?'Solicitação recebida':'Aguardando autorização'}</span>`:''}${t.status==='declined'?'<span class="v15-thread-state declined">Contato não autorizado</span>':''}</span></button>`;
+      return `<button class="thread-item ${activeChat?.id===t.id?'selected':''}" data-thread="${safe(t.id)}">${avatarHTML(p,'thread-avatar')}<span class="thread-copy"><span class="thread-copy-top"><strong>${safe(p.name)}</strong><em>${safe(p.subtitle)}</em></span><small>${safe(t.lastMessage||'Conversa iniciada')}</small>${t.status==='pending'?`<span class="v15-thread-state">${t.providerId===currentUid()?'Solicitação recebida':'Aguardando autorização'}</span>`:''}${t.status==='declined'?'<span class="v15-thread-state declined">Contato não autorizado</span>':''}${t.status==='blocked'?'<span class="v15-thread-state declined">Conversa bloqueada</span>':''}</span></button>`;
     }).join(''):'<div class="thread-empty"><span class="v11-thread-empty-icon">✉</span><strong>Nenhuma conversa ainda</strong><p>Encontre um profissional para iniciar sua primeira conversa.</p><button data-route="explore">Ver profissionais</button></div>';
   }
   function renderMessages(){
@@ -191,8 +196,9 @@
     renderThreads();
     const head=$('#chatHead'),input=$('#chatInput'),send=$('#chatSend');
     if(!activeChat){head.innerHTML=`<div class="chat-head-main">${avatarHTML({name:'Conecta'},'chat-person-icon')}<div class="chat-head-copy"><strong>Suas conversas</strong><small>Escolha uma conversa para começar</small></div></div>`}
-    else {const person=getDisplayPerson(activeChat);head.innerHTML=`<div class="chat-head-main"><button class="v27-chat-back" type="button" data-chat-back aria-label="Voltar às conversas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg><span>Voltar às conversas</span></button><button type="button" class="v28-sound-toggle v28-chat-sound-inline" data-chat-sound aria-pressed="${soundEnabled}" aria-label="${soundEnabled?'Desativar':'Ativar'} som de novas mensagens" title="${soundEnabled?'Desativar':'Ativar'} som de novas mensagens"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="v28-sound-label">${soundEnabled?'Desativar som':'Ativar som'}</span></button><div class="v28-chat-person-row">${avatarHTML(person,'chat-person-icon')}<div class="chat-head-copy"><strong title="${safe(person.name)}">${safe(person.name)}</strong><small>${safe(person.subtitle)}</small></div></div></div>`}
+    else {const person=getDisplayPerson(activeChat);head.innerHTML=`<div class="chat-head-main"><button class="v27-chat-back" type="button" data-chat-back aria-label="Voltar às conversas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg><span>Voltar às conversas</span></button><button type="button" class="v28-sound-toggle v28-chat-sound-inline" data-chat-sound aria-pressed="${soundEnabled}" aria-label="${soundEnabled?'Desativar':'Ativar'} som de novas mensagens" title="${soundEnabled?'Desativar':'Ativar'} som de novas mensagens"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="v28-sound-label">${soundEnabled?'Desativar som':'Ativar som'}</span></button><div class="v28-chat-person-row">${avatarHTML(person,'chat-person-icon')}<div class="chat-head-copy"><strong title="${safe(person.name)}">${safe(person.name)}</strong><small>${safe(person.subtitle)}</small></div></div>${activeChat.status==='accepted'?'<button type="button" class="v46-block-contact" data-contact-block="true">Bloquear contato</button>':activeChat.status==='blocked'&&activeChat.blockerId===currentUid()?'<button type="button" class="v46-unblock-contact" data-contact-block="false">Desbloquear</button>':''}</div>`}
     const status=activeChat?.status || 'accepted';
+    const relationshipBlocked=isRelationshipBlocked(activeChat);
     const isProvider=activeChat?.providerId===currentUid();
     const pendingCount=Math.max(1,Number(activeChat?.pendingCount||1));
     const remainingPending=Math.max(0,3-pendingCount);
@@ -201,10 +207,12 @@
       head.insertAdjacentHTML('beforeend',`<div class="v15-contact-banner"><span>${safe(info)}</span>${isProvider?'<div class="v15-decision-actions"><button type="button" class="v15-accept" data-contact-decision="accepted">Aceitar contato</button><button type="button" class="v15-decline" data-contact-decision="declined">Recusar</button></div>':''}</div>`);
     }else if(activeChat && status==='declined'){
       head.insertAdjacentHTML('beforeend','<div class="v15-contact-banner declined">O pedido de contato foi recusado. Esta conversa está encerrada.</div>');
+    }else if(activeChat && relationshipBlocked){
+      head.insertAdjacentHTML('beforeend',`<div class="v15-contact-banner declined">${activeChat.status==='blocked'&&activeChat.blockerId===currentUid()?'Você bloqueou este contato.':'Este contato está bloqueado.'} Não é possível enviar novas mensagens enquanto houver bloqueio.</div>`);
     }
-    const allowed=!!activeChat && verified() && !waitingSend && (activeChat.newConversation || status==='accepted' || (status==='pending' && activeChat.customerId===currentUid() && remainingPending>0));
+    const allowed=!!activeChat && verified() && !waitingSend && !relationshipBlocked && (activeChat.newConversation || status==='accepted' || (status==='pending' && activeChat.customerId===currentUid() && remainingPending>0));
     input.disabled=send.disabled=!allowed;
-    input.placeholder=activeChat && status==='pending'?(activeChat.customerId===currentUid() && remainingPending>0?`Você pode enviar mais ${remainingPending} ${remainingPending===1?'mensagem':'mensagens'} antes da autorização...`:'Aguardando autorização para continuar...'):activeChat && status==='declined'?'Conversa encerrada':'Escreva sua mensagem...';
+    input.placeholder=activeChat && status==='pending'?(activeChat.customerId===currentUid() && remainingPending>0?`Você pode enviar mais ${remainingPending} ${remainingPending===1?'mensagem':'mensagens'} antes da autorização...`:'Aguardando autorização para continuar...'):activeChat && relationshipBlocked?'Conversa bloqueada':activeChat && status==='declined'?'Conversa encerrada':'Escreva sua mensagem...';
     renderMessages();
   }
   function chooseThread(thread){
@@ -249,8 +257,21 @@
     finally{waitingSend=false;renderInbox();if(!input.disabled)input.focus()}
   }
   document.addEventListener('click',async e=>{
-    const b=e.target.closest('[data-chat-sound],[data-chat-back],[data-chat-pro],[data-whatsapp-pro],[data-thread],[data-contact-decision],[data-auth-mode],[data-action="auth-open"],[data-action="auth-logout"],[data-action="auth-check"],[data-action="auth-resend"]');
+    const b=e.target.closest('[data-contact-block],[data-chat-sound],[data-chat-back],[data-chat-pro],[data-whatsapp-pro],[data-thread],[data-contact-decision],[data-auth-mode],[data-action="auth-open"],[data-action="auth-logout"],[data-action="auth-check"],[data-action="auth-resend"]');
     if(!b)return;
+    if(b.hasAttribute('data-contact-block')){
+      if(!activeChat||!verified())return;
+      const block=b.dataset.contactBlock==='true';
+      if(block && !confirm('Bloquear este contato? Vocês não poderão mais trocar mensagens pelo Conecta até que você desbloqueie.'))return;
+      b.disabled=true;
+      try{
+        await backend().setContactBlocked(activeChat.id,block);
+        activeChat={...activeChat,status:block?'blocked':'accepted',blockerId:block?currentUid():undefined};
+        renderInbox();
+        notify(block?'Contato bloqueado. Novas mensagens foram interrompidas.':'Contato desbloqueado. A conversa foi reaberta.');
+      }catch(ex){notify('Não foi possível alterar o bloqueio: '+authProblem(ex));b.disabled=false}
+      return;
+    }
     if(b.hasAttribute('data-chat-sound')){toggleChatSound();return;}
     if(b.hasAttribute('data-chat-back')){document.body.classList.remove('v27-chat-open');return;}
     if(b.dataset.chatPro){startConversation(allPros().find(p=>p.id===b.dataset.chatPro));return}
@@ -258,7 +279,7 @@
       if(!requireAuth('messages'))return;
       const p=allPros().find(x=>x.id===b.dataset.whatsappPro);
       if(!p?.ownerUid)return;
-      const approved=threads.find(t=>t.customerId===currentUid()&&t.providerId===p.ownerUid&&t.status==='accepted');
+      const approved=threads.find(t=>t.customerId===currentUid()&&t.providerId===p.ownerUid&&t.status==='accepted'&&!isRelationshipBlocked(t));
       if(!approved){
         window.ConectaUI?.dialog({title:'Contato protegido',message:'Para proteger o telefone do profissional, converse primeiro pelo Conecta. O WhatsApp estará disponível depois que ele autorizar o contato.'});
         return;

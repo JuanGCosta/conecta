@@ -1,0 +1,13 @@
+/* Conecta V46: pedidos concluídos, bloqueio de chat e feedback de fotos. */
+.v11-request-card .request-state.v46-request-closed {background:#edf0ed!important;color:#66736a!important}
+.v11-request-card .request-actions {display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.v11-request-card .request-actions .btn {min-height:38px;font-size:12px}
+.v46-request-closed-note {font-size:12px;color:#627568;font-weight:700}
+.v46-block-contact,.v46-unblock-contact{border:1px solid #e1e9e1;background:#f6f8f4;color:#667b70;padding:9px 12px;border-radius:11px;font-size:12px;font-weight:800;white-space:nowrap;cursor:pointer;align-self:center}
+.v46-block-contact:hover {background:#fff2ef;border-color:#ecd0c9;color:#a34634}
+.v46-unblock-contact {background:#e9f4e8;color:#256c4b}
+.v46-block-contact:disabled,.v46-unblock-contact:disabled{opacity:.55;cursor:wait}
+@media(max-width:700px){
+  .v46-block-contact,.v46-unblock-contact{padding:8px 10px;font-size:11px}
+  .v11-request-card .request-actions{width:100%;justify-content:flex-start}
+}

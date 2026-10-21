@@ -168,7 +168,7 @@
           const t=existing.data();
           if (!existing.exists() || t.customerId!==u.uid || t.providerId!==providerId ||
               !Array.isArray(t.participants) || !t.participants.includes(u.uid)) throw e;
-          if (t.status==='declined') throw Error('Este contato foi recusado e está encerrado.');
+          if (t.status==='declined' || t.status==='blocked') throw Error(t.status==='blocked'?'Esta conversa foi bloqueada.':'Este contato foi recusado e está encerrado.');
           const retry=writeBatch(db);
           if (t.status==='pending') {
             const nextCount=Math.max(1,Number(t.pendingCount||1))+1;
@@ -193,6 +193,21 @@
         if(!snap.exists()||snap.data().providerId!==u.uid||snap.data().status!=='pending')
           throw Error('Este pedido não está aguardando sua autorização.');
         await updateDoc(ref,{status:decision,updatedAt:serverTimestamp()});
+      };
+      backend.setContactBlocked = async (threadId,shouldBlock) => {
+        const u=ownVerified();
+        const ref=doc(db,'chats',threadId);
+        const snap=await getDoc(ref);
+        if(!snap.exists())throw Error('Conversa não encontrada.');
+        const t=snap.data();
+        if(!Array.isArray(t.participants)||!t.participants.includes(u.uid))throw Error('Você não participa desta conversa.');
+        if(shouldBlock){
+          if((t.status||'accepted')!=='accepted')throw Error('Só é possível bloquear conversas autorizadas.');
+          await updateDoc(ref,{status:'blocked',blockerId:u.uid,updatedAt:serverTimestamp()});
+        }else{
+          if(t.status!=='blocked'||t.blockerId!==u.uid)throw Error('Apenas quem bloqueou pode desbloquear a conversa.');
+          await updateDoc(ref,{status:'accepted',blockerId:dbm.deleteField(),updatedAt:serverTimestamp()});
+        }
       };
       backend.reply = async (thread,text) => {
         const u=auth.currentUser;
@@ -220,7 +235,7 @@
           await batch.commit();
           return {status:'pending',pendingCount:nextCount};
         }
-        if(live.status==='declined') throw Error('Este contato foi recusado e está encerrado.');
+        if(live.status==='declined' || live.status==='blocked') throw Error(live.status==='blocked'?'Esta conversa está bloqueada.':'Este contato foi recusado e está encerrado.');
         throw Error('Aguarde a autorização do contato.');
       };
       // V24: dados compartilhados e sincronizados entre contas/dispositivos.
@@ -255,6 +270,14 @@
           });
           return ref.id;
         } catch(e) {if(photos.length)await deletePhotos('request-images',ref.id,photos.length);throw e}
+      };
+      backend.closeRequest = async requestId => {
+        const u=ownVerified();
+        const ref=doc(db,'requests',requestId);
+        const snap=await getDoc(ref);
+        if(!snap.exists()||snap.data().ownerUid!==u.uid)throw Error('Somente o dono pode encerrar este pedido.');
+        if(snap.data().status!=='open')throw Error('Este pedido já foi encerrado.');
+        await updateDoc(ref,{status:'closed',updatedAt:serverTimestamp()});
       };
       backend.deleteRequest = async record => {
         const u=ownVerified();
