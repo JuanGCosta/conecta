@@ -59,7 +59,7 @@ let coverImage=null, coverBusy=false;
 let state=load(), currentPage='home',selectedPro=null, stagedImages=[],profileImage=null,toastTimer,exploreTab='all';
 function save(){return true} // Publicações e salvos não usam mais o navegador.
 const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function safePhoto(url){const value=String(url||'');return (/^https:\/\/firebasestorage\.googleapis\.com\//.test(value)||(/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(value)&&value.length<=95000))?esc(value):''}
+function safePhoto(url){const value=String(url||'');return (/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(value)&&value.length<=95000)?esc(value):''}
 function notify(message){const t=$('#toast');t.textContent=message;t.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('visible'),3200)}
 function dialog(opts){const cfg=typeof opts==='string'?{message:opts}:opts||{};const tone=cfg.tone||'info';const title=cfg.title||'Aviso';const eyebrow=cfg.eyebrow||'CONECTA';const message=cfg.message||'';const button=cfg.buttonLabel||'Entendi';modal(`<div class="conecta-dialog conecta-dialog-${tone}"><div class="conecta-dialog-badge">${tone==='success'?'✓':tone==='error'?'!':'i'}</div><span class="conecta-dialog-eyebrow">${eyebrow}</span><h2>${esc(title)}</h2><p>${esc(message)}</p><div class="conecta-dialog-actions"><button type="button" class="btn btn-green" data-action="close-modal">${esc(button)}</button></div></div>`)}
 function allPros(){return window.ConectaV9?.profilesForCatalog?.() ?? []}

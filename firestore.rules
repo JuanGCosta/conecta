@@ -7,10 +7,27 @@ service cloud.firestore {
     function verified() {
       return signed() && request.auth.token.email_verified == true;
     }
+    // V47: nomes que imitam a plataforma ("Suporte Conecta", "C0necta", "Moderação")
+    // são recusados para evitar golpes. O nome é normalizado antes da comparação:
+    // minúsculas, sem acentos, números usados como letras e sem espaços/símbolos.
+    function nomeNormalizado(n) {
+      return n.lower()
+        .replace('[@4áàâãä]', 'a').replace('[3éèêë]', 'e').replace('[1!|íìîï]', 'i')
+        .replace('[0óòôõö]', 'o').replace('[úùûü]', 'u').replace('[5$]', 's').replace('ç', 'c')
+        .replace('[^a-z]', '');
+    }
+    function nomeReservado(n) {
+      return nomeNormalizado(n).matches('.*(conecta|administrador|administracao|moderador|moderacao).*');
+    }
+    // Contas sem nome aparecem como "Cliente Conecta", texto gerado pelo próprio site.
+    function nomeDaContaPermitido() {
+      return !('name' in request.auth.token) || !nomeReservado(request.auth.token.name);
+    }
     function profileValid(p) {
       return p.keys().hasOnly(['ownerUid','name','category','city','neighborhood','hasWhatsapp','bio','photo','cover','updatedAt'])
         && p.ownerUid == request.auth.uid
         && p.name is string && p.name.size() > 1 && p.name.size() <= 80
+        && !nomeReservado(p.name)
         && p.category is string && p.category.size() > 1 && p.category.size() <= 40
         && p.city == 'São José dos Campos'
         && p.neighborhood is string && p.neighborhood.size() <= 80
@@ -41,6 +58,7 @@ service cloud.firestore {
         && p.ownerUid == request.auth.uid
         && p.owner is string && p.owner.size() > 0 && p.owner.size() <= 70
         && p.owner == request.auth.token.get('name','Cliente Conecta')
+        && nomeDaContaPermitido()
         && p.title is string && p.title.size() >= 5 && p.title.size() <= 90
         && p.category in ['Reformas','Elétrica','Hidráulica','Limpeza','Pintura','Jardinagem','Montagem','Tecnologia','Beleza','Fotografia','Aulas','Marcenaria','Ar-condicionado','Fretes','Pet care','Costura','Eventos','Automotivo','Saúde','Outros']
         && p.city == 'São José dos Campos'
@@ -83,6 +101,11 @@ service cloud.firestore {
           get(/databases/$(database)/documents/requests/$(requestId)).data.ownerUid == request.auth.uid
         );
       }
+    }
+    // V47: permite ao profissional encontrar as próprias propostas em todos os
+    // pedidos (consulta de grupo), para apagá-las ao excluir a conta.
+    match /{path=**}/offers/{providerId} {
+      allow list: if verified() && resource.data.providerUid == request.auth.uid;
     }
     match /works/{workId} {
       allow get, list: if true;
@@ -131,13 +154,17 @@ service cloud.firestore {
         && validReview(request.resource.data);
       allow update: if reviewId != userId && mayReview(userId,reviewId)
         && resource.data.authorUid == request.auth.uid && validReview(request.resource.data);
-      allow delete: if verified() && request.auth.uid == reviewId;
+      // V47: o dono do perfil só apaga as avaliações recebidas junto com a exclusão
+      // do próprio perfil (exclusão de conta). Com o perfil ativo, elas ficam.
+      allow delete: if verified() && (request.auth.uid == reviewId
+        || (request.auth.uid == userId && !existsAfter(/databases/$(database)/documents/profiles/$(userId))));
     }
     function validReview(r) {
       return r.keys().hasOnly(['authorUid','authorName','rating','comment','updatedAt'])
         && r.authorUid == request.auth.uid
         && r.authorName is string && r.authorName.size() > 0 && r.authorName.size() <= 70
         && r.authorName == request.auth.token.get('name','Cliente Conecta')
+        && nomeDaContaPermitido()
         && r.rating is int && r.rating >= 1 && r.rating <= 5
         && r.comment is string && r.comment.size() > 0 && r.comment.size() <= 500
         && r.updatedAt == request.time;
@@ -183,12 +210,30 @@ service cloud.firestore {
         && data.participants == [data.customerId,data.providerId]
         && data.customerName is string && data.customerName.size() <= 70
         && data.customerName == request.auth.token.get('name','Cliente Conecta')
+        && nomeDaContaPermitido()
         && data.providerName is string && data.providerName.size() <= 80
         && data.providerName == get(/databases/$(database)/documents/profiles/$(data.providerId)).data.name
         && data.lastMessage is string && data.lastMessage.size() > 0 && data.lastMessage.size() <= 1000
         && data.lastSenderId == request.auth.uid && data.updatedAt == request.time
         && threadStatus(data) in ['pending','accepted','declined','blocked']
         && (!('pendingCount' in data) || (data.pendingCount is int && data.pendingCount >= 1 && data.pendingCount <= 3));
+    }
+    // V47: ao excluir a conta, cada participante troca o próprio nome por
+    // "Usuário removido" e encerra a conversa (status 'removed', sem volta).
+    // As mensagens continuam visíveis para a outra pessoa.
+    function removedSide(before,after) {
+      return after.customerId == before.customerId
+        && after.providerId == before.providerId
+        && after.participants == before.participants
+        && after.createdAt == before.createdAt
+        && after.get('status','') == 'removed'
+        && after.lastMessage == 'Conversa encerrada.'
+        && after.lastSenderId == request.auth.uid
+        && after.diff(before).affectedKeys().hasOnly(['status','customerName','providerName','lastMessage','lastSenderId','updatedAt'])
+        && ((request.auth.uid == before.customerId
+              && after.customerName == 'Usuário removido' && after.providerName == before.providerName)
+          || (request.auth.uid == before.providerId
+              && after.providerName == 'Usuário removido' && after.customerName == before.customerName));
     }
     function stableThread(before,after) {
       return after.customerId == before.customerId
@@ -210,9 +255,8 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time;
       allow update: if participant(resource.data)
         && request.resource.data.keys().hasOnly(['customerId','providerId','participants','customerName','providerName','lastMessage','lastSenderId','createdAt','updatedAt','status','pendingCount','blockerId'])
-        && stableThread(resource.data,request.resource.data)
         && request.resource.data.updatedAt == request.time
-        && (
+        && ((stableThread(resource.data,request.resource.data) && (
           // Only the professional may authorize or refuse the request.
           (request.auth.uid == resource.data.providerId
             && threadStatus(resource.data) == 'pending'
@@ -262,7 +306,7 @@ service cloud.firestore {
             && threadStatus(request.resource.data) == 'accepted'
             && !('blockerId' in request.resource.data)
             && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','blockerId','updatedAt']))
-        );
+        )) || removedSide(resource.data,request.resource.data));
       allow delete: if false;
       match /messages/{messageId} {
         allow get, list: if participant(get(/databases/$(database)/documents/chats/$(chatId)).data);

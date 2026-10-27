@@ -1,0 +1,12 @@
+/* Conecta V47: aviso antigolpe fixo acima do campo de mensagem. */
+#page-inbox .v47-chat-safety{flex:0 0 auto;margin:0;padding:9px 20px;border-top:1px solid #f1e3c8;background:#fdf8ec;color:#7a5a1e;font-size:12px;line-height:1.45;font-weight:600}
+#page-inbox .v47-chat-safety strong{font-weight:800}
+@media(max-width:700px){
+  #page-inbox .v47-chat-safety{padding:7px 12px;font-size:11px}
+}
+
+/* Conecta V47: formulário de exclusão da conta na Central de Privacidade. */
+#v47DeleteAccountForm{display:grid;gap:12px}
+#v47DeleteAccountForm label{display:grid;gap:6px;font-size:12px;font-weight:700;color:#153d2c}
+#v47DeleteAccountForm input{border:1px solid #e2d2ce;border-radius:11px;padding:11px 12px;font:inherit;font-size:14px;background:#fff}
+#v47DeleteAccountForm button[type="button"]{background:#f6f8f4;color:#667b70;border-color:#e1e9e1}
