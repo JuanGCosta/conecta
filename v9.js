@@ -181,7 +181,7 @@
     $('#chatThreadCount').textContent=threads.length;
     list.innerHTML=threads.length?threads.map(t=>{
       const p=getDisplayPerson(t);
-      return `<button class="thread-item ${activeChat?.id===t.id?'selected':''}" data-thread="${safe(t.id)}">${avatarHTML(p,'thread-avatar')}<span class="thread-copy"><span class="thread-copy-top"><strong>${safe(p.name)}</strong><em>${safe(p.subtitle)}</em></span><small>${safe(t.lastMessage||'Conversa iniciada')}</small>${t.status==='pending'?`<span class="v15-thread-state">${t.providerId===currentUid()?'Solicitação recebida':'Aguardando autorização'}</span>`:''}${t.status==='declined'?'<span class="v15-thread-state declined">Contato não autorizado</span>':''}${t.status==='blocked'?'<span class="v15-thread-state declined">Conversa bloqueada</span>':''}</span></button>`;
+      return `<button class="thread-item ${activeChat?.id===t.id?'selected':''}" data-thread="${safe(t.id)}">${avatarHTML(p,'thread-avatar')}<span class="thread-copy"><span class="thread-copy-top"><strong>${safe(p.name)}</strong><em>${safe(p.subtitle)}</em></span><small>${safe(t.lastMessage||'Conversa iniciada')}</small>${t.status==='pending'?`<span class="v15-thread-state">${t.providerId===currentUid()?'Solicitação recebida':'Aguardando autorização'}</span>`:''}${t.status==='declined'?'<span class="v15-thread-state declined">Contato não autorizado</span>':''}${t.status==='blocked'?'<span class="v15-thread-state declined">Conversa bloqueada</span>':''}${t.status==='removed'?'<span class="v15-thread-state declined">Conversa encerrada</span>':''}</span></button>`;
     }).join(''):'<div class="thread-empty"><span class="v11-thread-empty-icon">✉</span><strong>Nenhuma conversa ainda</strong><p>Encontre um profissional para iniciar sua primeira conversa.</p><button data-route="explore">Ver profissionais</button></div>';
   }
   function renderMessages(){
@@ -207,12 +207,14 @@
       head.insertAdjacentHTML('beforeend',`<div class="v15-contact-banner"><span>${safe(info)}</span>${isProvider?'<div class="v15-decision-actions"><button type="button" class="v15-accept" data-contact-decision="accepted">Aceitar contato</button><button type="button" class="v15-decline" data-contact-decision="declined">Recusar</button></div>':''}</div>`);
     }else if(activeChat && status==='declined'){
       head.insertAdjacentHTML('beforeend','<div class="v15-contact-banner declined">O pedido de contato foi recusado. Esta conversa está encerrada.</div>');
+    }else if(activeChat && status==='removed'){
+      head.insertAdjacentHTML('beforeend','<div class="v15-contact-banner declined">Esta conversa foi encerrada porque uma das pessoas excluiu a conta do Conecta.</div>');
     }else if(activeChat && relationshipBlocked){
       head.insertAdjacentHTML('beforeend',`<div class="v15-contact-banner declined">${activeChat.status==='blocked'&&activeChat.blockerId===currentUid()?'Você bloqueou este contato.':'Este contato está bloqueado.'} Não é possível enviar novas mensagens enquanto houver bloqueio.</div>`);
     }
     const allowed=!!activeChat && verified() && !waitingSend && !relationshipBlocked && (activeChat.newConversation || status==='accepted' || (status==='pending' && activeChat.customerId===currentUid() && remainingPending>0));
     input.disabled=send.disabled=!allowed;
-    input.placeholder=activeChat && status==='pending'?(activeChat.customerId===currentUid() && remainingPending>0?`Você pode enviar mais ${remainingPending} ${remainingPending===1?'mensagem':'mensagens'} antes da autorização...`:'Aguardando autorização para continuar...'):activeChat && relationshipBlocked?'Conversa bloqueada':activeChat && status==='declined'?'Conversa encerrada':'Escreva sua mensagem...';
+    input.placeholder=activeChat && status==='pending'?(activeChat.customerId===currentUid() && remainingPending>0?`Você pode enviar mais ${remainingPending} ${remainingPending===1?'mensagem':'mensagens'} antes da autorização...`:'Aguardando autorização para continuar...'):activeChat && relationshipBlocked?'Conversa bloqueada':activeChat && (status==='declined'||status==='removed')?'Conversa encerrada':'Escreva sua mensagem...';
     renderMessages();
   }
   function chooseThread(thread){

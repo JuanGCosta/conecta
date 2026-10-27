@@ -1,0 +1,13 @@
+{
+  "name": "conecta-testes-regras",
+  "private": true,
+  "description": "Testes das regras do Firestore no emulador local (não acessa o Firebase real).",
+  "type": "module",
+  "scripts": {
+    "test": "firebase emulators:exec --only firestore --project demo-conecta \"node --test\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^6.0.0",
+    "firebase": "^13.1.0"
+  }
+}

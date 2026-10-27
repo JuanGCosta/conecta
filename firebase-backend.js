@@ -39,7 +39,15 @@
       auth.languageCode = 'pt-BR';
       const {collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where, orderBy, limit, onSnapshot, serverTimestamp, writeBatch} = dbm;
       backend.subscribeAuth = callback => authm.onAuthStateChanged(auth, u => {backend.user=u;callback(u)}, err => {backend.error=err.message;callback(null)});
+      // V47: mesma verificação de nomes reservados do firestore.rules, feita antes
+      // de criar a conta para a pessoa não ficar com um nome que será recusado.
+      const reservedName = name => String(name||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
+        .replace(/[@4]/g,'a').replace(/3/g,'e').replace(/[1!|]/g,'i').replace(/0/g,'o').replace(/[5$]/g,'s')
+        .replace(/[^a-z]/g,'').match(/conecta|administrador|administracao|moderador|moderacao/);
+      const reservedNameMessage = 'Esse nome lembra um nome oficial do Conecta e não pode ser usado. Use seu nome ou o nome do seu negócio.';
+      backend.isReservedName = name => !!reservedName(name);
       backend.signup = async (name,email,password) => {
+        if (reservedName(name)) throw Error(reservedNameMessage);
         const credential = await authm.createUserWithEmailAndPassword(auth,email,password);
         await authm.updateProfile(credential.user,{displayName:name.trim().slice(0,70)});
         await authm.sendEmailVerification(credential.user);
@@ -67,6 +75,7 @@
       backend.saveProfile = async data => {
         const u=auth.currentUser;
         if (!u?.emailVerified) throw Error('Confirme seu e-mail primeiro.');
+        if (reservedName(data.name)) throw Error(reservedNameMessage);
         const {phone,...publicProfile}=data;
         const batch=writeBatch(db);
         batch.set(doc(db,'profiles',u.uid), {...publicProfile,hasWhatsapp:!!phone,ownerUid:u.uid,updatedAt:serverTimestamp()});
@@ -86,6 +95,58 @@
         batch.delete(doc(db,'profiles',u.uid));
         batch.delete(doc(db,'contacts',u.uid));
         await batch.commit();
+      };
+      // V47: exclusão da conta pelo próprio usuário (LGPD). Apaga perfil, telefone,
+      // portfólio, pedidos (com as propostas recebidas), propostas enviadas,
+      // favoritos e avaliações feitas e recebidas. Nas conversas, troca o próprio
+      // nome por "Usuário removido" e encerra a conversa. Por último, apaga o login.
+      // Cada etapa pode ser repetida: se algo falhar no meio, basta tentar de novo.
+      backend.deleteAccount = async password => {
+        const u=auth.currentUser;
+        if(!u)throw Error('Entre na sua conta para excluí-la.');
+        await authm.reauthenticateWithCredential(u,authm.EmailAuthProvider.credential(u.email,password));
+        if(u.emailVerified){
+          const uid=u.uid;
+          await u.getIdToken(true);
+          const commitInChunks=async ops=>{
+            for(let i=0;i<ops.length;i+=400){
+              const batch=writeBatch(db);
+              ops.slice(i,i+400).forEach(op=>op(batch));
+              await batch.commit();
+            }
+          };
+          const [sentOffers,chats,requests,favorites,works,received]=await Promise.all([
+            getDocs(query(dbm.collectionGroup(db,'offers'),where('providerUid','==',uid))),
+            getDocs(query(collection(db,'chats'),where('participants','array-contains',uid))),
+            getDocs(query(collection(db,'requests'),where('ownerUid','==',uid))),
+            getDocs(collection(db,'users',uid,'favorites')),
+            getDocs(query(collection(db,'works'),where('ownerUid','==',uid))),
+            getDocs(collection(db,'profiles',uid,'reviews'))
+          ]);
+          const ops=[];
+          sentOffers.docs.forEach(d=>ops.push(b=>b.delete(d.ref)));
+          // Avaliações feitas: só existem onde houve conversa aceita como cliente.
+          chats.docs.filter(c=>c.data().customerId===uid)
+            .forEach(c=>ops.push(b=>b.delete(doc(db,'profiles',c.data().providerId,'reviews',uid))));
+          // As propostas de cada pedido saem antes do pedido (a regra consulta o dono do pedido).
+          for(const r of requests.docs){
+            (await getDocs(collection(r.ref,'offers'))).docs.forEach(o=>ops.push(b=>b.delete(o.ref)));
+            ops.push(b=>b.delete(r.ref));
+          }
+          favorites.docs.forEach(d=>ops.push(b=>b.delete(d.ref)));
+          works.docs.forEach(d=>ops.push(b=>b.delete(d.ref)));
+          // O perfil sai no mesmo lote das avaliações recebidas: a regra só libera
+          // apagá-las quando o perfil deixa de existir.
+          ops.push(b=>b.delete(doc(db,'profiles',uid)));
+          ops.push(b=>b.delete(doc(db,'contacts',uid)));
+          received.docs.forEach(d=>ops.push(b=>b.delete(d.ref)));
+          chats.docs.forEach(c=>{
+            const own=c.data().customerId===uid?'customerName':'providerName';
+            ops.push(b=>b.update(c.ref,{status:'removed',[own]:'Usuário removido',lastMessage:'Conversa encerrada.',lastSenderId:uid,updatedAt:serverTimestamp()}));
+          });
+          await commitInChunks(ops);
+        }
+        await authm.deleteUser(u);
       };
       backend.getContact = async uid => {
         if (!auth.currentUser?.emailVerified) throw Error('Confirme o e-mail primeiro.');
@@ -168,6 +229,7 @@
           const t=existing.data();
           if (!existing.exists() || t.customerId!==u.uid || t.providerId!==providerId ||
               !Array.isArray(t.participants) || !t.participants.includes(u.uid)) throw e;
+          if (t.status==='removed') throw Error('Esta conversa foi encerrada porque a outra pessoa excluiu a conta.');
           if (t.status==='declined' || t.status==='blocked') throw Error(t.status==='blocked'?'Esta conversa foi bloqueada.':'Este contato foi recusado e está encerrado.');
           const retry=writeBatch(db);
           if (t.status==='pending') {
@@ -235,6 +297,7 @@
           await batch.commit();
           return {status:'pending',pendingCount:nextCount};
         }
+        if(live.status==='removed') throw Error('Esta conversa foi encerrada porque a outra pessoa excluiu a conta.');
         if(live.status==='declined' || live.status==='blocked') throw Error(live.status==='blocked'?'Esta conversa está bloqueada.':'Este contato foi recusado e está encerrado.');
         throw Error('Aguarde a autorização do contato.');
       };
