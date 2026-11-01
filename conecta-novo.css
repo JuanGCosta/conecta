@@ -472,3 +472,38 @@ body[data-page="explore"] .header .top-cta:not(.btn-accent){background:transpare
 .reveal-element.is-visible{opacity:1}
 
 .footer-bottom a{color:#b9ecae !important}
+
+
+/* V49 · hero com identidade da marca */
+#page-home .hero-brand-visual::before{background:linear-gradient(135deg,#d8efda 0%,#e7f5e5 52%,#c6e3d2 100%)}
+#page-home .hero-brand-panel{display:flex;flex-direction:column;justify-content:space-between;padding:30px 30px 28px;background:linear-gradient(160deg,#f7fbf7 0%,#ecf7ee 48%,#d5ebdd 100%);border:1px solid #d4e6d8}
+#page-home .hero-brand-panel-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+#page-home .hero-brand-pill,#page-home .hero-brand-status,#page-home .hero-brand-tags span,#page-home .hero-brand-mini-copy strong{font-family:'DM Sans',sans-serif}
+#page-home .hero-brand-pill{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:999px;background:#194432;color:#f0faf3;font-size:10px;font-weight:800;letter-spacing:.16em}
+#page-home .hero-brand-status{display:inline-flex;align-items:center;padding:9px 12px;border-radius:999px;background:#ffffffb8;color:#2f6d54;font-size:11px;font-weight:700;border:1px solid #d8e8dc}
+#page-home .hero-brand-showcase{display:flex;flex-direction:column;align-items:flex-start;gap:20px}
+#page-home .hero-brand-mark,#page-home .hero-brand-mini-mark{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;transform:rotate(-16deg)}
+#page-home .hero-brand-mark{width:116px;height:116px;padding:18px;border-radius:34px;background:#fff;border:1px solid #dcece0;box-shadow:0 18px 44px #163e2d14}
+#page-home .hero-brand-mini-mark{width:56px;height:56px;gap:6px;padding:9px;border-radius:18px;background:#ffffffd6;border:1px solid #dbeadf}
+#page-home .hero-brand-mark i,#page-home .hero-brand-mini-mark i{display:block;border-radius:13px;background:#1f7f57;box-shadow:inset 0 -3px 0 #15664520}
+#page-home .hero-brand-mark i:nth-child(2),#page-home .hero-brand-mark i:nth-child(3),#page-home .hero-brand-mini-mark i:nth-child(2),#page-home .hero-brand-mini-mark i:nth-child(3){background:#8cc9a1}
+#page-home .hero-brand-wording strong{display:block;font:800 clamp(40px,4.2vw,58px)/.95 Manrope,sans-serif;letter-spacing:-.06em;color:#14372c}
+#page-home .hero-brand-wording strong span{color:#2da36f}
+#page-home .hero-brand-wording p{margin:14px 0 0;max-width:300px;color:#5b7a69;font-size:15px;line-height:1.6}
+#page-home .hero-brand-tags{display:flex;flex-wrap:wrap;gap:11px}
+#page-home .hero-brand-tags span{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:999px;background:#fff;border:1px solid #d7e9dc;color:#1a5f42;font-size:11px;font-weight:800;box-shadow:0 8px 18px #173c2d0d}
+#page-home .hero-brand-card{display:flex;flex-direction:column;justify-content:center;gap:16px;padding:20px;background:linear-gradient(180deg,#ffffff 0%,#eef8f1 100%);border-color:#d7e8db}
+#page-home .hero-brand-mini-copy{display:flex;flex-direction:column;gap:5px}
+#page-home .hero-brand-mini-copy strong{font-size:18px;line-height:1.1;color:#173e31}
+#page-home .hero-brand-mini-copy small{font-size:12px;color:#688375;line-height:1.5}
+@media(max-width:980px){
+  #page-home .hero-brand-mark{width:98px;height:98px}
+  #page-home .hero-brand-wording strong{font-size:42px}
+}
+@media(max-width:760px){
+  #page-home .hero-brand-panel{padding:22px 20px 20px}
+  #page-home .hero-brand-mark{width:84px;height:84px;padding:14px;border-radius:24px;gap:8px}
+  #page-home .hero-brand-wording strong{font-size:34px}
+  #page-home .hero-brand-wording p{font-size:13px}
+  #page-home .hero-brand-tags span{padding:9px 12px;font-size:10px}
+}

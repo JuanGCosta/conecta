@@ -1,27 +1,38 @@
 
-/* Central de Privacidade — V34 */
+/* Central de Privacidade — V49 */
 .v34-privacy-action{border:1px solid #c7d9cb!important;background:#edf5ee!important;color:#16563c!important}
 .v34-auth-policy{display:flex!important;flex-direction:row!important;align-items:flex-start!important;gap:11px!important;background:#f5faf5;border:1px solid #e0ece2;padding:13px!important;border-radius:12px;font-weight:500!important;line-height:1.5;font-size:12px!important}
 .v34-auth-policy input{width:17px!important;height:17px!important;min-width:17px!important;margin:2px 0 0!important;accent-color:#15583d;flex:none;box-shadow:none!important}
-.v34-auth-policy a,.footer-bottom a{color:#b9ecae !important;text-decoration:underline;text-underline-offset:3px}
+.v34-auth-policy a,.footer-bottom a{color:#c6ebc4!important;text-decoration:underline;text-underline-offset:3px}
 .footer-bottom span:last-child{display:flex;flex-wrap:wrap;gap:18px}
-.v34-privacy-modal{max-width:610px;color:#163c2c}
-.v34-privacy-modal .v34-overline{display:block;font-size:11px;font-weight:850;color:#338258;letter-spacing:.14em;text-transform:uppercase;margin-bottom:11px}
-.v34-privacy-modal h2{font-size:clamp(25px,4vw,34px);margin:0 0 10px;letter-spacing:-.04em;line-height:1.12}
-.v34-privacy-modal>p{color:#688373;font-size:13px;line-height:1.6;margin:0 0 20px}
-.v34-privacy-links{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+.v34-privacy-modal{max-width:760px;color:#163c2c}
+.v34-privacy-hero{padding:4px 0 8px}
+.v34-privacy-hero-tight{padding-bottom:2px}
+.v34-privacy-modal .v34-overline{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:#eef7f0;color:#2f8359;font-size:11px;font-weight:850;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
+.v34-privacy-modal h2{font-size:clamp(28px,4vw,38px);margin:0 0 10px;letter-spacing:-.05em;line-height:1.05;font-family:Manrope,'DM Sans',sans-serif}
+.v34-privacy-modal>p,.v34-privacy-hero>p{color:#688373;font-size:14px;line-height:1.75;margin:0 0 18px}
+.v34-privacy-links{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:18px}
 .v34-privacy-links a{display:inline-flex;align-items:center;justify-content:center;padding:12px 15px;border:1px solid #cee2d1;border-radius:13px;color:#135338!important;font-weight:800;text-decoration:none;background:#f4faf5;font-size:12px}
-.v34-privacy-section{padding:18px;border:1px solid #e2eae3;border-radius:17px;margin:10px 0;background:#fff}
-.v34-privacy-section h3{font-size:15px;color:#153d2c;margin:0 0 6px}
-.v34-privacy-section p{font-size:12px;color:#6b8073;line-height:1.6;margin:0 0 11px}
-.v34-privacy-section button{border-radius:12px;padding:11px 15px;font-weight:800;cursor:pointer;border:1px solid #cfe2d2;background:#edf6ef;color:#15523a;font-size:12px}
+.v34-privacy-links a:hover{transform:translateY(-1px)}
+.v35-privacy-contact{margin:6px 0 0!important;color:#547365!important;font-size:13px!important}
+.v35-privacy-contact a{color:#145c40!important;text-decoration:underline!important;font-weight:800!important;overflow-wrap:anywhere}
+.v34-privacy-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:12px}
+.v34-card-eyebrow{display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;background:#eef7f0;color:#2d8059;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.v34-privacy-section{display:flex;flex-direction:column;justify-content:space-between;gap:16px;padding:20px;border:1px solid #e2eae3;border-radius:22px;background:linear-gradient(180deg,#fff 0%,#fbfdfb 100%);box-shadow:0 14px 28px #173d2d0a;margin:0}
+.v34-privacy-section h3{font-size:18px;font-family:Manrope,'DM Sans',sans-serif;color:#153d2c;margin:0 0 8px;letter-spacing:-.03em}
+.v34-privacy-section p{font-size:13px;color:#6b8073;line-height:1.7;margin:0}
+.v34-privacy-section button{border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer;border:1px solid #cfe2d2;background:#edf6ef;color:#15523a;font-size:12px;align-self:flex-start}
 .v34-privacy-section button:disabled{opacity:.55;cursor:wait}
-.v34-privacy-section.danger{background:#fffbfa;border-color:#f0dad6}
+.v34-privacy-section.accent{background:linear-gradient(180deg,#f7fbf8 0%,#edf7f0 100%)}
+.v34-privacy-section.danger{background:linear-gradient(180deg,#fffafa 0%,#fff4f2 100%);border-color:#f0dad6}
+.v34-privacy-section.danger .v34-card-eyebrow{background:#fff0ec;color:#9a4737}
 .v34-privacy-section.danger button{background:#fff2ef;color:#963e30;border-color:#ecc7c1}
-.v34-privacy-notice{padding:13px 15px;border-radius:13px;background:#fff6e6;border:1px solid #eedaba;color:#7b5c27;font-size:12px;line-height:1.6;margin:12px 0}
-.v34-privacy-feedback{min-height:23px;margin-top:9px;font-size:12px;color:#235940;font-weight:700}
-@media(max-width:700px){.v34-privacy-section{padding:15px}.v30-header-side{flex-wrap:wrap}}
-#modal:has(.v34-privacy-modal) .modal{width:min(700px,calc(100vw - 24px));max-width:700px;max-height:min(90dvh,900px);padding:32px 28px;overflow-x:hidden;overflow-y:auto;border-radius:22px;background:#fff}
-@media(max-width:700px){#modal:has(.v34-privacy-modal) .modal{max-height:calc(100dvh - 26px);padding:25px 16px}}
-
-.v35-privacy-contact{margin:10px 0 18px!important;color:#547365!important;font-size:13px!important}.v35-privacy-contact a{color:#145c40!important;text-decoration:underline!important;font-weight:800!important;overflow-wrap:anywhere}
+.v34-privacy-notice{padding:14px 16px;border-radius:16px;background:#fff6e6;border:1px solid #eedaba;color:#7b5c27;font-size:12px;line-height:1.7;margin:16px 0 0}
+.v34-privacy-feedback{min-height:24px;margin-top:14px;font-size:12px;color:#235940;font-weight:700}
+.v34-delete-form label{display:block;font-size:12px;font-weight:800;color:#27493b}
+.v34-delete-form input{display:block;width:100%;margin-top:8px;border:1px solid #dce7de;border-radius:12px;background:#fff;color:#17362e;padding:13px;outline-color:#79cbaa}
+.v34-delete-actions{display:flex;gap:10px;flex-wrap:wrap}
+.v34-delete-actions .ghost{background:#fff;border:1px solid #d6e4da;color:#234e3d}
+@media(max-width:700px){.v30-header-side{flex-wrap:wrap}.v34-privacy-grid{grid-template-columns:1fr}.v34-privacy-section{padding:16px}.v34-delete-actions{flex-direction:column}.v34-delete-actions button{width:100%}}
+#modal:has(.v34-privacy-modal) .modal{width:min(780px,calc(100vw - 24px));max-width:780px;max-height:min(90dvh,900px);padding:30px 26px;overflow-x:hidden;overflow-y:auto;border-radius:28px;background:linear-gradient(180deg,#fff 0%,#f9fcfa 100%)}
+@media(max-width:700px){#modal:has(.v34-privacy-modal) .modal{max-height:calc(100dvh - 26px);padding:24px 14px;border-radius:22px}}
