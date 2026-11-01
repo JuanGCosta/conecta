@@ -13,6 +13,6 @@ window.CONECTA_FIREBASE_CONFIG = {
 // Tipo da chave: "enterprise" (reCAPTCHA Enterprise, recomendado pelo Firebase) ou "v3".
 // Enquanto a chave estiver vazia, o App Check fica desligado e nada muda no site.
 
-window.CONECTA_APP_CHECK_SITE_KEY = "";
+window.CONECTA_APP_CHECK_SITE_KEY = "6Lfi3wsuAAAAAAgscXpA7ZfG_-WczgQP7g_IhX4J";
 
 window.CONECTA_APP_CHECK_PROVIDER = window.CONECTA_APP_CHECK_PROVIDER || "enterprise";
