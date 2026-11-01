@@ -1,5 +1,7 @@
 /* Conecta: secure Firebase email action handler for the free GitHub Pages deployment. */
-const SITE_URL = 'https://juangcosta.github.io/conecta/';
+// Endereço do Conecta calculado a partir desta página, para funcionar no
+// GitHub Pages e no domínio próprio sem precisar trocar o código.
+const SITE_URL = new URL('./', location.href).href;
 const params = new URLSearchParams(location.search);
 const mode = params.get('mode');
 const code = params.get('oobCode');
@@ -59,6 +61,18 @@ async function run() {
       import(`https://www.gstatic.com/firebasejs/${version}/firebase-auth.js`)
     ]);
     const app = appSDK.getApps().length ? appSDK.getApp() : appSDK.initializeApp(config);
+    // Mesmo App Check do site: se a fiscalização for ligada também para o login,
+    // esta página continua confirmando e-mails e trocando senhas.
+    const appCheckKey = String(window.CONECTA_APP_CHECK_SITE_KEY || '').trim();
+    if (appCheckKey) {
+      try {
+        const ac = await import(`https://www.gstatic.com/firebasejs/${version}/firebase-app-check.js`);
+        const provider = String(window.CONECTA_APP_CHECK_PROVIDER || 'enterprise') === 'v3'
+          ? new ac.ReCaptchaV3Provider(appCheckKey)
+          : new ac.ReCaptchaEnterpriseProvider(appCheckKey);
+        ac.initializeAppCheck(app, { provider, isTokenAutoRefreshEnabled: true });
+      } catch (e) { console.warn('Conecta App Check:', e?.code || e); }
+    }
     const auth = authSDK.getAuth(app);
     auth.languageCode='pt-BR';
     if (mode === 'verifyEmail' || mode === 'verifyAndChangeEmail') {

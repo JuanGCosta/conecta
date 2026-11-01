@@ -9,5 +9,8 @@ window.CONECTA_FIREBASE_CONFIG = {
   appId: "1:709373004225:web:9d144da826740d60dc4740"
 };
 
-// App Check (opcional): informe a chave pública do reCAPTCHA v3 após registrar o app no console.
-window.CONECTA_APP_CHECK_SITE_KEY = window.CONECTA_APP_CHECK_SITE_KEY || "";
+// App Check (opcional): informe a chave pública do reCAPTCHA após registrar o app no console.
+// Tipo da chave: "enterprise" (reCAPTCHA Enterprise, recomendado pelo Firebase) ou "v3".
+// Enquanto a chave estiver vazia, o App Check fica desligado e nada muda no site.
+window.CONECTA_APP_CHECK_SITE_KEY = window.CONECTA_APP_CHECK_SITE_KEY || "6LdPqAsuAAAAANjMtdne2P3SvirxBipDlnotkiTC";
+window.CONECTA_APP_CHECK_PROVIDER = window.CONECTA_APP_CHECK_PROVIDER || "enterprise";
