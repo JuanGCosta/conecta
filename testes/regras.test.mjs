@@ -358,3 +358,61 @@ describe('Exclusão de conta (LGPD)', () => {
     await assertFails(getDoc(doc(db(CLI), 'contacts', 'prof')));
   });
 });
+
+describe('Capa do perfil em documento separado (V48)', () => {
+  const capa = 'data:image/jpeg;base64,' + 'A'.repeat(2000);
+  const midia = (uid, extra = {}) => ({ ownerUid: uid, cover: capa, updatedAt: serverTimestamp(), ...extra });
+
+  test('perfil no formato antigo (capa dentro do perfil) continua aceito', async () => {
+    await assertSucceeds(setDoc(doc(db(PROF), 'profiles', 'prof'), { ...perfil('prof', 'Paulo Pintor'), cover: capa }));
+  });
+  test('perfil no formato novo (hasCover) é aceito', async () => {
+    await assertSucceeds(setDoc(doc(db(PROF), 'profiles', 'prof'), { ...perfil('prof', 'Paulo Pintor'), cover: '', hasCover: true }));
+  });
+  test('hasCover precisa ser verdadeiro ou falso', async () => {
+    await assertFails(setDoc(doc(db(PROF), 'profiles', 'prof'), { ...perfil('prof', 'Paulo Pintor'), hasCover: 'sim' }));
+  });
+  test('o dono salva perfil e capa no mesmo lote', async () => {
+    const d = db(PROF);
+    const lote = writeBatch(d);
+    lote.set(doc(d, 'profiles', 'prof'), { ...perfil('prof', 'Paulo Pintor'), cover: '', hasCover: true });
+    lote.set(doc(d, 'profileMedia', 'prof'), midia('prof'));
+    await assertSucceeds(lote.commit());
+  });
+  test('ninguém grava a capa de outra pessoa', async () => {
+    await assertFails(setDoc(doc(db(ESTRANHO), 'profileMedia', 'prof'), midia('prof')));
+  });
+  test('a capa só aceita imagem JPEG no formato do site', async () => {
+    await assertFails(setDoc(doc(db(PROF), 'profileMedia', 'prof'), midia('prof', { cover: 'https://exemplo.com/capa.jpg' })));
+  });
+  test('a capa não passa do tamanho máximo', async () => {
+    await assertFails(setDoc(doc(db(PROF), 'profileMedia', 'prof'), midia('prof', { cover: 'data:image/jpeg;base64,' + 'A'.repeat(96000) })));
+  });
+  test('não aceita campos extras no documento da capa', async () => {
+    await assertFails(setDoc(doc(db(PROF), 'profileMedia', 'prof'), midia('prof', { phone: '12999990000' })));
+  });
+  test('conta sem e-mail confirmado não grava capa', async () => {
+    await assertFails(setDoc(doc(db(conta('prof', 'Paulo Pintor', { email_verified: false })), 'profileMedia', 'prof'), midia('prof')));
+  });
+  test('visitante abre a capa de um perfil específico', async () => {
+    await semera(d => setDoc(doc(d, 'profileMedia', 'prof'), { ownerUid: 'prof', cover: capa, updatedAt: antigo() }));
+    await assertSucceeds(getDoc(doc(visitante(), 'profileMedia', 'prof')));
+  });
+  test('ninguém baixa todas as capas de uma vez', async () => {
+    await semera(d => setDoc(doc(d, 'profileMedia', 'prof'), { ownerUid: 'prof', cover: capa, updatedAt: antigo() }));
+    await assertFails(getDocs(collection(visitante(), 'profileMedia')));
+  });
+  test('excluir a conta apaga a capa junto com o perfil', async () => {
+    await semera(d => setDoc(doc(d, 'profileMedia', 'prof'), { ownerUid: 'prof', cover: capa, updatedAt: antigo() }));
+    const d = db(PROF);
+    const lote = writeBatch(d);
+    lote.delete(doc(d, 'profiles', 'prof'));
+    lote.delete(doc(d, 'profileMedia', 'prof'));
+    lote.delete(doc(d, 'contacts', 'prof'));
+    await assertSucceeds(lote.commit());
+  });
+  test('ninguém apaga a capa de outra pessoa', async () => {
+    await semera(d => setDoc(doc(d, 'profileMedia', 'prof'), { ownerUid: 'prof', cover: capa, updatedAt: antigo() }));
+    await assertFails(deleteDoc(doc(db(ESTRANHO), 'profileMedia', 'prof')));
+  });
+});
