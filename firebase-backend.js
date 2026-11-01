@@ -67,17 +67,47 @@
         backend.user=auth.currentUser;
         return auth.currentUser;
       };
-      backend.getOwnProfile = async () => {
-        if (!auth.currentUser) return null;
-        const [snap,contact,media] = await Promise.all([
-          getDoc(doc(db,'profiles',auth.currentUser.uid)),
-          getDoc(doc(db,'contacts',auth.currentUser.uid)),
-          getDoc(doc(db,'profileMedia',auth.currentUser.uid))
-        ]);
-        if(!snap.exists())return null;
-        const cover=(media.exists()&&media.data().cover)||snap.data().cover||'';
-        return {...snap.data(),cover,phone:contact.exists()?contact.data().phone:'',id:snap.id};
-      };
+      
+backend.getOwnProfile = async () => {
+  const u = auth.currentUser;
+  if (!u) return null;
+
+  const uid = u.uid;
+
+  const [snap, media] = await Promise.all([
+    getDoc(doc(db, 'profiles', uid)),
+    getDoc(doc(db, 'profileMedia', uid))
+  ]);
+
+  if (!snap.exists()) return null;
+
+  let phone = '';
+
+  if (u.emailVerified) {
+    try {
+      const contact = await getDoc(doc(db, 'contacts', uid));
+      phone = contact.exists()
+        ? (contact.data().phone || '')
+        : '';
+    } catch (err) {
+      if (err.code !== 'permission-denied') throw err;
+      console.warn('[Conecta] Contato não autorizado:', err);
+    }
+  }
+
+  const cover =
+    (media.exists() && media.data().cover) ||
+    snap.data().cover ||
+    '';
+
+  return {
+    ...snap.data(),
+    cover,
+    phone,
+    id: snap.id
+  };
+};
+
       // V48: a lista de profissionais é baixada inteira por cada visitante, então
       // o documento do perfil guarda só uma foto pequena (até 240 px, exibida no
       // máximo com 100 px) e a capa vai para profileMedia/{uid}, lida sob demanda.
