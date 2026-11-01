@@ -112,8 +112,24 @@
     const status=$('#cloudProfileStatus');if(status)status.textContent=!configured()?'Firebase não configurado':!user?'Entre para publicar':!verified()?'Confirme seu e-mail':state.profile?'Perfil publicado no Conecta':'Pronto para criar seu perfil';
     updateProfileUI();
   }
+  // V48: as capas ficam fora da lista de perfis. Só a do perfil aberto é baixada;
+  // quando chega, refreshCatalog() redesenha a página do profissional com ela.
+  const coverCache=new Map();
+  function coverFor(p){
+    if(p.cover || !p.hasCover || !backend()?.getProfileCover)return p.cover||'';
+    const stamp=p.updatedAt?.toMillis?.()||0;
+    const hit=coverCache.get(p.ownerUid);
+    if(hit && hit.stamp===stamp)return hit.cover;
+    coverCache.set(p.ownerUid,{stamp,cover:''});
+    backend().getProfileCover(p.ownerUid).then(cover=>{coverCache.set(p.ownerUid,{stamp,cover});if(cover)refreshCatalog()}).catch(()=>{});
+    return '';
+  }
   function profilesForCatalog(){
-    if(configured())return realProfiles.filter(p=>window.ConectaRegions?.isSJC(p.city) ?? p.city==='São José dos Campos').map(p=>({...p,id:p.ownerUid===currentUid()?'mine':'user:'+p.ownerUid,initials:nick(p.name),demo:false}));
+    const openPro=currentPage==='professional' && typeof selectedPro!=='undefined' ? selectedPro : null;
+    if(configured())return realProfiles.filter(p=>window.ConectaRegions?.isSJC(p.city) ?? p.city==='São José dos Campos').map(p=>{
+      const id=p.ownerUid===currentUid()?'mine':'user:'+p.ownerUid;
+      return {...p,id,initials:nick(p.name),demo:false,cover:id===openPro?coverFor(p):(p.cover||'')};
+    });
     return [];
   }
   function requireAuth(reason){

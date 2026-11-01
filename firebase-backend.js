@@ -69,19 +69,49 @@
       };
       backend.getOwnProfile = async () => {
         if (!auth.currentUser) return null;
-        const [snap,contact] = await Promise.all([
+        const [snap,contact,media] = await Promise.all([
           getDoc(doc(db,'profiles',auth.currentUser.uid)),
-          getDoc(doc(db,'contacts',auth.currentUser.uid))
+          getDoc(doc(db,'contacts',auth.currentUser.uid)),
+          getDoc(doc(db,'profileMedia',auth.currentUser.uid))
         ]);
-        return snap.exists() ? {...snap.data(),phone:contact.exists()?contact.data().phone:'',id:snap.id} : null;
+        if(!snap.exists())return null;
+        const cover=(media.exists()&&media.data().cover)||snap.data().cover||'';
+        return {...snap.data(),cover,phone:contact.exists()?contact.data().phone:'',id:snap.id};
+      };
+      // V48: a lista de profissionais é baixada inteira por cada visitante, então
+      // o documento do perfil guarda só uma foto pequena (até 240 px, exibida no
+      // máximo com 100 px) e a capa vai para profileMedia/{uid}, lida sob demanda.
+      const shrinkPhoto = src => new Promise(resolve => {
+        if(!src)return resolve('');
+        const img=new Image();
+        img.onload=()=>{
+          const side=Math.max(img.naturalWidth,img.naturalHeight);
+          if(side<=240 && src.length<=40000)return resolve(src);
+          const scale=Math.min(1,240/side);
+          const canvas=document.createElement('canvas');
+          canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+          canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+          canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+          let quality=.86, out=canvas.toDataURL('image/jpeg',quality);
+          while(out.length>40000 && quality>.45){quality-=.1;out=canvas.toDataURL('image/jpeg',quality)}
+          resolve(out);
+        };
+        img.onerror=()=>resolve(src); // Se não der para reduzir, mantém a foto como veio.
+        img.src=src;
+      });
+      backend.getProfileCover = async uid => {
+        const media=await getDoc(doc(db,'profileMedia',uid));
+        return media.exists()?(media.data().cover||''):'';
       };
       backend.saveProfile = async data => {
         const u=auth.currentUser;
         if (!u?.emailVerified) throw Error('Confirme seu e-mail primeiro.');
         if (reservedName(data.name)) throw Error(reservedNameMessage);
-        const {phone,...publicProfile}=data;
+        const {phone,cover,...publicProfile}=data;
+        const photo=await shrinkPhoto(publicProfile.photo);
         const batch=writeBatch(db);
-        batch.set(doc(db,'profiles',u.uid), {...publicProfile,hasWhatsapp:!!phone,ownerUid:u.uid,updatedAt:serverTimestamp()});
+        batch.set(doc(db,'profiles',u.uid), {...publicProfile,photo,cover:'',hasCover:!!cover,hasWhatsapp:!!phone,ownerUid:u.uid,updatedAt:serverTimestamp()});
+        batch.set(doc(db,'profileMedia',u.uid), {ownerUid:u.uid,cover:cover||'',updatedAt:serverTimestamp()});
         batch.set(doc(db,'contacts',u.uid), {ownerUid:u.uid,phone:phone||'',updatedAt:serverTimestamp()});
         await batch.commit();
       };
@@ -96,6 +126,7 @@
         const batch=writeBatch(db);
         works.docs.forEach(work=>batch.delete(work.ref));
         batch.delete(doc(db,'profiles',u.uid));
+        batch.delete(doc(db,'profileMedia',u.uid));
         batch.delete(doc(db,'contacts',u.uid));
         await batch.commit();
       };
@@ -142,6 +173,7 @@
           // apagá-las quando o perfil deixa de existir.
           ops.push(b=>b.delete(doc(db,'profiles',uid)));
           ops.push(b=>b.delete(doc(db,'contacts',uid)));
+          ops.push(b=>b.delete(doc(db,'profileMedia',uid)));
           received.docs.forEach(d=>ops.push(b=>b.delete(d.ref)));
           chats.docs.forEach(c=>{
             const own=c.data().customerId===uid?'customerName':'providerName';
@@ -415,9 +447,10 @@
       backend.exportMyData = async () => {
         const u=ownVerified();
         const uid=u.uid;
-        const [prof,contact,favorites,works,requests,chats,reviewedProfile] = await Promise.all([
+        const [prof,contact,media,favorites,works,requests,chats,reviewedProfile] = await Promise.all([
           getDoc(doc(db,'profiles',uid)),
           getDoc(doc(db,'contacts',uid)),
+          getDoc(doc(db,'profileMedia',uid)),
           getDocs(collection(db,'users',uid,'favorites')),
           getDocs(query(collection(db,'works'),where('ownerUid','==',uid))),
           getDocs(query(collection(db,'requests'),where('ownerUid','==',uid))),
@@ -445,6 +478,7 @@
           account:{uid,email:u.email,displayName:u.displayName,emailVerified:u.emailVerified},
           profile:prof.exists()?serialize(prof.data()):null,
           privateContact:contact.exists()?serialize(contact.data()):null,
+          profileMedia:media.exists()?serialize(media.data()):null,
           favorites:rows(favorites),works:rows(works),requests:rows(requests),
           proposalsReceived:offers,reviewsReceived:rows(reviewedProfile),chats:threads
         };
