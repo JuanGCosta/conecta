@@ -31,7 +31,10 @@
       if(appCheckKey){
         try{
           const ac=await import(`https://www.gstatic.com/firebasejs/${v}/firebase-app-check.js`);
-          ac.initializeAppCheck(app,{provider:new ac.ReCaptchaV3Provider(appCheckKey),isTokenAutoRefreshEnabled:true});
+          const provider=String(window.CONECTA_APP_CHECK_PROVIDER||'enterprise')==='v3'
+            ? new ac.ReCaptchaV3Provider(appCheckKey)
+            : new ac.ReCaptchaEnterpriseProvider(appCheckKey);
+          ac.initializeAppCheck(app,{provider,isTokenAutoRefreshEnabled:true});
           backend.appCheckEnabled=true;
         }catch(e){console.warn('[Conecta] Não foi possível iniciar App Check:',e)}
       }
