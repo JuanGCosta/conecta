@@ -1,0 +1,17 @@
+{
+  "name": "Conecta | Profissionais em São José dos Campos",
+  "short_name": "Conecta",
+  "description": "Encontre profissionais, explore serviços e publique seus pedidos com facilidade no Conecta.",
+  "lang": "pt-BR",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#103c30",
+  "theme_color": "#123f32",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
