@@ -48,7 +48,7 @@
       'Jardim Rosário','Jardim Sul','Jardim Anhembi','Jardim Portugal'
     ]},
     oeste:{title:'Zona Oeste',aliases:['zona oeste','regiao oeste','oeste','oeste sjc'],neighborhoods:[
-      'Jardim das Indústrias','Jardim Alvorada','Parque Residencial Aquarius','Aquarius','Urbanova'
+      'Jardim das Indústrias','Jardim Alvorada','Parque Residencial Aquarius','Aquarius','Jardim Aquarius','Urbanova','Jardim Colinas','Jardim Limoeiro'
     ]},
     leste:{title:'Zona Leste',aliases:['zona leste','regiao leste','leste','leste sjc'],neighborhoods:[
       'Jardim Castanheiras','Jardim Paraíso do Sol','Jardim Nova Michigan','Parque Novo Horizonte',
@@ -62,7 +62,7 @@
       'Vila São Benedito','Jardim Souto','Parque Martim Cererê','Jardim Colorado','Jardim Uirá'
     ]},
     centro:{title:'Região Central',aliases:['zona central','regiao central','centro','central'],neighborhoods:[
-      'Monte Castelo','Vila Progresso','Vila Tupi','Jardim Esplanada','Jardim Esplanada II',
+      'Monte Castelo','Vila Progresso','Vila Tupi','Jardim Esplanada','Jardim Esplanada II','Vila Ema','Vila Adyana','Jardim São Dimas','São Dimas','Jardim Apolo','Jardim Paulista',
       'Vila Guarani','Vila Santa Luzia','Vila Maria','Vila Santos','Vila Terezinha','Jardim Jussara','Centro'
     ]}
   };
@@ -106,7 +106,20 @@
       // Other cities may explicitly use the same region name, but we do not infer it.
       return neighborhoodParts(pro.neighborhood).some(part=>pickRegion(part)===regionKey);
     }
-    return neighborhoodParts(pro.neighborhood).some(part=>part.includes(q));
+    const knownQuery=knownNeighborhoods.some(n=>n.canonical===q);
+    return neighborhoodParts(pro.neighborhood).some(part=>{
+      if(part===q)return true;
+      // Abreviações e variações de escrita como "Jd. Aquarius" / "Parque Residencial Aquarius".
+      // Evita identificar "Vila Santa Luzia" como "Jardim Santa Luzia".
+      if(q==='aquarius'||q==='jardim aquarius'||q==='parque residencial aquarius'){
+        return ['aquarius','jardim aquarius','parque residencial aquarius'].includes(part);
+      }
+      if(part==='aquarius'||part==='jardim aquarius'||part==='parque residencial aquarius'){
+        return ['aquarius','jardim aquarius','parque residencial aquarius'].includes(q);
+      }
+      // Bairro completo deve corresponder por inteiro. Digitação parcial exige 3+ caracteres.
+      return !knownQuery && q.length>=3 && part.startsWith(q);
+    });
   };
   window.ConectaRegions={regions,pickRegion,matches,matchesCity,isSJC,belongsToRegion,neighborhoodKey};
   const input=$('#neighborhoodFilter');
@@ -137,11 +150,11 @@
     // first 16 entries of the original curated list.
     const ranked=[...r.neighborhoods].sort((a,b)=>Number(available.has(neighborhoodKey(b)))-Number(available.has(neighborhoodKey(a))));
     const active=ranked.filter(n=>available.has(neighborhoodKey(n)));
-    const chips=ranked.map(n=>{
+    const chips=ranked.filter(n=>available.has(neighborhoodKey(n))).slice(0,10).map(n=>{
       const activeClass=available.has(neighborhoodKey(n))?'has-pro':'';
       return `<button type="button" data-v15-bairro="${n.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" class="${activeClass}">${n}</button>`;
     }).join('');
-    wrapper.innerHTML=`<div class="v15-region-result"><span class="v15-region-title">${r.title} · São José dos Campos</span><small>${matched.length} ${matched.length===1?'profissional cadastrado':'profissionais cadastrados'} com bairro identificado nessa região</small></div><div class="v15-region-chips">${chips}</div><p class="v15-region-info">A busca regional considera os bairros informados no cadastro. Perfis sem bairro não podem ser localizados por região. Os bairros sugeridos não representam uma lista completa.</p>`;
+    wrapper.innerHTML=`<div class="v15-region-result"><span class="v15-region-title">${r.title} · São José dos Campos</span><small>${matched.length} ${matched.length===1?'profissional cadastrado':'profissionais cadastrados'} com bairro registrado nessa região</small></div>${chips?`<div class="v15-region-chips">${chips}</div>`:''}<p class="v15-region-info">A busca regional considera os bairros informados no cadastro. Perfis sem bairro não podem ser localizados por região. Os bairros sugeridos não representam uma lista completa.</p>`;
   }
   function neighborhoodPartsList(profs){
     const names=new Set();
@@ -162,5 +175,17 @@
     input.value=btn.dataset.v15Bairro;
     input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();
   });
+  // A lista sugere regiões e bairros conhecidos, sem prometer cobertura de profissionais.
+  function refreshSuggestions(){
+    const values=new Set(Object.values(regions).flatMap(r=>r.neighborhoods));
+    Object.values(regions).forEach(r=>values.add(r.title));
+    if(typeof allPros==='function') allPros().forEach(p=>String(p.neighborhood||'').split(/[,;|/]/).forEach(n=>{if(n.trim())values.add(n.trim())}));
+    const html=[...values].sort((a,b)=>a.localeCompare(b,'pt-BR')).map(n=>`<option value="${n.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;')}"></option>`).join('');
+    const list=$('#v51NeighborhoodList');if(list)list.innerHTML=html;
+    const profileList=$('#v51ProfileNeighborhoodList');if(profileList)profileList.innerHTML=html;
+  }
+  input.addEventListener('focus',refreshSuggestions);
+  $('#profileForm input[name="neighborhood"]')?.addEventListener('focus',refreshSuggestions);
+  refreshSuggestions();
   draw();
 })();

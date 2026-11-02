@@ -7,3 +7,17 @@
 .status-icon[data-kind=info] .status-spinner:before{content:"✉";font-size:32px;font-weight:800;color:#1b6c4a}
 .support-contact{display:block;margin:10px auto 0;max-width:100%;overflow-wrap:anywhere;color:#205e44;font-size:12px;font-weight:700;text-decoration:underline;text-underline-offset:3px}
 .support-contact:hover{color:#123a2b}
+
+/* V52: confirmação limpa, logo real e menos decoração */
+.page{background:linear-gradient(145deg,#f2f7f2,#e9f2ec)}
+.ambient,.story-decoration{display:none!important}
+.panel{width:min(960px,100%);min-height:600px;border-radius:24px;grid-template-columns:.95fr 1fr;box-shadow:0 25px 70px rgba(12,55,37,.12)}
+.story{min-height:600px;padding:35px 43px 30px;background:linear-gradient(155deg,#114c36,#0c3528)}
+.story:after{display:none}.story-main{padding:35px 0 28px}.story-large-logo{width:140px;height:140px;object-fit:contain;filter:drop-shadow(0 16px 20px #05281944);border-radius:32px}
+.brand{font-size:26px}.brand-logo{width:37px;height:37px;border-radius:11px}
+.brand small{font-size:13px;letter-spacing:0;color:#cbe9cb}.story h1{margin:31px 0 13px;font-size:clamp(32px,3.4vw,48px);letter-spacing:-2px}
+.story-main>p{font-size:15px;line-height:1.65;color:#c9e3d4}.story-footer{letter-spacing:.04em}
+.action{background:#fff;padding:30px 36px}.status-icon{width:72px;height:72px;border-radius:22px;box-shadow:none;margin-bottom:24px;font-size:36px}
+.action h2{font-size:clamp(26px,2.9vw,35px)}.action-content>p{font-size:14px}
+.password-rule{font-size:11px;line-height:1.5;color:#637f6e}
+@media(max-width:800px){.panel{grid-template-columns:1fr;max-width:580px;min-height:0}.story{min-height:unset;padding:26px 28px 20px}.story-main{padding:22px 0 0}.story-large-logo{width:74px;height:74px;border-radius:18px}.story h1{font-size:30px;margin:16px 0 10px}.story-main>p{font-size:13px}.action{padding:26px 28px}.story-footer{display:none}}

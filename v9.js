@@ -1,6 +1,6 @@
 /* Conecta V9: public catalog, protected profiles and private conversations. */
 (function(){
-  let user=null,realProfiles=[],threads=[],messages=[],activeChat=null,stopThreads=null,stopMessages=null,stopPros=null,pendingPro=null,authSerial=0,waitingSend=false,threadsBootstrapped=false,notificationAsked=false,soundEnabled=false,soundContext=null;
+  let user=null,realProfiles=[],threads=[],messages=[],activeChat=null,stopThreads=null,stopMessages=null,stopPros=null,stopHidden=null,pendingPro=null,hiddenThreads=new Map(),authSerial=0,waitingSend=false,threadsBootstrapped=false,notificationAsked=false,soundEnabled=false,soundContext=null;
   const $ = s => document.querySelector(s);
   const backend = () => window.ConectaBackend;
   const configured = () => !!backend()?.configured && !!backend()?.subscribeAuth;
@@ -12,7 +12,7 @@
   const authProblem = e => ({
     'auth/email-already-in-use':'Este e-mail já possui uma conta. Tente entrar.',
     'auth/invalid-email':'Confira o e-mail informado.',
-    'auth/weak-password':'Crie uma senha mais forte, com pelo menos 8 caracteres.',
+    'auth/weak-password':'Crie uma senha mais forte: 10 caracteres, maiúscula, minúscula, número e símbolo.',
     'auth/invalid-credential':'E-mail ou senha incorretos.',
     'auth/too-many-requests':'Muitas tentativas. Aguarde alguns minutos.',
     'auth/unauthorized-domain':'Adicione o domínio do site em Authentication > Settings > Authorized domains.',
@@ -30,9 +30,40 @@
       modal(`<div class="auth-shell"><div class="auth-symbol">✉</div><h2>Recuperar senha</h2><p>Enviaremos um link para você definir uma nova senha.</p><form id="resetAuthForm" class="auth-form"><label>E-mail<input name="email" type="email" required autocomplete="email" placeholder="voce@exemplo.com"></label><button type="submit" class="btn btn-green">Enviar link</button><p id="authFeedback" class="auth-feedback" role="status"></p></form><div class="auth-inline"><button data-auth-mode="login">Voltar ao login</button></div></div>`);return;
     }
     const create=mode==='register';
-    modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">BEM-VINDO AO CONECTA</span><h2>${create?'Crie sua conta':'Entre na sua conta'}</h2><p>${create?'Crie sua conta gratuitamente e encontre profissionais ou ofereça seus serviços.':'Acesse suas mensagens, publique seu perfil profissional e acompanhe seus pedidos.'}</p><div class="auth-tabs"><button type="button" data-auth-mode="login" class="${!create?'active':''}">Entrar</button><button type="button" data-auth-mode="register" class="${create?'active':''}">Criar conta</button></div><form id="${create?'registerAuthForm':'loginAuthForm'}" class="auth-form">${create?'<label>Seu nome<input type="text" name="name" maxlength="70" minlength="2" required autocomplete="name" placeholder="Como podemos chamar você?"></label>':''}<label>E-mail<input type="email" name="email" required autocomplete="email" placeholder="voce@exemplo.com"></label><label>Senha<input type="password" name="password" minlength="${create?'8':'6'}" required autocomplete="${create?'new-password':'current-password'}" placeholder="${create?'Mínimo de 8 caracteres':'Sua senha'}"></label>${create?'<p class="auth-small">Após o cadastro, confirme seu e-mail. Confira também a caixa de spam.</p><label class="v34-auth-policy"><input type="checkbox" name="privacyAcknowledged" required><span>Li a <a href="privacidade.html" target="_blank" rel="noopener noreferrer">Política de Privacidade</a> e os <a href="termos.html" target="_blank" rel="noopener noreferrer">Termos de Uso</a>.</span></label>':''}<button type="submit" class="btn btn-green">${create?'Criar conta':'Entrar'}</button><p class="auth-feedback" id="authFeedback" role="status"></p></form><div class="auth-inline">${!create?'<button data-auth-mode="reset">Esqueci minha senha</button>':''}<span>Explorar profissionais é grátis e não exige login.</span></div></div>`);
+    modal(`<div class="auth-shell"><div class="auth-symbol">◈</div><span class="overline">BEM-VINDO AO CONECTA</span><h2>${create?'Crie sua conta':'Entre na sua conta'}</h2><p>${create?'Crie sua conta gratuitamente e encontre profissionais ou ofereça seus serviços.':'Acesse suas mensagens, publique seu perfil profissional e acompanhe seus pedidos.'}</p><div class="auth-tabs"><button type="button" data-auth-mode="login" class="${!create?'active':''}">Entrar</button><button type="button" data-auth-mode="register" class="${create?'active':''}">Criar conta</button></div><form id="${create?'registerAuthForm':'loginAuthForm'}" class="auth-form">${create?'<label>Seu nome<input type="text" name="name" maxlength="70" minlength="2" required autocomplete="name" placeholder="Como podemos chamar você?"></label>':''}<label>E-mail<input type="email" name="email" required autocomplete="email" placeholder="voce@exemplo.com"></label><label class="v53-password-label">Senha<div class="v53-password-field"><input id="conectaAuthPassword" type="password" name="password" minlength="${create?'10':'6'}" ${create?'maxlength="4096"':''} required autocomplete="${create?'new-password':'current-password'}" placeholder="${create?'Crie uma senha forte':'Sua senha'}"><button type="button" class="v53-password-toggle" data-toggle-password aria-pressed="false" aria-controls="conectaAuthPassword" aria-label="Mostrar senha">Mostrar</button></div></label>${create?'<div class="v53-password-rules" id="v53PasswordChecklist" aria-label="Requisitos da senha"><span data-password-rule="length">10 ou mais caracteres</span><span data-password-rule="upper">Letra maiúscula</span><span data-password-rule="lower">Letra minúscula</span><span data-password-rule="number">Número</span><span data-password-rule="special">Símbolo</span></div><p class="auth-small">Após o cadastro, confirme seu e-mail. Confira também a caixa de spam.</p><label class="v34-auth-policy"><input type="checkbox" name="privacyAcknowledged" required><span>Li a <a href="privacidade.html" target="_blank" rel="noopener noreferrer">Política de Privacidade</a> e os <a href="termos.html" target="_blank" rel="noopener noreferrer">Termos de Uso</a>.</span></label>':''}<button type="submit" class="btn btn-green">${create?'Criar conta':'Entrar'}</button><p class="auth-feedback" id="authFeedback" role="status"></p></form><div class="auth-inline">${!create?'<button data-auth-mode="reset">Esqueci minha senha</button>':''}<span>Explorar profissionais é grátis e não exige login.</span></div></div>`);
   }
-  function errorAtAuth(msg){const t=$('#authFeedback');if(t)t.textContent=msg;else notify(msg)}
+  function passwordRequirements(pw){
+    const password=String(pw||'');
+    return {length:password.length>=10&&password.length<=4096,upper:/[A-Z]/.test(password),lower:/[a-z]/.test(password),number:/[0-9]/.test(password),special:/[^A-Za-z0-9\s]/.test(password)};
+  }
+  function refreshPasswordRequirements(form){
+    const field=form?.elements?.password;
+    const checklist=form?.querySelector('#v53PasswordChecklist');
+    if(!field||!checklist)return;
+    const rules=passwordRequirements(field.value);
+    Object.entries(rules).forEach(([key,ok])=>{
+      const item=checklist.querySelector('[data-password-rule="'+key+'"]');
+      if(item){item.classList.toggle('is-met',ok);item.setAttribute('aria-label',(ok?'Atendido: ':'Pendente: ')+item.textContent)}
+    });
+    const feedback=form.querySelector('#authFeedback');
+    if(feedback&&feedback.dataset.validation==='password')feedback.textContent='';
+  }
+  document.addEventListener('click',e=>{
+    const toggle=e.target.closest('[data-toggle-password]');
+    if(!toggle)return;
+    const field=toggle.closest('.v53-password-field')?.querySelector('input[name="password"]');
+    if(!field)return;
+    const reveal=field.type==='password';
+    field.type=reveal?'text':'password';
+    toggle.textContent=reveal?'Ocultar':'Mostrar';
+    toggle.setAttribute('aria-pressed',String(reveal));
+    toggle.setAttribute('aria-label',reveal?'Ocultar senha':'Mostrar senha');
+    field.focus({preventScroll:true});
+  });
+  document.addEventListener('input',e=>{
+    if(e.target.matches('#registerAuthForm input[name="password"]'))refreshPasswordRequirements(e.target.form);
+  });
+  function errorAtAuth(msg){const t=$('#authFeedback');if(t){t.textContent=msg;t.dataset.validation='';}else notify(msg)}
 
   function playIncomingSound(){
     if(!soundEnabled || !soundContext)return;
@@ -139,9 +170,10 @@
     return true;
   }
   async function handleAuth(u){
-    const serial=++authSerial;user=u;state.profile=null;activeChat=null;messages=[];threads=[];threadsBootstrapped=false;
+    const serial=++authSerial;user=u;state.profile=null;profileDraftDirty=false;activeChat=null;messages=[];threads=[];threadsBootstrapped=false;
     window.ConectaLaunch?.onAuth(u);
     if(stopThreads)stopThreads();stopThreads=null;
+    if(stopHidden)stopHidden();stopHidden=null;hiddenThreads.clear();
     if(stopMessages)stopMessages();stopMessages=null;
     updateHeaders();renderHome();renderExplore();
     if(!u)return;
@@ -152,6 +184,11 @@
       renderDashboard();renderHome();renderExplore();updateHeaders();
     }catch(e){notify('Não foi possível carregar seu perfil: '+authProblem(e))}
     if(serial!==authSerial)return;
+    stopHidden=backend().subscribeHiddenChats(list=>{
+      if(serial!==authSerial)return;
+      hiddenThreads=new Map(list.map(t=>[t.id,t.hiddenAt?.toMillis?.()||Date.now()]));
+      renderInbox();
+    },e=>notify('Conversas ocultas: '+authProblem(e)));
     stopThreads=backend().subscribeThreads(list=>{maybeNotifyThreads(list);threads=list;if(activeChat){const current=threads.find(t=>t.id===activeChat.id);if(current)activeChat={...current,newConversation:false};}renderInbox()},e=>notify('Mensagens: '+authProblem(e)));
     if(pendingPro){const p=pendingPro;pendingPro=null;closeModal();startConversation(p)}
   }
@@ -169,12 +206,15 @@
     const fields=form.elements;
     const data={name:fields.name.value.trim(),category:fields.category.value,city:fields.city.value.trim(),neighborhood:fields.neighborhood.value.trim(),phone:fields.phone.value.replace(/[^\d]/g,''),bio:fields.bio.value.trim(),photo:profileImage||'',cover:coverImage||''};
     if(!data.name||!data.category||!data.city){notify('Preencha os campos obrigatórios.');return}
-    if(coverBusy){notify('Aguarde a foto de capa terminar de carregar.');return}if(data.photo.length>340000||data.cover.length>95000){notify('Uma das fotos ficou muito grande. Tente outra imagem.');return}
+    if(coverBusy||profilePhotoBusy){notify('Aguarde a foto terminar de carregar.');return}
+    const prepare=window.ConectaCover?.prepare;
+    try{if(prepare)data.cover=await prepare()}catch(ex){notify('Não foi possível enquadrar a capa: '+(ex.message||'Tente outra imagem.'));return}
+    if(data.photo.length>340000||data.cover.length>95000){notify('Uma das fotos ficou muito grande. Tente outra imagem.');return}
     const existed=!!state.profile?.name;
     const btn=$('#profileSubmit');btn.disabled=true;$('#profileSubmitText').textContent='Publicando...';
     try{
       await backend().saveProfile(data);
-      state.profile={...data,ownerUid:currentUid(),id:'mine'};
+      state.profile={...data,ownerUid:currentUid(),id:'mine'};profileDraftDirty=false;
       renderDashboard();renderHome();renderExplore();updateHeaders();
       notify(existed?'Alterações publicadas para todos!':'Perfil criado e publicado para todos!');
       if(typeof openOwnProfile==='function')openOwnProfile();
@@ -194,8 +234,14 @@
   }
   function renderThreads(){
     const list=$('#chatThreadList');if(!list)return;
-    $('#chatThreadCount').textContent=threads.length;
-    list.innerHTML=threads.length?threads.map(t=>{
+    const visibleThreads=threads.filter(t=>{
+      const hiddenAt=hiddenThreads.get(t.id);
+      if(!hiddenAt)return true;
+      const updated=t.updatedAt?.toMillis?.()||0;
+      return updated>hiddenAt;
+    });
+    $('#chatThreadCount').textContent=visibleThreads.length;
+    list.innerHTML=visibleThreads.length?visibleThreads.map(t=>{
       const p=getDisplayPerson(t);
       return `<button class="thread-item ${activeChat?.id===t.id?'selected':''}" data-thread="${safe(t.id)}">${avatarHTML(p,'thread-avatar')}<span class="thread-copy"><span class="thread-copy-top"><strong>${safe(p.name)}</strong><em>${safe(p.subtitle)}</em></span><small>${safe(t.lastMessage||'Conversa iniciada')}</small>${t.status==='pending'?`<span class="v15-thread-state">${t.providerId===currentUid()?'Solicitação recebida':'Aguardando autorização'}</span>`:''}${t.status==='declined'?'<span class="v15-thread-state declined">Contato não autorizado</span>':''}${t.status==='blocked'?'<span class="v15-thread-state declined">Conversa bloqueada</span>':''}${t.status==='removed'?'<span class="v15-thread-state declined">Conversa encerrada</span>':''}</span></button>`;
     }).join(''):'<div class="thread-empty"><span class="v11-thread-empty-icon">✉</span><strong>Nenhuma conversa ainda</strong><p>Encontre um profissional para iniciar sua primeira conversa.</p><button data-route="explore">Ver profissionais</button></div>';
@@ -212,7 +258,7 @@
     renderThreads();
     const head=$('#chatHead'),input=$('#chatInput'),send=$('#chatSend');
     if(!activeChat){head.innerHTML=`<div class="chat-head-main">${avatarHTML({name:'Conecta'},'chat-person-icon')}<div class="chat-head-copy"><strong>Suas conversas</strong><small>Escolha uma conversa para começar</small></div></div>`}
-    else {const person=getDisplayPerson(activeChat);head.innerHTML=`<div class="chat-head-main"><button class="v27-chat-back" type="button" data-chat-back aria-label="Voltar às conversas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg><span>Voltar às conversas</span></button><button type="button" class="v28-sound-toggle v28-chat-sound-inline" data-chat-sound aria-pressed="${soundEnabled}" aria-label="${soundEnabled?'Desativar':'Ativar'} som de novas mensagens" title="${soundEnabled?'Desativar':'Ativar'} som de novas mensagens"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="v28-sound-label">${soundEnabled?'Desativar som':'Ativar som'}</span></button><div class="v28-chat-person-row">${avatarHTML(person,'chat-person-icon')}<div class="chat-head-copy"><strong title="${safe(person.name)}">${safe(person.name)}</strong><small>${safe(person.subtitle)}</small></div></div>${activeChat.status==='accepted'?'<button type="button" class="v46-block-contact" data-contact-block="true">Bloquear contato</button>':activeChat.status==='blocked'&&activeChat.blockerId===currentUid()?'<button type="button" class="v46-unblock-contact" data-contact-block="false">Desbloquear</button>':''}</div>`}
+    else {const person=getDisplayPerson(activeChat);head.innerHTML=`<div class="chat-head-main"><button class="v27-chat-back" type="button" data-chat-back aria-label="Voltar às conversas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg><span>Voltar às conversas</span></button><button type="button" class="v28-sound-toggle v28-chat-sound-inline" data-chat-sound aria-pressed="${soundEnabled}" aria-label="${soundEnabled?'Desativar':'Ativar'} som de novas mensagens" title="${soundEnabled?'Desativar':'Ativar'} som de novas mensagens"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span class="v28-sound-label">${soundEnabled?'Desativar som':'Ativar som'}</span></button><div class="v28-chat-person-row">${avatarHTML(person,'chat-person-icon')}<div class="chat-head-copy"><strong title="${safe(person.name)}">${safe(person.name)}</strong><small>${safe(person.subtitle)}</small></div></div>${activeChat.status==='accepted'?'<button type="button" class="v46-block-contact" data-contact-block="true">Bloquear contato</button>':activeChat.status==='blocked'&&activeChat.blockerId===currentUid()?'<button type="button" class="v46-unblock-contact" data-contact-block="false">Desbloquear</button>':''}<button type="button" class="v52-remove-chat" data-remove-chat="true" title="Remover esta conversa da minha caixa de entrada">Excluir conversa</button></div>`}
     const status=activeChat?.status || 'accepted';
     const relationshipBlocked=isRelationshipBlocked(activeChat);
     const isProvider=activeChat?.providerId===currentUid();
@@ -241,13 +287,23 @@
     if(currentPage!=='inbox')route('inbox');
     setTimeout(()=>$('#chatInput')?.focus(),40);
   }
+  async function awaitHiddenChatRestore(id,existing){
+    await backend().unhideThread(id);
+    hiddenThreads.delete(id);
+    chooseThread(existing);
+  }
   function startConversation(p){
     if(!p||demo(p)){notify('Este perfil é ilustrativo e não recebe mensagens.');return}
     if(!requireAuth('messages')){pendingPro=p;return}
     if(p.ownerUid===currentUid()){notify('Este perfil pertence a você.');return}
     const id=`${currentUid()}_${p.ownerUid}`;
     const existing=threads.find(t=>t.id===id);
-    if(existing){chooseThread(existing);return}
+    if(existing){
+      if(hiddenThreads.has(id)){
+        awaitHiddenChatRestore(id,existing).catch(e=>notify(authProblem(e)))
+      }else chooseThread(existing);
+      return;
+    }
     if(stopMessages)stopMessages();stopMessages=null;
     document.body.classList.add('v27-chat-open');
     activeChat={id,providerId:p.ownerUid,customerId:currentUid(),providerName:p.name,customerName:user.displayName||'Cliente Conecta',newConversation:true};
@@ -275,8 +331,22 @@
     finally{waitingSend=false;renderInbox();if(!input.disabled)input.focus()}
   }
   document.addEventListener('click',async e=>{
-    const b=e.target.closest('[data-contact-block],[data-chat-sound],[data-chat-back],[data-chat-pro],[data-whatsapp-pro],[data-thread],[data-contact-decision],[data-auth-mode],[data-action="auth-open"],[data-action="auth-logout"],[data-action="auth-check"],[data-action="auth-resend"]');
+    const b=e.target.closest('[data-remove-chat],[data-contact-block],[data-chat-sound],[data-chat-back],[data-chat-pro],[data-whatsapp-pro],[data-thread],[data-contact-decision],[data-auth-mode],[data-action="auth-open"],[data-action="auth-logout"],[data-action="auth-check"],[data-action="auth-resend"]');
     if(!b)return;
+    if(b.hasAttribute('data-remove-chat')){
+      if(!activeChat||!verified())return;
+      if(!window.confirm('Excluir esta conversa da sua caixa de entrada? As mensagens permanecem disponíveis para a outra pessoa. Se receber uma nova mensagem, a conversa voltará a aparecer.'))return;
+      b.disabled=true;
+      try{
+        const id=activeChat.id;
+        await backend().hideThread(id);
+        hiddenThreads.set(id,Date.now());
+        stopMessages?.();stopMessages=null;activeChat=null;messages=[];
+        document.body.classList.remove('v27-chat-open');renderInbox();
+        notify('Conversa removida da sua caixa de entrada.');
+      }catch(ex){notify('Não foi possível excluir: '+authProblem(ex));b.disabled=false}
+      return;
+    }
     if(b.hasAttribute('data-contact-block')){
       if(!activeChat||!verified())return;
       const block=b.dataset.contactBlock==='true';
@@ -349,6 +419,14 @@
     const button=f.querySelector('button[type="submit"]');if(button)button.disabled=true;
     try{
       if(f.id==='registerAuthForm'){
+        const checks=passwordRequirements(f.elements.password.value);
+        if(Object.values(checks).some(ok=>!ok)){
+          refreshPasswordRequirements(f);
+          const feedback=f.querySelector('#authFeedback');
+          if(feedback){feedback.textContent='Confira os critérios da senha destacados acima.';feedback.dataset.validation='password';}
+          f.elements.password.focus();
+          return;
+        }
         const registered=await backend().signup(f.elements.name.value,f.elements.email.value.trim(),f.elements.password.value);
         if(!user)user=registered;
         openAuth('verify');

@@ -1,0 +1,61 @@
+/* Conecta SJC V53 · senha compreensível e portfólio em modal completo */
+#modal .v53-password-label{display:block!important;font-weight:700}
+#modal .v53-password-field{position:relative;display:flex;align-items:center;margin-top:7px}
+#modal .v53-password-field input:not([type=checkbox]){padding-right:91px!important;min-width:0}
+#modal .v53-password-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:#eaf4ed;color:#176448;padding:8px 12px;border-radius:9px;min-height:34px;cursor:pointer;font-size:12px;font-weight:700;line-height:1;letter-spacing:0}
+#modal .v53-password-toggle:hover,#modal .v53-password-toggle:focus-visible{background:#d6ecdd;outline:2px solid transparent}
+#modal .v53-password-rules{display:flex;flex-wrap:wrap;gap:6px 7px;margin:-2px 0 3px}
+#modal .v53-password-rules span{padding:5px 8px;border-radius:30px;background:#f1f4f0;border:1px solid #e2e9e0;color:#647a6d;font-size:10px;font-weight:600;line-height:1.3;transition:background .2s,color .2s}
+#modal .v53-password-rules span:before{content:'○';margin-right:5px;font-weight:800}
+#modal .v53-password-rules span.is-met{background:#e1f4e6;border-color:#b7dfc1;color:#14653d}
+#modal .v53-password-rules span.is-met:before{content:'✓'}
+.v53-work-card{transition:transform .2s ease,box-shadow .2s ease}
+.v53-work-card:hover{transform:translateY(-3px);box-shadow:0 17px 42px rgba(17,70,45,.12)!important}
+.v53-work-card .v53-work-open{display:block;width:100%;padding:0;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer;font:inherit;min-width:0}
+.v53-work-card .v53-work-open:focus-visible{outline:3px solid #2e9868;outline-offset:-3px;border-radius:18px}
+.v53-work-card .work-photos{display:grid}
+.v53-work-card .v52-work-photo{cursor:pointer}
+.v53-work-card .v52-work-photo img{transition:transform .24s ease}
+.v53-work-card .v53-work-open:hover .v52-work-photo img{transform:scale(1.045)}
+.v53-work-card .v53-work-open .work-content{display:block;padding:19px 22px 16px}
+.v53-work-card .v53-work-card-title{display:block;font-size:clamp(17px,2vw,22px);font-weight:800;line-height:1.28;letter-spacing:-.025em;color:#173e30;margin-bottom:8px}
+.v53-work-card .v53-work-card-desc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;color:#6a7f70;line-height:1.6;font-size:13px;min-height:0}
+.v53-work-card .v53-work-card-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:17px;color:#246a49}
+.v53-work-card .v53-work-card-footer small{font-size:11px;color:#698a79}
+.v53-work-card .v53-work-card-footer>span{font-size:12px;font-weight:800}
+.v53-work-card .v52-work-manage{padding:0 22px 19px;margin:0}
+#modal .modal:has(.v53-work-detail){width:min(930px,calc(100vw - 26px))!important;max-width:930px!important;max-height:min(90dvh,880px)!important;background:#fbfdfb!important;border-radius:24px!important;overflow:auto!important;padding:0!important;box-shadow:0 26px 80px rgba(9,49,32,.2)!important}
+#modal .modal:has(.v53-work-detail) #modalBody{padding:0!important;overflow:visible!important}
+#modal .modal:has(.v53-work-detail) .modal-close{z-index:8;top:18px;right:18px;background:#f0f7f2}
+.v53-work-detail{color:#193e2d}
+.v53-work-detail-heading{padding:32px 36px 22px;background:linear-gradient(140deg,#f0f9f2,#fff)}
+.v53-work-detail-heading>span,.v53-story-kicker{font-weight:800;color:#278052;letter-spacing:.13em;font-size:10px}
+.v53-work-detail-heading h2{font-size:clamp(24px,3vw,36px);line-height:1.1;letter-spacing:-.045em;margin:12px 50px 0 0;color:#133c2b;overflow-wrap:anywhere}
+.v53-work-detail-body{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(240px,.82fr);gap:0;min-height:300px}
+.v53-work-gallery{padding:22px;background:#f0f7f0;min-width:0}
+.v53-work-photo-stage{position:relative;width:100%;aspect-ratio:4/3;background:#dfece2;border-radius:17px;overflow:hidden;display:grid;place-items:center}
+.v53-work-photo-stage .v53-feature-photo{width:100%;height:100%;display:block;object-fit:contain}
+.v53-work-photo-stage>button{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;border-radius:50%;background:#fffefaeb;color:#174e38;font-size:27px;line-height:1;box-shadow:0 6px 20px #0019;cursor:pointer}
+.v53-work-prev{left:12px}.v53-work-next{right:12px}
+.v53-work-gallery-bottom{display:flex;align-items:center;gap:15px;margin-top:12px}
+.v53-work-gallery-bottom>[data-photo-current]{font-size:11px;color:#53816a;white-space:nowrap}
+.v53-work-thumbs{display:flex;overflow-x:auto;gap:8px;flex:1;min-width:0;padding:3px 0}
+.v53-work-thumbs button{width:58px;height:48px;flex:none;background:#fff;border:2px solid transparent;border-radius:9px;overflow:hidden;padding:0;cursor:pointer;opacity:.65}
+.v53-work-thumbs button.is-active{border-color:#158052;opacity:1}
+.v53-work-thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.v53-work-story{padding:29px 29px 32px;background:white;min-width:0}
+.v53-work-story p{font-size:15px;line-height:1.85;color:#566f5e;overflow-wrap:anywhere;white-space:pre-wrap;margin:16px 0 24px}
+.v53-work-photo-count{font-size:11px;color:#41815e;font-weight:700;border-top:1px solid #e8f0e9;padding-top:17px}
+.v53-work-no-photo{display:grid;place-items:center;background:#f0f7ef;color:#6c8776;font-size:13px;margin:22px;border-radius:16px;min-height:260px;padding:20px;text-align:center}
+@media(max-width:700px){
+ #modal .modal:has(.v53-work-detail){max-height:calc(100dvh - 20px)!important;width:calc(100vw - 16px)!important;border-radius:19px!important}
+ .v53-work-detail-heading{padding:27px 20px 17px}
+ .v53-work-detail-heading h2{font-size:25px;margin-right:32px}
+ .v53-work-detail-body{grid-template-columns:1fr}
+ .v53-work-gallery{padding:14px}
+ .v53-work-story{padding:22px 20px 26px}
+ .v53-work-story p{font-size:14px}
+ .v53-work-no-photo{margin:14px;min-height:180px}
+ .v53-work-card .v53-work-open .work-content{padding:17px}
+ .v53-work-card .v52-work-manage{padding:0 17px 17px}
+}

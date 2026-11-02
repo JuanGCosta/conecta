@@ -1,0 +1,26 @@
+/* Conecta SJC V52: portfolio, interactive cover and discreet chat controls */
+#page-dashboard .v32-cover-preview.v52-cover-draggable{cursor:grab;touch-action:none;outline-offset:5px}
+#page-dashboard .v32-cover-preview.v52-dragging{cursor:grabbing}
+#page-dashboard .v32-cover-preview.v52-cover-draggable img{pointer-events:none;user-select:none;object-fit:cover}
+#page-dashboard .v52-cover-empty{text-align:center;display:grid;gap:6px;padding:20px;color:#25583f}
+#page-dashboard .v52-cover-empty strong{font-size:14px}#page-dashboard .v52-cover-empty small{font-size:12px;color:#668773}
+.v52-work-photos{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;position:relative;min-height:0!important;height:auto!important;aspect-ratio:1.6 / 1;overflow:hidden;border-radius:15px;background:#ecf3ed}
+.v52-work-photos.v52-single-photo{grid-template-columns:1fr}
+.v52-work-photos:empty{min-height:140px!important}
+.v52-work-photo{position:relative;display:block;border:0;padding:0;min-width:0;overflow:hidden;cursor:zoom-in;background:#eaf3ed}
+.v52-work-photos .v52-work-photo img{display:block!important;position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:cover!important;transition:transform .2s}
+.v52-work-photo:hover img{transform:scale(1.035)}
+.v52-work-manage{margin-top:12px}.v52-works-loading{padding:25px 5px;color:#63816e;font-size:14px}
+.v52-photo-preview{position:relative;width:82px;height:82px;display:inline-block;vertical-align:top;margin:5px}
+.v52-photo-preview img{display:block!important;width:100%!important;height:100%!important;object-fit:cover;border-radius:12px}
+.v52-photo-preview button{position:absolute;top:-6px;right:-6px;width:25px;height:25px;border:0;border-radius:50%;background:#af3636;color:#fff;cursor:pointer;font-weight:800;box-shadow:0 2px 8px #0003}
+#chatHead .v52-remove-chat{border:1px solid #e4d0d0;color:#9a4141;background:#fff;border-radius:10px;padding:8px 12px;font-size:11px;font-weight:750;white-space:nowrap;cursor:pointer}
+#chatHead .v52-remove-chat:hover{background:#fff2f2}
+.v52-password-guidance{color:#3c6951!important;line-height:1.5}
+@media(max-width:750px){#chatHead .v52-remove-chat{font-size:10px;padding:7px 9px}.v52-work-photos{aspect-ratio:1.5 / 1}}
+
+/* Override legacy portfolio dimensions on both own dashboard and public detail */
+#page-dashboard #myWorks .work-photos.v52-work-photos, #page-professional .work-photos.v52-work-photos{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));place-items:stretch!important;height:auto!important;min-height:0!important;aspect-ratio:1.6 / 1;padding:0!important}
+#page-dashboard #myWorks .work-photos.v52-work-photos.v52-single-photo, #page-professional .work-photos.v52-work-photos.v52-single-photo{grid-template-columns:1fr}
+#page-dashboard #myWorks .work-photos.v52-work-photos .v52-work-photo, #page-professional .work-photos.v52-work-photos .v52-work-photo{display:block;position:relative;height:auto;min-height:0;width:100%;border:0;border-radius:0}
+#page-dashboard #myWorks .work-photos.v52-work-photos .v52-work-photo img, #page-professional .work-photos.v52-work-photos .v52-work-photo img{position:absolute!important;inset:0!important;object-fit:cover!important;width:100%!important;height:100%!important}
