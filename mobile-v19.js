@@ -29,7 +29,8 @@
  const safeValue=()=>cityFilter?.value.trim()||'';
  const updateCity=()=>{if(cityLabel)cityLabel.textContent=safeValue()||'Escolher cidade'};
  function countFilters(){
-   const count=['cityFilter','neighborhoodFilter','categoryFilter'].filter(id=>!!get(id)?.value.trim()).length;
+   // São José dos Campos é o valor fixo de cidade, não um filtro ativo.
+   const count=['regionFilter','neighborhoodFilter','categoryFilter','professionFilter'].filter(id=>!!get(id)?.value.trim()).length;
    filterCount.textContent=count;
    filterCount.hidden=!count;
    filterButton.setAttribute('aria-label',`Abrir filtros${count?' ('+count+' ativos)':''}`);
@@ -48,7 +49,7 @@
  filterClose?.addEventListener('click',()=>setFilters(false));
  filterApply?.addEventListener('click',()=>setFilters(false));
  filterBackdrop?.addEventListener('click',()=>setFilters(false));
- for(const id of ['cityFilter','neighborhoodFilter','categoryFilter']){
+ for(const id of ['cityFilter','regionFilter','neighborhoodFilter','categoryFilter','professionFilter']){
    get(id)?.addEventListener('input',countFilters);
    get(id)?.addEventListener('change',countFilters);
  }

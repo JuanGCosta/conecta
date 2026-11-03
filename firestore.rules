@@ -121,6 +121,16 @@ service cloud.firestore {
       allow delete: if verified() && resource.data.ownerUid == request.auth.uid;
       allow update: if false;
     }
+    // V52: ocultação pessoal das conversas; nunca apaga mensagens do outro participante.
+    match /users/{userId}/hiddenChats/{chatId} {
+      allow get, list: if verified() && request.auth.uid == userId;
+      allow create, update: if verified() && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly(['hiddenAt'])
+        && request.resource.data.hiddenAt == request.time
+        && exists(/databases/$(database)/documents/chats/$(chatId))
+        && request.auth.uid in get(/databases/$(database)/documents/chats/$(chatId)).data.participants;
+      allow delete: if verified() && request.auth.uid == userId;
+    }
     match /users/{userId}/favorites/{providerId} {
       allow get, list: if verified() && request.auth.uid == userId;
       allow create: if verified() && request.auth.uid == userId && providerId != userId

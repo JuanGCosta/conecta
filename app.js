@@ -28,6 +28,179 @@ const svgPaths={
 const categoryIcons={'Reformas':'hammer','Elétrica':'zap','Hidráulica':'droplets','Limpeza':'sparkles','Pintura':'paint','Jardinagem':'leaf','Montagem':'box','Tecnologia':'monitor','Beleza':'scissors','Fotografia':'camera','Aulas':'book','Marcenaria':'hammer','Ar-condicionado':'wind','Fretes':'truck','Pet care':'paw','Costura':'shirt','Eventos':'party','Automotivo':'car','Saúde':'firstaid','Outros':'grid'};
 function icon(name,sz=23){return `<svg width="${sz}" height="${sz}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${svgPaths[name]||svgPaths.grid}</svg>`}
 const categories=[['Reformas','▦','Pedreiros e reformas'],['Elétrica','ϟ','Instalações elétricas'],['Hidráulica','◉','Encanamentos'],['Limpeza','✧','Limpeza e faxina'],['Pintura','▧','Pintores'],['Jardinagem','❀','Jardins e plantas'],['Montagem','▤','Móveis e instalações'],['Tecnologia','⌘','Computadores e redes'],['Beleza','✦','Estética e beleza'],['Fotografia','▣','Fotos e vídeos'],['Aulas','⌁','Professores'],['Marcenaria','▥','Móveis sob medida'],['Ar-condicionado','≈','Instalação e manutenção'],['Fretes','⇄','Mudanças e entregas'],['Pet care','◌','Banho, tosa e cuidados'],['Costura','✂','Ajustes e confecção'],['Eventos','✶','Festas e eventos'],['Automotivo','◈','Serviços para veículos'],['Saúde','＋','Cuidados e bem-estar'],['Outros','···','Mais serviços']];
+// V51: especialidades profissionais são valores permitidos no perfil, mas os pedidos
+// continuam nas 20 categorias-base previstas nas regras de segurança do Firestore.
+const specialtyCatalog = {
+  "Reformas": [
+    "Pedreiro",
+    "Mestre de obras",
+    "Gesseiro",
+    "Instalador de drywall",
+    "Azulejista",
+    "Assentador de pisos",
+    "Telhadista",
+    "Impermeabilizador",
+    "Vidraceiro",
+    "Serralheiro",
+    "Soldador",
+    "Instalador de esquadrias"
+  ],
+  "Elétrica": [
+    "Eletricista",
+    "Eletricista residencial",
+    "Instalador de energia solar",
+    "Instalador de câmeras",
+    "Instalador de cerca elétrica",
+    "Automação residencial"
+  ],
+  "Hidráulica": [
+    "Encanador",
+    "Desentupidor",
+    "Caça-vazamentos",
+    "Instalador de aquecedores"
+  ],
+  "Limpeza": [
+    "Diarista",
+    "Faxineiro",
+    "Limpeza pós-obra",
+    "Limpeza comercial",
+    "Higienização de estofados",
+    "Limpeza de caixa d’água",
+    "Dedetizador"
+  ],
+  "Pintura": [
+    "Pintor residencial",
+    "Pintor comercial",
+    "Aplicador de textura",
+    "Pintor decorativo"
+  ],
+  "Jardinagem": [
+    "Jardineiro",
+    "Paisagista",
+    "Podador de árvores",
+    "Piscineiro"
+  ],
+  "Montagem": [
+    "Montador de móveis",
+    "Instalador de cortinas",
+    "Instalador de persianas",
+    "Instalador de papel de parede",
+    "Instalador de suportes"
+  ],
+  "Tecnologia": [
+    "Técnico de informática",
+    "Suporte de TI",
+    "Técnico de redes",
+    "Desenvolvedor de sites",
+    "Assistência de celulares",
+    "Instalador de internet"
+  ],
+  "Beleza": [
+    "Cabeleireiro",
+    "Manicure e pedicure",
+    "Designer de sobrancelhas",
+    "Lash designer",
+    "Maquiador",
+    "Barbeiro",
+    "Esteticista",
+    "Trancista"
+  ],
+  "Fotografia": [
+    "Fotógrafo",
+    "Fotógrafo de eventos",
+    "Videomaker",
+    "Editor de vídeo"
+  ],
+  "Aulas": [
+    "Professor particular",
+    "Reforço escolar",
+    "Professor de inglês",
+    "Professor de música",
+    "Professor de informática",
+    "Professor de matemática"
+  ],
+  "Marcenaria": [
+    "Marceneiro",
+    "Projetista de móveis",
+    "Carpinteiro",
+    "Restaurador de móveis"
+  ],
+  "Ar-condicionado": [
+    "Técnico de ar-condicionado",
+    "Instalador de ar-condicionado",
+    "Técnico em refrigeração"
+  ],
+  "Fretes": [
+    "Motorista de frete",
+    "Carreteiro",
+    "Motoboy",
+    "Serviço de mudanças"
+  ],
+  "Pet care": [
+    "Banho e tosa",
+    "Pet sitter",
+    "Passeador de cães",
+    "Adestrador"
+  ],
+  "Costura": [
+    "Costureira",
+    "Ajustes de roupas",
+    "Bordadeira",
+    "Modelista"
+  ],
+  "Eventos": [
+    "Decorador de festas",
+    "Cerimonialista",
+    "Buffet",
+    "DJ",
+    "Garçom",
+    "Barman",
+    "Confeiteiro",
+    "Cozinheiro para eventos"
+  ],
+  "Automotivo": [
+    "Mecânico",
+    "Autoelétrico",
+    "Funileiro",
+    "Martelinho de ouro",
+    "Detailer automotivo",
+    "Lavador de carros"
+  ],
+  "Saúde": [
+    "Personal trainer",
+    "Nutricionista",
+    "Fisioterapeuta",
+    "Psicólogo",
+    "Cuidador de idosos",
+    "Massoterapeuta",
+    "Enfermeiro"
+  ],
+  "Outros": [
+    "Babá",
+    "Tradutor",
+    "Consultor",
+    "Assistente virtual",
+    "Designer gráfico",
+    "Social media",
+    "Profissional de marketing",
+    "Chaveiro"
+  ]
+};
+const professionGroup = Object.fromEntries(Object.entries(specialtyCatalog).flatMap(([group,names])=>names.map(name=>[name,group])));
+const categoryGroup = value => professionGroup[value] || value;
+const iconForCategory = value => categoryIcons[categoryGroup(value)] || 'grid';
+const searchFold = value => String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR').replace(/[^a-z0-9]+/g,' ').trim();
+function setProfessionOptions(){
+  const category = $('#categoryFilter')?.value||'';
+  const select = $('#professionFilter'); if(!select)return;
+  const previous = select.value;
+  const groups = category ? [category] : categories.map(([name])=>name);
+  select.innerHTML='<option value="">Todas as profissões</option>'+groups.map(group=>{
+    const jobs=specialtyCatalog[group]||[];
+    return `<optgroup label="${esc(group)}">${jobs.map(job=>`<option value="${esc(job)}">${esc(job)}</option>`).join('')}</optgroup>`;
+  }).join('');
+  select.value = [...select.options].some(option=>option.value===previous) ? previous : '';
+}
 const categoryPictures={
 'Reformas':['https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=450&q=83','assets/category-reformas.svg'],
 'Elétrica':['https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=450&q=83','assets/category-el-trica.svg'],
@@ -55,7 +228,7 @@ const key='conecta.reconstruido.v1';
 function load(){return {profile:null,works:[],requests:[],favorites:[]}} // Account data comes from Firebase. Legacy local entries are not read.
 let photosBusy=false, uploadGeneration=0;
 let publicRequests=[],offersByRequest=new Map();
-let coverImage=null, coverBusy=false;
+let coverImage=null, coverBusy=false, profilePhotoBusy=false, coverSource=null, coverFocus={x:.5,y:.5}, coverDrag=null, profileDraftDirty=false;
 let state=load(), currentPage='home',selectedPro=null, stagedImages=[],profileImage=null,toastTimer,exploreTab='all';
 function save(){return true} // Publicações e salvos não usam mais o navegador.
 const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -64,7 +237,7 @@ function notify(message){const t=$('#toast');t.textContent=message;t.classList.a
 function dialog(opts){const cfg=typeof opts==='string'?{message:opts}:opts||{};const tone=cfg.tone||'info';const title=cfg.title||'Aviso';const eyebrow=cfg.eyebrow||'CONECTA';const message=cfg.message||'';const button=cfg.buttonLabel||'Entendi';modal(`<div class="conecta-dialog conecta-dialog-${tone}"><div class="conecta-dialog-badge">${tone==='success'?'✓':tone==='error'?'!':'i'}</div><span class="conecta-dialog-eyebrow">${eyebrow}</span><h2>${esc(title)}</h2><p>${esc(message)}</p><div class="conecta-dialog-actions"><button type="button" class="btn btn-green" data-action="close-modal">${esc(button)}</button></div></div>`)}
 function allPros(){return window.ConectaV9?.profilesForCatalog?.() ?? []}
 function initials(n){return String(n||'').split(' ').filter(Boolean).slice(0,2).map(s=>s[0].toUpperCase()).join('')||'CO'}
-function proCard(p){const saved=(state.favorites||[]).includes(p.id);return `<article class="pro-card"><div class="pro-card-cover"><span class="cover-badge">${icon(categoryIcons[p.category],15)} ${esc(p.category)}</span><div class="cover-art" aria-hidden="true">${icon(categoryIcons[p.category],102)}</div><div class="pro-avatar">${p.photo?`<img src="${esc(p.photo)}" ${p.upgrade?`data-upgrade-src="${esc(p.upgrade)}"`:""} ${p.fallback?`onerror="this.onerror=null;this.src='${esc(p.fallback)}'"`:''} alt="Foto ilustrativa de ${esc(p.name)}">`:esc(p.initials||initials(p.name))}</div></div><button class="save-badge ${saved?'is-saved':''}" type="button" data-favorite="${esc(p.id)}" aria-pressed="${saved}" aria-label="${saved?'Remover dos salvos':'Salvar perfil de '+esc(p.name)}">${icon('heart',19)}</button><div class="pro-content"><span class="pro-label">${p.id==='mine'?'MEU PERFIL':'CONHEÇA O PROFISSIONAL'}</span><h3>${esc(p.name)}</h3><p>${esc(p.bio||'Profissional da comunidade Conecta.')}</p><div class="pro-meta"><span>${icon('pin',15)} ${esc(p.city)}${p.neighborhood?' · '+esc(p.neighborhood):''}</span><span class="verified">${p.id==='mine'?'Seu perfil':p.id.startsWith('demo-')?'Perfil de exemplo':'Perfil publicado'}</span></div>${p.ownerUid?`<span class="v12-rating-chip" data-rating-for="${esc(p.ownerUid)}">Ainda sem avaliações</span>`:''}<div class="pro-footer"><span class="pro-availability"><span class="contact-dot"></span> Ver apresentação</span><button class="btn btn-green" data-pro="${esc(p.id)}">Ver perfil ${icon('arrow',17)}</button></div></div></article>`}
+function proCard(p){const saved=(state.favorites||[]).includes(p.id);return `<article class="pro-card"><div class="pro-card-cover"><span class="cover-badge">${icon(iconForCategory(p.category),15)} ${esc(p.category)}</span><div class="cover-art" aria-hidden="true">${icon(iconForCategory(p.category),102)}</div><div class="pro-avatar">${p.photo?`<img src="${esc(p.photo)}" ${p.upgrade?`data-upgrade-src="${esc(p.upgrade)}"`:""} ${p.fallback?`onerror="this.onerror=null;this.src='${esc(p.fallback)}'"`:''} alt="Foto ilustrativa de ${esc(p.name)}">`:esc(p.initials||initials(p.name))}</div></div><button class="save-badge ${saved?'is-saved':''}" type="button" data-favorite="${esc(p.id)}" aria-pressed="${saved}" aria-label="${saved?'Remover dos salvos':'Salvar perfil de '+esc(p.name)}">${icon('heart',19)}</button><div class="pro-content"><span class="pro-label">${p.id==='mine'?'MEU PERFIL':'CONHEÇA O PROFISSIONAL'}</span><h3>${esc(p.name)}</h3><p>${esc(p.bio||'Profissional da comunidade Conecta.')}</p><div class="pro-meta"><span>${icon('pin',15)} ${esc(p.city)}${p.neighborhood?' · '+esc(p.neighborhood):''}</span><span class="verified">${p.id==='mine'?'Seu perfil':p.id.startsWith('demo-')?'Perfil de exemplo':'Perfil publicado'}</span></div>${p.ownerUid?`<span class="v12-rating-chip" data-rating-for="${esc(p.ownerUid)}">Ainda sem avaliações</span>`:''}<div class="pro-footer"><span class="pro-availability"><span class="contact-dot"></span> Ver apresentação</span><button class="btn btn-green" data-pro="${esc(p.id)}">Ver perfil ${icon('arrow',17)}</button></div></div></article>`}
 const conectaUpgradedImages = new Map();
 function upgradeImages(){
   $$('img[data-upgrade-src]:not([data-upgrade-started])').forEach(img=>{
@@ -87,7 +260,16 @@ function upgradeImages(){
     loader.src=src;
   });
 }
-function setupSelects(){const opt='<option value="">Todas as categorias</option>'+categories.map(([c])=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('#categoryFilter').innerHTML=opt;$('#heroCategory').innerHTML=opt;$('#requestCategory').innerHTML=opt;$('#profileCategory').innerHTML='<option value="">Selecione o serviço</option>'+categories.map(([c])=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');$('#sidebarCategories').innerHTML=categories.map(([c])=>`<button class="sidebar-category" type="button" data-filter-category="${esc(c)}"><span class="sidebar-category-square">${icon(categoryIcons[c],19)}</span>${esc(c)}<small></small></button>`).join('')}
+function setupSelects(){
+  const opt='<option value="">Todas as categorias</option>'+categories.map(([c])=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  $('#categoryFilter').innerHTML=opt;
+  $('#heroCategory').innerHTML=opt;
+  $('#requestCategory').innerHTML=opt;
+  // Preserva cadastros antigos por categoria-base, mas oferece profissões específicas.
+  $('#profileCategory').innerHTML='<option value="">Escolha seu serviço ou profissão</option>'+categories.map(([group])=>`<optgroup label="${esc(group)}"><option value="${esc(group)}">${esc(group)} (geral)</option>${(specialtyCatalog[group]||[]).map(job=>`<option value="${esc(job)}">${esc(job)}</option>`).join('')}</optgroup>`).join('');
+  $('#sidebarCategories').innerHTML=categories.map(([c])=>`<button class="sidebar-category" type="button" data-filter-category="${esc(c)}"><span class="sidebar-category-square">${icon(categoryIcons[c],19)}</span>${esc(c)}<small></small></button>`).join('');
+  setProfessionOptions();
+}
 function renderHome(){
   $('#categories').innerHTML=categories.map(([name,_,subtitle])=>{
     const pic=categoryPictures[name];return `<button class="category-item" data-category="${esc(name)}"><span class="v19-category-icon" aria-hidden="true">${icon(categoryIcons[name],23)}</span><span class="category-picture"><img src="${pic[1]}" data-upgrade-src="${pic[0]}" data-category-image="${esc(name)}" loading="eager" decoding="async" alt=""></span><span class="category-words"><strong>${esc(name)}</strong><small>${esc(subtitle)}</small></span></button>`
@@ -98,16 +280,49 @@ function renderHome(){
   $('#heroReqCount').textContent=publicRequests.length;
   upgradeImages();
 }
+// Uma nova visita pelo logo ou pelo botao limpar deve comecar com filtros neutros.
+// O valor fixo de cidade e preservado porque o Conecta atende apenas SJC.
+function resetExploreFilters(){
+  $('#searchPros').value='';
+  $('#categoryFilter').value='';
+  $('#cityFilter').value='São José dos Campos';
+  $('#neighborhoodFilter').value='';
+  $('#regionFilter').value='';
+  $('#professionFilter').value='';
+  $('#proSort').value='default';
+  $('#topSearchQuery').value='';
+  $('#heroQuery').value='';
+  $('#heroCategory').value='';
+  exploreTab='all';
+  // Atualiza a contagem e os estados da folha de filtros no mobile.
+  setProfessionOptions();
+  $('#categoryFilter').dispatchEvent(new Event('change',{bubbles:true}));
+  $('#neighborhoodFilter').dispatchEvent(new Event('input',{bubbles:true}));
+}
 function renderExplore(){
-  const q=$('#searchPros').value.trim().toLowerCase(),cat=$('#categoryFilter').value,city=$('#cityFilter').value.trim(),neighborhood=$('#neighborhoodFilter').value.trim();
-  let list=allPros().filter(p=>(!cat||p.category===cat)&&(!city||(window.ConectaRegions?.matchesCity(p.city,city)??String(p.city||'').toLowerCase().includes(city.toLowerCase())))&&(!neighborhood||(window.ConectaRegions?.matches(p,neighborhood)??String(p.neighborhood||'').toLocaleLowerCase('pt-BR').includes(neighborhood.toLocaleLowerCase('pt-BR'))))&&(!q||[p.name,p.category,p.bio,p.city,p.neighborhood||''].join(' ').toLowerCase().includes(q))&&(exploreTab!=='saved'||(state.favorites||[]).includes(p.id)));
+  const q=searchFold($('#searchPros').value),cat=$('#categoryFilter').value,job=$('#professionFilter').value;
+  const city=$('#cityFilter').value.trim(),neighborhood=$('#neighborhoodFilter').value.trim(),region=$('#regionFilter').value;
+  const loc=window.ConectaRegions;
+  let list=allPros().filter(p=>
+    (!cat||categoryGroup(p.category)===cat)&&
+    (!job||p.category===job)&&
+    (!city||(loc?.matchesCity(p.city,city)??String(p.city||'').toLowerCase()===city.toLowerCase()))&&
+    (!region||(loc?.belongsToRegion(p,region)??false))&&
+    (!neighborhood||(loc?.matches(p,neighborhood)??false))&&
+    (!q||searchFold([p.name,p.category,categoryGroup(p.category),p.bio,p.city,p.neighborhood||''].join(' ')).includes(q))&&
+    (exploreTab!=='saved'||(state.favorites||[]).includes(p.id))
+  );
   if($('#proSort').value==='name')list.sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
   if($('#proSort').value==='city')list.sort((a,b)=>a.city.localeCompare(b.city,'pt-BR'));
   if($('#proSort').value==='rating')list.sort((a,b)=>{const get=p=>window.ConectaReviewScores?.get(p.ownerUid)?.average||0;const count=p=>window.ConectaReviewScores?.get(p.ownerUid)?.count||0;return get(b)-get(a)||count(b)-count(a)});
   $$('.explore-tabs button').forEach(b=>b.classList.toggle('active',b.dataset.exploreTab===exploreTab));
   $$('.sidebar-category').forEach(b=>b.classList.toggle('active',b.dataset.filterCategory===cat));
   $('#resultCount').innerHTML=`<span><strong>${list.length}</strong> ${list.length===1?'profissional encontrado':'profissionais encontrados'}</span>`;
-  $('#professionalsList').innerHTML=list.map(proCard).join('')||empty(exploreTab==='saved'?'Nenhum perfil salvo':'Nenhum resultado',exploreTab==='saved'?'Toque no coração de um perfil para salvá-lo aqui.':'Tente outro filtro, categoria ou cidade.');
+  const hasLocation=Boolean(region||neighborhood);
+  const emptyText = exploreTab==='saved'?'Toque no coração de um perfil para salvá-lo aqui.':hasLocation?'Nenhum perfil cadastrado corresponde a esta região ou bairro. Tente limpar a localização ou buscar outro bairro.':'Tente outra profissão, categoria ou termo de busca.';
+  $('#professionalsList').innerHTML=list.map(proCard).join('')||empty(exploreTab==='saved'?'Nenhum perfil salvo':'Nenhum resultado',emptyText);
+  const summary=$('#locationStatus');
+  if(summary){summary.textContent=hasLocation?(region?`${window.ConectaRegions?.regions[region]?.title||region}`:'')+(region&&neighborhood?' · ':'')+(neighborhood||''):'Todas as regiões de São José dos Campos';}
   upgradeImages();
 }
 
@@ -148,26 +363,102 @@ function updateProfileUI(){
 function updateCoverPreview(){
   const target=$('#profileCoverPreview'),remove=$('[data-action="remove-profile-cover"]');
   if(!target)return;
-  const src=safePhoto(coverImage||'');
-  target.innerHTML=src?`<img src="${src}" alt="Sua foto de capa">`:defaultCoverMarkup();
-  if(remove)remove.hidden=!src;
+  const src=coverSource?(typeof coverSource==='string'?coverSource:coverSource.url):safePhoto(coverImage||'');
+  // Prévia pode ser reposicionada; a versão JPEG final é recortada ao salvar.
+  target.innerHTML=src?`<img src="${src}" alt="Sua foto de capa" draggable="false" style="object-position:${Math.round(coverFocus.x*100)}% ${Math.round(coverFocus.y*100)}%">`:'<div class="v52-cover-empty"><strong>Sua capa, do seu jeito</strong><small>Adicione uma imagem e arraste para enquadrar.</small></div>';
+  target.classList.toggle('v52-cover-draggable',!!coverSource);
+  target.setAttribute('role',coverSource?'slider':'img');
+  if(coverSource){target.setAttribute('tabindex','0');target.setAttribute('aria-label','Enquadrar foto de capa: arraste para posicionar ou use as setas');}
+  else{target.removeAttribute('tabindex');target.setAttribute('aria-label','Prévia da capa do perfil');}
+  if(remove)remove.hidden=!(src||coverImage);
 }
+async function prepareCoverForSave(){
+  if(!coverSource)return coverImage||'';
+  const source=typeof coverSource==='string'?coverSource:coverSource.file;
+  return compress(source,1000,93000,3.2,coverFocus);
+}
+window.ConectaCover={prepare:prepareCoverForSave};
+function freeCoverObject(){if(coverSource && typeof coverSource!=='string')URL.revokeObjectURL(coverSource.url);coverSource=null;}
+function updateCoverFocus(){const image=$('#profileCoverPreview img');if(image)image.style.objectPosition=`${Math.round(coverFocus.x*100)}% ${Math.round(coverFocus.y*100)}%`;}
+const coverPreview=$('#profileCoverPreview');
+coverPreview?.addEventListener('pointerdown',event=>{
+  if(!coverSource||event.button>0)return;
+  profileDraftDirty=true;coverDrag={startX:event.clientX,startY:event.clientY,x:coverFocus.x,y:coverFocus.y};
+  coverPreview.setPointerCapture(event.pointerId);coverPreview.classList.add('v52-dragging');
+});
+coverPreview?.addEventListener('pointermove',event=>{
+  if(!coverDrag)return;
+  const area=coverPreview.getBoundingClientRect();
+  coverFocus.x=Math.max(0,Math.min(1,coverDrag.x-(event.clientX-coverDrag.startX)/Math.max(area.width,1)));
+  coverFocus.y=Math.max(0,Math.min(1,coverDrag.y-(event.clientY-coverDrag.startY)/Math.max(area.height,1)));
+  updateCoverFocus();
+});
+function endCoverDrag(){coverDrag=null;coverPreview?.classList.remove('v52-dragging');}
+coverPreview?.addEventListener('pointerup',endCoverDrag);
+coverPreview?.addEventListener('pointercancel',endCoverDrag);
+coverPreview?.addEventListener('keydown',event=>{
+  if(!coverSource||!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;
+  event.preventDefault();profileDraftDirty=true;
+  const delta=event.shiftKey?.1:.04;
+  if(event.key==='ArrowLeft')coverFocus.x=Math.min(1,coverFocus.x+delta);
+  if(event.key==='ArrowRight')coverFocus.x=Math.max(0,coverFocus.x-delta);
+  if(event.key==='ArrowUp')coverFocus.y=Math.min(1,coverFocus.y+delta);
+  if(event.key==='ArrowDown')coverFocus.y=Math.max(0,coverFocus.y-delta);
+  updateCoverFocus();
+});
 function renderDashboard(){
   const p=state.profile||{};
   const f=$('#profileForm');
-  for(const key of ['name','category','city','neighborhood','phone','bio']) f.elements[key].value=key==='city'?'São José dos Campos':(p[key]||'');
-  profileImage=p.photo||null;
-  $('#profilePreview').innerHTML=profileImage?`<img src="${profileImage}" alt="Foto de perfil">`:'';
-  coverImage=p.cover||'';
-  updateCoverPreview();
+  if(!profileDraftDirty){
+    for(const key of ['name','category','city','neighborhood','phone','bio']) f.elements[key].value=key==='city'?'São José dos Campos':(p[key]||'');
+    profileImage=p.photo||null;
+    $('#profilePreview').innerHTML=profileImage?`<img src="${profileImage}" alt="Foto de perfil">`:'';
+    freeCoverObject();coverImage=p.cover||'';coverFocus={x:.5,y:.5};updateCoverPreview();
+  }
   updateProfileUI();
   $('#myWorks').innerHTML=state.works.length?state.works.map(w=>workCard(w,true)).join(''):empty('Nenhum trabalho ainda','Adicione trabalhos e mostre suas fotos para futuros clientes.');
   $('#myRequests').innerHTML=state.requests.length?state.requests.map(requestCard).join(''):empty('Você ainda não publicou pedidos','Publique o primeiro pedido e ele aparecerá aqui.');
   f.dispatchEvent(new Event('input'));
 }
-function workCard(w,manage=false){return `<article class="work-card"><div class="work-photos">${w.photos?.[0]&&safePhoto(w.photos[0])?`<img src="${safePhoto(w.photos[0])}" alt="${esc(w.title)}" data-workphoto="${esc(w.id)}:0">`:''}</div><div class="work-content"><h3>${esc(w.title)}</h3><p>${esc(w.description)}</p><small>${w.photos?.length?`${w.photos.length} foto${w.photos.length===1?'':'s'}`:'Trabalho publicado'}</small>${manage?`<div style="margin-top:12px"><button data-delete-work="${esc(w.id)}">Excluir trabalho</button></div>`:''}</div></article>`}
+function workCard(w,manage=false){
+  const photos=(w.photos||[]).map((src,index)=>safePhoto(src)?`<span class="v52-work-photo"><img loading="lazy" src="${safePhoto(src)}" alt="${esc(w.title)} · Foto ${index+1}"></span>`:'').filter(Boolean);
+  return `<article class="work-card v52-work-card v53-work-card"><button type="button" class="v53-work-open" data-workdetail="${esc(w.id)}" aria-label="Ver detalhes do trabalho ${esc(w.title)}"><span class="work-photos v52-work-photos ${photos.length===1?'v52-single-photo':''}">${photos.join('')}</span><span class="work-content"><strong class="v53-work-card-title">${esc(w.title)}</strong><span class="v53-work-card-desc">${esc(w.description)}</span><span class="v53-work-card-footer"><small>${photos.length?`${photos.length} foto${photos.length===1?'':'s'}`:'Trabalho publicado'}</small><span>Ver trabalho <span aria-hidden="true">›</span></span></span></span></button>${manage?`<div class="v52-work-manage"><button type="button" data-delete-work="${esc(w.id)}">Excluir trabalho</button></div>`:''}</article>`;
+}
+function findWorkDetail(id){
+  const selected=allPros().find(p=>p.id===selectedPro);
+  const owner=selected?.ownerUid||(selectedPro==='mine'?window.ConectaBackend?.user?.uid:null);
+  return (state.works||[]).find(w=>w.id===id)||(window.ConectaLaunch?.worksFor(owner)||[]).find(w=>w.id===id);
+}
+let detailWorkPhotos=[], detailWorkPhotoIndex=0;
+function updateWorkPhoto(index){
+  const gallery=$('#modalBody .v53-work-detail');
+  if(!gallery||!detailWorkPhotos.length)return;
+  detailWorkPhotoIndex=(index+detailWorkPhotos.length)%detailWorkPhotos.length;
+  const featured=gallery.querySelector('.v53-feature-photo');
+  if(featured){featured.src=detailWorkPhotos[detailWorkPhotoIndex];featured.alt=`Foto ${detailWorkPhotoIndex+1} de ${detailWorkPhotos.length} do trabalho`}
+  const current=gallery.querySelector('[data-photo-current]');
+  if(current)current.textContent=`${detailWorkPhotoIndex+1} de ${detailWorkPhotos.length}`;
+  gallery.querySelectorAll('[data-work-slide]').forEach(btn=>{
+    const selected=Number(btn.dataset.workSlide)===detailWorkPhotoIndex;
+    btn.classList.toggle('is-active',selected);
+    btn.setAttribute('aria-pressed',String(selected));
+  });
+}
+function openWorkDetail(id){
+  const work=findWorkDetail(id);
+  if(!work)return notify('Não foi possível abrir esse trabalho. Atualize a página.');
+  detailWorkPhotos=(work.photos||[]).map(s=>safePhoto(s)).filter(Boolean);
+  detailWorkPhotoIndex=0;
+  const count=detailWorkPhotos.length;
+  const thumbnails=count>1?`<div class="v53-work-thumbs" aria-label="Fotos do trabalho">${detailWorkPhotos.map((src,i)=>`<button type="button" data-work-slide="${i}" aria-label="Ver foto ${i+1}" aria-pressed="${i===0}"><img loading="lazy" src="${src}" alt=""></button>`).join('')}</div>`:'';
+  const gallery=count?`<div class="v53-work-gallery"><div class="v53-work-photo-stage"><img class="v53-feature-photo" src="${detailWorkPhotos[0]}" alt="Foto 1 de ${count} do trabalho">${count>1?'<button type="button" class="v53-work-prev" data-work-move="-1" aria-label="Foto anterior">‹</button><button type="button" class="v53-work-next" data-work-move="1" aria-label="Próxima foto">›</button>':''}</div><div class="v53-work-gallery-bottom"><span data-photo-current>1 de ${count}</span>${thumbnails}</div></div>`:'<div class="v53-work-no-photo">Trabalho publicado sem imagens</div>';
+  modal(`<div class="v53-work-detail" role="document"><div class="v53-work-detail-heading"><span>PORTFÓLIO · TRABALHOS REALIZADOS</span><h2>${esc(work.title)}</h2></div><div class="v53-work-detail-body">${gallery}<div class="v53-work-story"><span class="v53-story-kicker">SOBRE O TRABALHO</span><p>${esc(work.description||'Sem descrição disponível.')}</p><div class="v53-work-photo-count">${count?`${count} foto${count===1?'':'s'} do projeto`:'Descrição do projeto'}</div></div></div></div>`);
+  updateWorkPhoto(0);
+}
 function defaultCoverMarkup(){return `<div class="v39-cover-default" aria-label="Capa padrão Conecta"><div class="v39-cover-content"><div class="v39-cover-brand"><span class="v39-brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="v39-brand-name">conecta<span>.</span></span></div><p>Conectando pessoas a boas oportunidades.</p></div><div class="v39-cover-emblem" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>`}
-function renderProfessional(){const p=allPros().find(x=>x.id===selectedPro)||(selectedPro==='mine' && state.profile?.name?{...state.profile,id:'mine',initials:initials(state.profile.name)}:null);if(!p){route('explore');return}let works=window.ConectaLaunch?.worksFor(p.ownerUid)||[];window.ConectaLaunch?.observeWorks(p.ownerUid);const own=p.id==='mine'||(!!p.ownerUid&&p.ownerUid===window.ConectaBackend?.user?.uid);document.body.classList.toggle('v33-own-profile',own);$('#page-professional').classList.toggle('v33-is-own',own);$$('.desktop-nav [data-open-my-profile]').forEach(b=>b.classList.toggle('current',own));const example=p.id.startsWith('demo-');const real=!own&&!example&&!!p.ownerUid;const reviews=!own&&p.ownerUid?`<section id="v12ReviewsSection" class="v12-reviews v36-reviews" data-reviews-for="${esc(p.ownerUid)}"><div class="v13-review-head"><h2>Avaliações de clientes</h2></div><div class="v12-reviews-content">Carregando avaliações...</div></section>`:'';let contact='';if(own){contact='<p class="modal-help">Este é seu perfil público.</p>'}else if(example){contact='<p class="modal-help">Este é um perfil ilustrativo. Não é possível enviar mensagens.</p>'}else if(real){contact=`<div class="v36-contact-stack"><button class="btn btn-green v36-chat-highlight" data-chat-pro="${esc(p.id)}">Vamos conversar</button>${p.hasWhatsapp?`<button class="btn v36-contact-secondary" data-whatsapp-pro="${esc(p.id)}">Solicitar WhatsApp</button>`:''}</div>`}else{contact='<p class="modal-help">Contato indisponível.</p>'}$('#professionalDetail').innerHTML=`${own?`<div class="v33-own-toolbar"><div class="v33-own-title"><span class="v33-own-eyebrow">MINHA CONTA</span><strong>Meu perfil</strong></div><div class="v38-own-actions"><button class="v33-edit-profile" type="button" data-action="edit-own-profile" aria-label="Editar meu perfil"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 4 4 4-12 12H4v-4L16 4Z"/><path d="m14 6 4 4"/></svg>Editar perfil</button><button class="v38-delete-profile" type="button" data-action="delete-own-profile" aria-label="Deletar meu perfil">Deletar perfil</button></div></div>`:''}<div class="detail-banner ${safePhoto(p.cover)?'has-cover':'v39-has-default-cover'}">${safePhoto(p.cover)?`<img class="v32-public-cover" src="${safePhoto(p.cover)}" alt="Capa do perfil de ${esc(p.name)}">`:defaultCoverMarkup()}<div class="detail-avatar">${p.photo?`<img src="${esc(p.photo)}" ${p.upgrade?`data-upgrade-src="${esc(p.upgrade)}"`:""} alt="">`:esc(p.initials||initials(p.name))}</div></div><div class="detail-main ${own?'v33-own-detail':''}"><div class="v36-profile-copy"><span class="overline">${own?'SEU PERFIL':example?'PERFIL DEMONSTRATIVO':'PROFISSIONAL DO CONECTA'}</span><h1>${esc(p.name)}</h1><span class="chip">${esc(p.category)}</span><p>${esc(p.bio||'Sem apresentação ainda.')}</p><p>⌖ ${esc(p.city)}${p.neighborhood?' · '+esc(p.neighborhood):''}</p></div><aside class="detail-aside v36-contact-card"><span class="v36-contact-kicker">${own?'PERFIL VISÍVEL':'FALAR COM O PROFISSIONAL'}</span><h3>${own?'Seu perfil':example?'Vamos conversar?':'Gostou deste perfil?'}</h3><p>${own?'Confira como seu perfil aparece aos clientes.':example?'Dados fictícios para demonstração.':`Fale agora com ${esc(p.name)} e explique o serviço que você precisa.`}</p>${contact}</aside></div><div class="detail-portfolio"><div class="v33-portfolio-heading"><h2>Trabalhos realizados</h2>${own?'<button type="button" class="v33-manage-portfolio" data-action="manage-own-portfolio">Gerenciar portfólio</button>':''}</div><div class="portfolio-grid">${works.length?works.map(w=>workCard(w)).join(''):empty('Sem trabalhos publicados','Este perfil ainda não publicou fotos de trabalhos.')}</div></div>${reviews}`}
+function renderProfessional(){const p=allPros().find(x=>x.id===selectedPro)||(selectedPro==='mine' && state.profile?.name?{...state.profile,id:'mine',initials:initials(state.profile.name)}:null);if(!p){route('explore');return}let works=window.ConectaLaunch?.worksFor(p.ownerUid)||[];window.ConectaLaunch?.observeWorks(p.ownerUid);
+  const worksLoading=!!p.ownerUid&&!window.ConectaLaunch?.hasLoadedWorks(p.ownerUid);
+  if(p.ownerUid===window.ConectaBackend?.user?.uid && !works.length && state.works?.length)works=state.works;const own=p.id==='mine'||(!!p.ownerUid&&p.ownerUid===window.ConectaBackend?.user?.uid);document.body.classList.toggle('v33-own-profile',own);$('#page-professional').classList.toggle('v33-is-own',own);$$('.desktop-nav [data-open-my-profile]').forEach(b=>b.classList.toggle('current',own));const example=p.id.startsWith('demo-');const real=!own&&!example&&!!p.ownerUid;const reviews=!own&&p.ownerUid?`<section id="v12ReviewsSection" class="v12-reviews v36-reviews" data-reviews-for="${esc(p.ownerUid)}"><div class="v13-review-head"><h2>Avaliações de clientes</h2></div><div class="v12-reviews-content">Carregando avaliações...</div></section>`:'';let contact='';if(own){contact='<p class="modal-help">Este é seu perfil público.</p>'}else if(example){contact='<p class="modal-help">Este é um perfil ilustrativo. Não é possível enviar mensagens.</p>'}else if(real){contact=`<div class="v36-contact-stack"><button class="btn btn-green v36-chat-highlight" data-chat-pro="${esc(p.id)}">Vamos conversar</button>${p.hasWhatsapp?`<button class="btn v36-contact-secondary" data-whatsapp-pro="${esc(p.id)}">Solicitar WhatsApp</button>`:''}</div>`}else{contact='<p class="modal-help">Contato indisponível.</p>'}$('#professionalDetail').innerHTML=`${own?`<div class="v33-own-toolbar"><div class="v33-own-title"><span class="v33-own-eyebrow">MINHA CONTA</span><strong>Meu perfil</strong></div><div class="v38-own-actions"><button class="v33-edit-profile" type="button" data-action="edit-own-profile" aria-label="Editar meu perfil"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 4 4 4-12 12H4v-4L16 4Z"/><path d="m14 6 4 4"/></svg>Editar perfil</button><button class="v38-delete-profile" type="button" data-action="delete-own-profile" aria-label="Deletar meu perfil">Deletar perfil</button></div></div>`:''}<div class="detail-banner ${safePhoto(p.cover)?'has-cover':'v39-has-default-cover'}">${safePhoto(p.cover)?`<img class="v32-public-cover" src="${safePhoto(p.cover)}" alt="Capa do perfil de ${esc(p.name)}">`:defaultCoverMarkup()}<div class="detail-avatar">${p.photo?`<img src="${esc(p.photo)}" ${p.upgrade?`data-upgrade-src="${esc(p.upgrade)}"`:""} alt="">`:esc(p.initials||initials(p.name))}</div></div><div class="detail-main ${own?'v33-own-detail':''}"><div class="v36-profile-copy"><span class="overline">${own?'SEU PERFIL':example?'PERFIL DEMONSTRATIVO':'PROFISSIONAL DO CONECTA'}</span><h1>${esc(p.name)}</h1><span class="chip">${esc(p.category)}</span><p>${esc(p.bio||'Sem apresentação ainda.')}</p><p>⌖ ${esc(p.city)}${p.neighborhood?' · '+esc(p.neighborhood):''}</p></div><aside class="detail-aside v36-contact-card"><span class="v36-contact-kicker">${own?'PERFIL VISÍVEL':'FALAR COM O PROFISSIONAL'}</span><h3>${own?'Seu perfil':example?'Vamos conversar?':'Gostou deste perfil?'}</h3><p>${own?'Confira como seu perfil aparece aos clientes.':example?'Dados fictícios para demonstração.':`Fale agora com ${esc(p.name)} e explique o serviço que você precisa.`}</p>${contact}</aside></div><div class="detail-portfolio"><div class="v33-portfolio-heading"><h2>Trabalhos realizados</h2>${own?'<button type="button" class="v33-manage-portfolio" data-action="manage-own-portfolio">Gerenciar portfólio</button>':''}</div><div class="portfolio-grid">${works.length?works.map(w=>workCard(w)).join(''):worksLoading?'<p class="v52-works-loading" role="status">Carregando trabalhos publicados...</p>':empty('Sem trabalhos publicados','Este perfil ainda não publicou fotos de trabalhos.')}</div></div>${reviews}`}
 
 let ownProfileLookupInProgress=false;
 async function openOwnProfile(){
@@ -221,7 +512,7 @@ function openRequest(){
       <label class="v32-field">Título do serviço<input name="title" required minlength="5" maxlength="90" placeholder="Ex.: Instalar ventilador de teto" autofocus></label>
       <div class="v32-modal-two"><label class="v32-field">Categoria<select name="category" required>${options()}</select></label><label class="v32-field">Cidade<input name="city" required value="São José dos Campos" readonly aria-readonly="true"></label></div>
       <label class="v32-field">Descreva o que precisa<textarea name="description" required minlength="10" maxlength="1000" rows="5" placeholder="Explique o serviço, os detalhes importantes e o que espera do profissional."></textarea></label>
-      <div class="v32-photos-row"><div><strong>Fotos do serviço <span>opcional</span></strong><p>Até 4 fotos JPG ou JPEG, de no máximo 12 MB cada. Otimizadas automaticamente.</p></div><label class="v32-pick-files"><input id="requestPhotos" type="file" accept="image/jpeg,.jpg,.jpeg" multiple>Adicionar fotos</label></div>
+      <div class="v32-photos-row"><div><strong>Fotos do serviço <span>opcional</span></strong><p>Até 4 fotos JPG, PNG ou WebP (12 MB cada). Otimizadas automaticamente.</p></div><label class="v32-pick-files"><input id="requestPhotos" type="file" accept="image/jpeg,image/png,image/webp" multiple>Adicionar fotos</label></div>
       <div id="uploadPreview" class="image-preview v32-image-preview" aria-live="polite"></div>
       <p class="v32-privacy-tip">Não informe endereço residencial, telefone ou dados pessoais na descrição. O pedido será público.</p>
       <div class="modal-actions v32-modal-actions"><button type="button" class="btn btn-light" data-action="close-modal">Cancelar</button><button type="submit" class="btn btn-green">Publicar pedido</button></div>
@@ -235,28 +526,28 @@ function openWork(){
     <form id="workForm" class="modal-form v32-publish-form">
       <label class="v32-field">Nome do trabalho<input name="title" required minlength="3" maxlength="90" placeholder="Ex.: Reforma de cozinha" autofocus></label>
       <label class="v32-field">Como foi o serviço?<textarea name="description" required minlength="5" maxlength="650" rows="5" placeholder="Explique o que foi feito e o resultado entregue."></textarea></label>
-      <div class="v32-photos-row"><div><strong>Galeria de fotos <span>opcional</span></strong><p>Compartilhe até 4 fotos JPG ou JPEG, de no máximo 12 MB cada.</p></div><label class="v32-pick-files"><input id="workPhotos" type="file" accept="image/jpeg,.jpg,.jpeg" multiple>Escolher fotos</label></div>
+      <div class="v32-photos-row"><div><strong>Galeria de fotos <span>opcional</span></strong><p>Compartilhe até 4 fotos JPG, PNG ou WebP. Você pode remover fotos antes de publicar.</p></div><label class="v32-pick-files"><input id="workPhotos" type="file" accept="image/jpeg,image/png,image/webp" multiple>Escolher fotos</label></div>
       <div id="uploadPreview" class="image-preview v32-image-preview" aria-live="polite"></div>
       <p class="v32-privacy-tip">Publique apenas imagens próprias ou autorizadas. Seus trabalhos aparecerão para visitantes.</p>
       <div class="modal-actions v32-modal-actions"><button type="button" class="btn btn-light" data-action="close-modal">Cancelar</button><button type="submit" class="btn btn-green">Publicar trabalho</button></div>
     </form></div>`);
 }
-async function compress(file,max=720,limit=81000,aspect=null){
-  if(file.type!=='image/jpeg'||file.size>12*1024*1024)throw Error('Envie somente imagens JPG ou JPEG de até 12 MB.');
+async function compress(file,max=720,limit=81000,aspect=null,focus={x:.5,y:.5}){
+  if(typeof file!=='string' && (!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>12*1024*1024))throw Error('Use JPG, PNG ou WebP de até 12 MB.');
   const img=await new Promise((resolve,reject)=>{
-    const image=new Image(),url=URL.createObjectURL(file);
-    image.onload=()=>{URL.revokeObjectURL(url);resolve(image)};
-    image.onerror=()=>{URL.revokeObjectURL(url);reject(Error('Não foi possível abrir a imagem.'))};
+    const image=new Image(),url=typeof file==='string'?file:URL.createObjectURL(file);
+    image.onload=()=>{if(typeof file!=='string')URL.revokeObjectURL(url);resolve(image)};
+    image.onerror=()=>{if(typeof file!=='string')URL.revokeObjectURL(url);reject(Error('Não foi possível abrir a imagem.'))};
     image.src=url;
   });
   let maxSide=max;
   for(let attempt=0;attempt<9;attempt++){
     let sourceW=img.naturalWidth,sourceH=img.naturalHeight,sourceX=0,sourceY=0;
-    if(aspect){if(sourceW/sourceH>aspect){sourceW=sourceH*aspect;sourceX=(img.naturalWidth-sourceW)/2}else{sourceH=sourceW/aspect;sourceY=(img.naturalHeight-sourceH)/2}}
+    if(aspect){if(sourceW/sourceH>aspect){sourceW=sourceH*aspect;sourceX=(img.naturalWidth-sourceW)*Math.max(0,Math.min(1,focus.x))}else{sourceH=sourceW/aspect;sourceY=(img.naturalHeight-sourceH)*Math.max(0,Math.min(1,focus.y))}}
     const scale=Math.min(1,maxSide/sourceW);
     const canvas=document.createElement('canvas');
     canvas.width=Math.max(1,Math.round(sourceW*scale));canvas.height=Math.max(1,Math.round(sourceH*scale));
-    canvas.getContext('2d').drawImage(img,sourceX,sourceY,sourceW,sourceH,0,0,canvas.width,canvas.height);
+    const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,sourceX,sourceY,sourceW,sourceH,0,0,canvas.width,canvas.height);
     const data=canvas.toDataURL('image/jpeg',Math.max(.30,.67-attempt*.045));
     if(data.length<=limit)return data;
     maxSide=Math.max(220,Math.floor(maxSide*.84));
@@ -279,7 +570,7 @@ async function readPhotos(input,max){
       if(preview)preview.innerHTML=`<p class="upload-status" role="status">Preparando fotos: ${i+1} de ${files.length}</p>`;
     }
     stagedImages=processed;
-    if(preview)preview.innerHTML=processed.map(x=>`<img src="${x}" alt="Prévia da foto">`).join('');
+    if(preview)preview.innerHTML=processed.map((x,i)=>`<div class="v52-photo-preview"><img src="${x}" alt="Prévia da foto ${i+1}"><button type="button" data-remove-upload-photo="${i}" aria-label="Remover foto ${i+1}">×</button></div>`).join('');
   }catch(err){stagedImages=[];input.value='';if(preview)preview.innerHTML='';notify(err.message||'Não foi possível processar as fotos.');}
   finally{if(token===uploadGeneration){photosBusy=false;if(submit)submit.disabled=false}}
 }
@@ -334,14 +625,14 @@ async function saveWork(f){
 }
 function dash(name){$$('[data-dash]').forEach(b=>b.classList.toggle('selected',b.dataset.dash===name));$$('.dash-panel').forEach(el=>el.classList.toggle('active',el.id===`dash${name==='myrequests'?'Myrequests':name==='portfolio'?'Portfolio':'Profile'}`));renderDashboard()}
 function showImage(src){modal(`<h2>Visualizar imagem</h2><img class="image-view" src="${src}" alt="Imagem ampliada">`)}
-document.addEventListener('click',e=>{const b=e.target.closest('button,a,[data-image],[data-workphoto]');if(!b)return;if(b.hasAttribute('data-profile-cta')||b.hasAttribute('data-open-my-profile')){e.preventDefault();openOwnProfile()}else if(b.dataset.action==='edit-own-profile'){e.preventDefault();route('dashboard');dash('profile')}else if(b.dataset.action==='manage-own-portfolio'){e.preventDefault();route('dashboard');dash('portfolio')}else if(b.dataset.route){e.preventDefault();route(b.dataset.route)}else if(b.dataset.favorite){
+document.addEventListener('click',e=>{const b=e.target.closest('button,a,[data-image],[data-workphoto],[data-workdetail],[data-work-slide],[data-work-move]');if(!b)return;if(b.hasAttribute('data-profile-cta')||b.hasAttribute('data-open-my-profile')){e.preventDefault();openOwnProfile()}else if(b.dataset.action==='edit-own-profile'){e.preventDefault();route('dashboard');dash('profile')}else if(b.dataset.action==='manage-own-portfolio'){e.preventDefault();route('dashboard');dash('portfolio')}else if(b.dataset.route){e.preventDefault();if(b.dataset.route==='home')resetExploreFilters();route(b.dataset.route)}else if(b.dataset.favorite){
   const id=b.dataset.favorite, backend=window.ConectaBackend;
   if(!window.ConectaV9?.requireAuth('favorite'))return;
   if(!id.startsWith('user:'))return notify('Este perfil não pode ser salvo.');
   const isSaved=(state.favorites||[]).includes(id);
   b.disabled=true;
   backend.setFavorite(id.slice(5),!isSaved).catch(err=>notify('Não foi possível atualizar seus salvos: '+(err?.message||'erro de conexão'))).finally(()=>{if(b.isConnected)b.disabled=false});
-}else if(b.dataset.category){exploreTab='all';$('#categoryFilter').value=b.dataset.category;route('explore')}else if(b.dataset.filterCategory){$('#categoryFilter').value=$('#categoryFilter').value===b.dataset.filterCategory?'':b.dataset.filterCategory;renderExplore()}else if(b.dataset.exploreTab){exploreTab=b.dataset.exploreTab;renderExplore()}else if(b.dataset.categoryScroll){$('#categories').scrollBy({left:b.dataset.categoryScroll==='next'?490:-490,behavior:'smooth'})}else if(b.dataset.pro){selectedPro=b.dataset.pro;route('professional')}else if(b.dataset.offerRequest)openOffer(b.dataset.offerRequest);else if(b.dataset.action==='open-request')openRequest();else if(b.dataset.action==='open-work')openWork();else if(b.dataset.action==='remove-profile-cover'){coverImage='';const input=$('#profileCoverPicture');if(input)input.value='';updateCoverPreview();notify('Capa removida da prévia. Salve o perfil para confirmar.')}else if(b.dataset.action==='view-my-profile'){if(state.profile?.name){selectedPro='mine';route('professional')}}else if(b.dataset.action==='delete-own-profile'){window.ConectaV9?.deleteProfile?.()}else if(b.dataset.action==='close-modal')closeModal();else if(b.dataset.dash)dash(b.dataset.dash);else if(b.dataset.closeRequest){
+}else if(b.dataset.category){exploreTab='all';$('#categoryFilter').value=b.dataset.category;$('#professionFilter').value='';setProfessionOptions();route('explore')}else if(b.dataset.filterCategory){$('#categoryFilter').value=$('#categoryFilter').value===b.dataset.filterCategory?'':b.dataset.filterCategory;setProfessionOptions();renderExplore()}else if(b.dataset.exploreTab){exploreTab=b.dataset.exploreTab;renderExplore()}else if(b.dataset.categoryScroll){$('#categories').scrollBy({left:b.dataset.categoryScroll==='next'?490:-490,behavior:'smooth'})}else if(b.dataset.pro){selectedPro=b.dataset.pro;route('professional')}else if(b.dataset.offerRequest)openOffer(b.dataset.offerRequest);else if(b.dataset.action==='open-request')openRequest();else if(b.dataset.action==='open-work')openWork();else if(b.dataset.action==='remove-profile-cover'){freeCoverObject();coverImage='';profileDraftDirty=true;const input=$('#profileCoverPicture');if(input)input.value='';updateCoverPreview();notify('Capa removida da prévia. Salve o perfil para confirmar.')}else if(b.dataset.action==='view-my-profile'){if(state.profile?.name){selectedPro='mine';route('professional')}}else if(b.dataset.action==='delete-own-profile'){window.ConectaV9?.deleteProfile?.()}else if(b.dataset.action==='close-modal')closeModal();else if(b.dataset.dash)dash(b.dataset.dash);else if(b.dataset.closeRequest){
   const r=state.requests.find(item=>item.id===b.dataset.closeRequest);
   if(!r||r.status!=='open')return notify('Este pedido não está mais em aberto.');
   if(!confirm('Encerrar este pedido? Depois de encerrado, ele não receberá novas propostas.'))return;
@@ -352,17 +643,23 @@ document.addEventListener('click',e=>{const b=e.target.closest('button,a,[data-i
   if(!r||!confirm('Excluir este pedido publicado?'))return;
   b.disabled=true;
   window.ConectaBackend.deleteRequest(r).then(()=>notify('Pedido removido da plataforma.')).catch(err=>{notify('Erro ao excluir pedido: '+err.message);b.disabled=false});
-}else if(b.dataset.deleteWork){
+}else if(b.dataset.workdetail){openWorkDetail(b.dataset.workdetail)}else if(b.dataset.workSlide!==undefined){updateWorkPhoto(Number(b.dataset.workSlide))}else if(b.dataset.workMove!==undefined){updateWorkPhoto(detailWorkPhotoIndex+Number(b.dataset.workMove))}else if(b.dataset.deleteWork){
   const w=state.works.find(w=>w.id===b.dataset.deleteWork);
   if(!w||!confirm('Excluir este trabalho do portfólio?'))return;
   b.disabled=true;
   window.ConectaBackend.deleteWork(w).then(()=>notify('Trabalho removido do portfólio.')).catch(err=>{notify('Erro ao excluir trabalho: '+err.message);b.disabled=false});
-}else if(b.dataset.image){const [id,n]=b.dataset.image.split(':');const r=publicRequests.find(r=>r.id===id);if(r?.photos[+n]&&safePhoto(r.photos[+n]))showImage(safePhoto(r.photos[+n]))}else if(b.dataset.workphoto){const [id,n]=b.dataset.workphoto.split(':');const selected=allPros().find(p=>p.id===selectedPro);const w=(window.ConectaLaunch?.worksFor(selected?.ownerUid)||[]).find(w=>w.id===id);if(w?.photos[+n]&&safePhoto(w.photos[+n]))showImage(safePhoto(w.photos[+n]))}});
-document.addEventListener('submit',e=>{if(e.target.id==='heroSearch'){e.preventDefault();$('#searchPros').value=$('#heroQuery').value;$('#categoryFilter').value=$('#heroCategory').value;exploreTab='all';route('explore')}else if(e.target.id==='topMarketplaceSearch'){e.preventDefault();$('#searchPros').value=$('#topSearchQuery').value;$('#categoryFilter').value='';exploreTab='all';route('explore')}else if(e.target.id==='profileForm'){e.preventDefault();window.ConectaV9?.saveProfile(e.target)}else if(e.target.id==='requestForm'){e.preventDefault();saveRequest(e.target)}else if(e.target.id==='workForm'){e.preventDefault();saveWork(e.target)}else if(e.target.id==='offerForm'){e.preventDefault();saveOffer(e.target)}});
-document.addEventListener('change',async e=>{if(e.target.id==='requestPhotos')await readPhotos(e.target,4);else if(e.target.id==='workPhotos')await readPhotos(e.target,4);else if(e.target.id==='profileCoverPicture'&&e.target.files[0]){coverBusy=true;$('#profileSubmit').disabled=true;try{coverImage=await compress(e.target.files[0],1000,93000,3.2);updateCoverPreview()}catch(err){notify(err.message||'Não foi possível preparar a capa.')}finally{coverBusy=false;$('#profileSubmit').disabled=false}}else if(e.target.id==='profilePicture'&&e.target.files[0]){try{profileImage=await compress(e.target.files[0],600,115000);$('#profilePreview').innerHTML=`<img src="${profileImage}" alt="Prévia">`}catch(err){e.target.value='';notify(err.message||'Não foi possível preparar a foto de perfil.')}}});
-['searchPros','cityFilter','neighborhoodFilter'].forEach(id=>$('#'+id).addEventListener('input',renderExplore));$('#categoryFilter').addEventListener('change',renderExplore);$('#proSort').addEventListener('change',renderExplore);['requestSearch','requestCategory','requestSort'].forEach(id=>$('#'+id).addEventListener(id==='requestSearch'?'input':'change',renderRequests));$('#clearFilters').addEventListener('click',()=>{$('#searchPros').value='';$('#categoryFilter').value='';$('#cityFilter').value='São José dos Campos';$('#neighborhoodFilter').value='';$('#proSort').value='default';exploreTab='all';$('#neighborhoodFilter').dispatchEvent(new Event('input',{bubbles:true}))});$('#closeModal').addEventListener('click',closeModal);$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});$('#menuBtn').addEventListener('click',()=>{const opened=$('#mobileNav').classList.toggle('open');$('#menuBtn').setAttribute('aria-expanded',String(opened))});
+}else if(b.dataset.image){const [id,n]=b.dataset.image.split(':');const r=publicRequests.find(r=>r.id===id);if(r?.photos[+n]&&safePhoto(r.photos[+n]))showImage(safePhoto(r.photos[+n]))}else if(b.dataset.removeUploadPhoto!==undefined){const at=Number(b.dataset.removeUploadPhoto);if(Number.isInteger(at)&&at>=0&&at<stagedImages.length){stagedImages.splice(at,1);const preview=b.closest('#uploadPreview');if(preview)preview.innerHTML=stagedImages.map((x,i)=>`<div class="v52-photo-preview"><img src="${x}" alt="Prévia da foto ${i+1}"><button type="button" data-remove-upload-photo="${i}" aria-label="Remover foto ${i+1}">×</button></div>`).join('')}}});
+document.addEventListener('submit',e=>{if(e.target.id==='heroSearch'){e.preventDefault();$('#searchPros').value=$('#heroQuery').value;$('#categoryFilter').value=$('#heroCategory').value;$('#professionFilter').value='';setProfessionOptions();exploreTab='all';route('explore')}else if(e.target.id==='topMarketplaceSearch'){e.preventDefault();$('#searchPros').value=$('#topSearchQuery').value;$('#categoryFilter').value='';$('#professionFilter').value='';setProfessionOptions();exploreTab='all';route('explore')}else if(e.target.id==='profileForm'){e.preventDefault();window.ConectaV9?.saveProfile(e.target)}else if(e.target.id==='requestForm'){e.preventDefault();saveRequest(e.target)}else if(e.target.id==='workForm'){e.preventDefault();saveWork(e.target)}else if(e.target.id==='offerForm'){e.preventDefault();saveOffer(e.target)}});
+document.addEventListener('input',e=>{if(e.isTrusted && e.target.closest('#profileForm'))profileDraftDirty=true});
+document.addEventListener('change',async e=>{if(e.target.id==='requestPhotos')await readPhotos(e.target,4);else if(e.target.id==='workPhotos')await readPhotos(e.target,4);else if(e.target.id==='profileCoverPicture'&&e.target.files[0]){
+  const file=e.target.files[0];
+  if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>12*1024*1024){e.target.value='';notify('Escolha JPG, PNG ou WebP de até 12 MB.');return;}
+  freeCoverObject();coverSource={file,url:URL.createObjectURL(file)};coverFocus={x:.5,y:.5};profileDraftDirty=true;
+  updateCoverPreview();
+}else if(e.target.id==='profilePicture'&&e.target.files[0]){profileDraftDirty=true;profilePhotoBusy=true;$('#profileSubmit').disabled=true;try{profileImage=await compress(e.target.files[0],600,115000);$('#profilePreview').innerHTML=`<img src="${profileImage}" alt="Prévia">`}catch(err){e.target.value='';notify(err.message||'Não foi possível preparar a foto de perfil.')}finally{profilePhotoBusy=false;$('#profileSubmit').disabled=false}}});
+['searchPros','cityFilter','neighborhoodFilter'].forEach(id=>$('#'+id).addEventListener('input',renderExplore));$('#categoryFilter').addEventListener('change',()=>{setProfessionOptions();renderExplore()});$('#professionFilter').addEventListener('change',renderExplore);$('#regionFilter').addEventListener('change',renderExplore);$('#proSort').addEventListener('change',renderExplore);['requestSearch','requestCategory','requestSort'].forEach(id=>$('#'+id).addEventListener(id==='requestSearch'?'input':'change',renderRequests));$('#clearFilters').addEventListener('click',resetExploreFilters);$('#closeModal').addEventListener('click',closeModal);$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});$('#menuBtn').addEventListener('click',()=>{const opened=$('#mobileNav').classList.toggle('open');$('#menuBtn').setAttribute('aria-expanded',String(opened))});
 state.requests=[];state.works=[];state.favorites=[];
-setupSelects();updateProfileUI();route('home');
+setupSelects();resetExploreFilters();updateProfileUI();route('home');
 
 window.ConectaUI={notify,dialog,closeModal,modal};
 

@@ -1,7 +1,7 @@
 /* Conecta: secure Firebase email action handler for the free GitHub Pages deployment. */
 // Endereço do Conecta calculado a partir desta página, para funcionar no
 // GitHub Pages e no domínio próprio sem precisar trocar o código.
-const SITE_URL = new URL('./', location.href).href;
+const SITE_URL = 'https://conecta-f6ac1.web.app/';
 const params = new URLSearchParams(location.search);
 const mode = params.get('mode');
 const code = params.get('oobCode');
@@ -86,7 +86,7 @@ async function run() {
         event.preventDefault();formError.hidden=true;
         const pw=document.getElementById('newPassword').value;
         const confirm=document.getElementById('confirmPassword').value;
-        if(pw.length<8 || pw!==confirm){formError.textContent=pw.length<8?'Use pelo menos 8 caracteres.':'As senhas não coincidem.';formError.hidden=false;return;}
+        if(pw!==confirm || pw.length<10 || pw.length>128 || /\s/.test(pw) || !/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/\d/.test(pw) || !/[^A-Za-z0-9\s]/.test(pw) || /senha|password|123456|qwerty|conecta|admin/i.test(pw)){formError.textContent=pw!==confirm?'As senhas não coincidem.':'Crie uma senha com 10 caracteres ou mais, maiúscula, minúscula, número e símbolo, sem palavras comuns.';formError.hidden=false;return;}
         submit.disabled=true;
         try{
           await authSDK.confirmPasswordReset(auth,code,pw);

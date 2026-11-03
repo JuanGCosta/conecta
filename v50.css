@@ -1,0 +1,101 @@
+/* Conecta V50: card único do hero, visual premium e responsivo. */
+#page-home .hero-brand-visual{isolation:isolate;min-height:557px;}
+#page-home .hero-brand-visual::before{
+  inset:7% -1% 3% 7%;z-index:-1;
+  border-radius:46px 138px 48px 72px;
+  transform:rotate(-5deg);
+  background:linear-gradient(142deg,#d8eed9 2%,#dbf1dc 46%,#b7dec4 100%);
+  box-shadow:none;
+}
+#page-home .hero-brand-panel{
+  box-sizing:border-box;
+  top:4%;right:1%;left:auto;width:92%;height:90%;
+  overflow:hidden;isolation:isolate;
+  padding:32px 34px 40px;
+  border-radius:48px 132px 48px 76px;
+  border:1px solid rgba(161,209,175,.5);
+  background:radial-gradient(circle at 78% 38%,rgba(210,249,223,.66),transparent 46%),
+    linear-gradient(140deg,#f8fcf8 4%,#f0f9f2 45%,#d8f4e1 100%);
+  box-shadow:0 32px 70px rgba(26,89,53,.14),inset 0 1px 0 rgba(255,255,255,.85);
+}
+#page-home .hero-brand-panel::before,
+#page-home .hero-brand-panel::after{
+  content:'';position:absolute;pointer-events:none;z-index:-1;
+  width:135%;height:57%;left:-17%;bottom:-36%;
+  transform:rotate(-15deg);border-radius:50% 52% 0 0;
+}
+#page-home .hero-brand-panel::before{
+  bottom:-27%;left:-29%;width:145%;height:63%;
+  background:linear-gradient(108deg,rgba(226,248,232,.8),rgba(127,210,160,.28));
+}
+#page-home .hero-brand-panel::after{
+  bottom:-41%;left:25%;width:111%;height:61%;
+  background:linear-gradient(135deg,rgba(156,218,174,.18),rgba(84,184,123,.24));
+}
+#page-home .hero-brand-panel-top{position:relative;z-index:1;justify-content:flex-start}
+#page-home .hero-brand-pill{
+  gap:9px;min-height:39px;box-sizing:border-box;
+  padding:11px 16px;border-radius:999px;
+  background:linear-gradient(115deg,#347a59,#134e35);
+  box-shadow:0 9px 20px rgba(20,77,47,.13);
+  color:#fff;font-size:10px;letter-spacing:.13em;
+}
+#page-home .hero-brand-pill-dot{width:7px;height:7px;border-radius:50%;background:#a8ff81;box-shadow:0 0 0 3px rgba(168,255,129,.09)}
+#page-home .hero-brand-showcase{
+  z-index:1;position:relative;align-items:flex-start;
+  gap:24px;margin:31px 0 auto;transform:none;
+}
+#page-home .hero-brand-mark{
+  width:113px;height:113px;padding:18px;gap:11px;
+  border-radius:34px;border:1px solid rgba(255,255,255,.84);
+  background:rgba(255,255,255,.93);
+  box-shadow:0 23px 38px rgba(44,114,78,.13);
+  transform:rotate(-16deg);
+}
+#page-home .hero-brand-mark i{border-radius:14px;background:#118458}
+#page-home .hero-brand-mark i:nth-child(2),
+#page-home .hero-brand-mark i:nth-child(3){background:#89cba0}
+#page-home .hero-brand-wording strong{
+  font-size:clamp(43px,4.7vw,64px);
+  color:#113d2f;line-height:1.02;letter-spacing:-.075em;
+}
+#page-home .hero-brand-wording strong span{color:#25af70}
+#page-home .hero-brand-wording p{
+  margin-top:14px;max-width:335px;
+  font-size:15px;line-height:1.65;color:#426956;
+}
+/* Exclusivamente o card principal: nenhum card flutuante ou chips de rodapé. */
+#page-home .hero-brand-visual .hero-photo-small,
+#page-home .hero-brand-visual .hero-floating-tag,
+#page-home .hero-brand-visual .hero-visual-caption,
+#page-home .hero-brand-visual .hero-brand-tags,
+#page-home .hero-brand-visual .hero-brand-status{display:none!important}
+@media (max-width:1100px){
+ #page-home .hero-brand-panel{padding:28px 27px 36px;border-radius:35px 94px 42px 64px}
+ #page-home .hero-brand-showcase{gap:22px}
+ #page-home .hero-brand-mark{width:96px;height:96px;padding:15px;border-radius:27px}
+ #page-home .hero-brand-wording strong{font-size:clamp(40px,4.5vw,54px)}
+}
+@media (max-width:760px){
+ #page-home .hero-brand-visual{height:370px;min-height:370px;max-width:500px}
+ #page-home .hero-brand-visual::before{inset:8% 4% 4% 5%;border-radius:32px 78px 40px 45px}
+ #page-home .hero-brand-panel{
+   top:4%;left:3%;right:3%;width:94%;height:89%;
+   padding:21px 24px 28px;
+   border-radius:30px 82px 34px 55px;
+ }
+ #page-home .hero-brand-pill{font-size:8px;min-height:33px;padding:9px 12px;letter-spacing:.12em}
+ #page-home .hero-brand-showcase{gap:18px;margin-top:25px}
+ #page-home .hero-brand-mark{width:84px;height:84px;border-radius:25px;padding:14px;gap:8px}
+ #page-home .hero-brand-wording strong{font-size:42px}
+ #page-home .hero-brand-wording p{margin-top:10px;font-size:12px;max-width:275px;line-height:1.55}
+}
+@media (max-width:410px){
+ #page-home .hero-brand-visual{height:330px;min-height:330px}
+ #page-home .hero-brand-panel{padding:18px 19px 23px}
+ #page-home .hero-brand-showcase{gap:14px;margin-top:17px}
+ #page-home .hero-brand-mark{width:75px;height:75px;padding:13px;gap:7px}
+ #page-home .hero-brand-wording strong{font-size:37px}
+ #page-home .hero-brand-wording p{font-size:11px;max-width:230px}
+}
+@media (prefers-reduced-motion: reduce){#page-home .hero-brand-visual{animation:none!important}}

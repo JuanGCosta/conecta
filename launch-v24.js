@@ -64,6 +64,7 @@
         if(document.body.dataset.page==='professional')window.renderProfessional?.();
       },err=>message('Não foi possível carregar os trabalhos publicados',err));
     },
-    worksFor(uid){return worksByOwner.get(uid)||[]}
+    worksFor(uid){return worksByOwner.get(uid)||[]},
+    hasLoadedWorks(uid){return !!uid && worksByOwner.has(uid)}
   };
 })();

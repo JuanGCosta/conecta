@@ -49,17 +49,34 @@
         .replace(/[^a-z]/g,'').match(/conecta|administrador|administracao|moderador|moderacao/);
       const reservedNameMessage = 'Esse nome lembra um nome oficial do Conecta e não pode ser usado. Use seu nome ou o nome do seu negócio.';
       backend.isReservedName = name => !!reservedName(name);
+      // V53: a mesma política configurada no Firebase Authentication.
+      // Não bloquear palavras contidas em e-mails, nomes ou marcas: eram regras extras
+      // não indicadas no formulário e rejeitavam senhas que atendiam à política real.
+      const passwordAdvice = 'A senha precisa ter 10 ou mais caracteres, com letra maiúscula, minúscula, número e símbolo.';
+      const strongPassword = value => {
+        const pw=String(value||'');
+        return pw.length>=10 && pw.length<=4096 && /[a-z]/.test(pw) && /[A-Z]/.test(pw)
+          && /[0-9]/.test(pw) && /[^A-Za-z0-9\s]/.test(pw);
+      };
+      backend.passwordAdvice=passwordAdvice;
+      backend.strongPassword=strongPassword;
+      const actionSettings={url:'https://conecta-f6ac1.web.app/',handleCodeInApp:false};
+      const sendVerifiedEmail = async user => {
+        try { return await authm.sendEmailVerification(user,actionSettings); }
+        catch(e){if(e?.code!=='auth/unauthorized-continue-uri' && e?.code!=='auth/invalid-continue-uri')throw e;return authm.sendEmailVerification(user);}
+      };
       backend.signup = async (name,email,password) => {
+        if(!strongPassword(password,email,name))throw Error(passwordAdvice);
         if (reservedName(name)) throw Error(reservedNameMessage);
         const credential = await authm.createUserWithEmailAndPassword(auth,email,password);
         await authm.updateProfile(credential.user,{displayName:name.trim().slice(0,70)});
-        await authm.sendEmailVerification(credential.user);
+        await sendVerifiedEmail(credential.user);
         return credential.user;
       };
       backend.login = async (email,password) => (await authm.signInWithEmailAndPassword(auth,email,password)).user;
       backend.logout = () => authm.signOut(auth);
-      backend.sendVerification = () => authm.sendEmailVerification(auth.currentUser);
-      backend.resetPassword = email => authm.sendPasswordResetEmail(auth,email);
+      backend.sendVerification = () => sendVerifiedEmail(auth.currentUser);
+      backend.resetPassword = async email => {try{return await authm.sendPasswordResetEmail(auth,email,actionSettings)}catch(e){if(e?.code!=='auth/unauthorized-continue-uri' && e?.code!=='auth/invalid-continue-uri')throw e;return authm.sendPasswordResetEmail(auth,email)}};
       backend.refreshUser = async () => {
         if (!auth.currentUser) return null;
         await authm.reload(auth.currentUser);
@@ -179,13 +196,14 @@ backend.getOwnProfile = async () => {
               await batch.commit();
             }
           };
-          const [sentOffers,chats,requests,favorites,works,received]=await Promise.all([
+          const [sentOffers,chats,requests,favorites,works,received,hiddenChats]=await Promise.all([
             getDocs(query(dbm.collectionGroup(db,'offers'),where('providerUid','==',uid))),
             getDocs(query(collection(db,'chats'),where('participants','array-contains',uid))),
             getDocs(query(collection(db,'requests'),where('ownerUid','==',uid))),
             getDocs(collection(db,'users',uid,'favorites')),
             getDocs(query(collection(db,'works'),where('ownerUid','==',uid))),
-            getDocs(collection(db,'profiles',uid,'reviews'))
+            getDocs(collection(db,'profiles',uid,'reviews')),
+            getDocs(collection(db,'users',uid,'hiddenChats'))
           ]);
           const ops=[];
           sentOffers.docs.forEach(d=>ops.push(b=>b.delete(d.ref)));
@@ -198,6 +216,7 @@ backend.getOwnProfile = async () => {
             ops.push(b=>b.delete(r.ref));
           }
           favorites.docs.forEach(d=>ops.push(b=>b.delete(d.ref)));
+          hiddenChats.docs.forEach(d=>ops.push(b=>b.delete(d.ref)));
           works.docs.forEach(d=>ops.push(b=>b.delete(d.ref)));
           // O perfil sai no mesmo lote das avaliações recebidas: a regra só libera
           // apagá-las quando o perfil deixa de existir.
@@ -228,11 +247,12 @@ backend.getOwnProfile = async () => {
         }catch(e){return false}
       };
       const chatCooldownMs=3000;
-      const assertChatCooldown = thread => {
+      const waitForChatWindow = async thread => {
         const last=thread?.updatedAt?.toMillis?.();
-        if(Number.isFinite(last) && Date.now()-last < chatCooldownMs){
-          throw Error('Aguarde 3 segundos entre mensagens para evitar spam.');
-        }
+        if(!Number.isFinite(last))return false;
+        const remaining=Math.ceil(chatCooldownMs+250-(Date.now()-last));
+        if(remaining>0){await new Promise(resolve=>setTimeout(resolve,Math.min(remaining,3500)));return true;}
+        return false;
       };
       backend.saveReview = async (providerId,rating,comment) => {
         const u=auth.currentUser;
@@ -250,6 +270,25 @@ backend.getOwnProfile = async () => {
       backend.subscribeProfiles = (success,failure) => onSnapshot(collection(db,'profiles'),snapshot => {
         success(snapshot.docs.map(d => ({...d.data(),id:d.id})))
       },failure);
+      backend.subscribeHiddenChats = (success,failure) => {
+        const u=auth.currentUser;
+        if(!u)return ()=>{};
+        return onSnapshot(collection(db,'users',u.uid,'hiddenChats'),snapshot=>{
+          success(snapshot.docs.map(d=>({id:d.id,...d.data()})));
+        },failure);
+      };
+      backend.hideThread = async threadId => {
+        const u=auth.currentUser;
+        if(!u?.emailVerified)throw Error('Confirme seu e-mail para remover uma conversa.');
+        const chat=await getDoc(doc(db,'chats',threadId));
+        if(!chat.exists() || !chat.data().participants?.includes(u.uid))throw Error('Conversa indisponível.');
+        await setDoc(doc(db,'users',u.uid,'hiddenChats',threadId),{hiddenAt:serverTimestamp()});
+      };
+      backend.unhideThread = async threadId => {
+        const u=auth.currentUser;
+        if(!u?.emailVerified)throw Error('Entre na sua conta.');
+        await dbm.deleteDoc(doc(db,'users',u.uid,'hiddenChats',threadId));
+      };
       backend.subscribeThreads = (success,failure) => {
         const u=auth.currentUser;
         return onSnapshot(query(collection(db,'chats'),where('participants','array-contains',u.uid)),snap => {
@@ -296,6 +335,7 @@ backend.getOwnProfile = async () => {
               !Array.isArray(t.participants) || !t.participants.includes(u.uid)) throw e;
           if (t.status==='removed') throw Error('Esta conversa foi encerrada porque a outra pessoa excluiu a conta.');
           if (t.status==='declined' || t.status==='blocked') throw Error(t.status==='blocked'?'Esta conversa foi bloqueada.':'Este contato foi recusado e está encerrado.');
+          await waitForChatWindow(t);
           const retry=writeBatch(db);
           if (t.status==='pending') {
             const nextCount=Math.max(1,Number(t.pendingCount||1))+1;
@@ -344,8 +384,17 @@ backend.getOwnProfile = async () => {
         const threadRef=doc(db,'chats',thread.id);
         const snap=await getDoc(threadRef);
         if(!snap.exists()) throw Error('Conversa não encontrada.');
-        const live={id:thread.id,...snap.data()};
-        if(live.status==='accepted' || (live.status==='pending' && live.customerId===u.uid))assertChatCooldown(live);
+        let live={id:thread.id,...snap.data()};
+        // A aceitação/bloqueio de contato também muda updatedAt. Não significa spam.
+        // Aguarda a janela das regras sem lançar um falso erro ao usuário.
+        if(live.status==='accepted' || (live.status==='pending' && live.customerId===u.uid)){
+          if(await waitForChatWindow(live)){
+            const latest=await getDoc(threadRef);
+            if(!latest.exists())throw Error('Conversa não encontrada.');
+            live={id:thread.id,...latest.data()};
+            await waitForChatWindow(live);
+          }
+        }
         const batch=writeBatch(db);
         const messageRef=doc(collection(db,'chats',thread.id,'messages'));
         if(live.status==='accepted'){
