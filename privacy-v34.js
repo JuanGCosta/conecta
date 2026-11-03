@@ -24,7 +24,7 @@
         <article class="v34-privacy-section"><div><span class="v34-card-eyebrow">Navegador</span><h3>Limpar dados antigos deste navegador</h3><p>Remove somente dados locais de versões antigas do Conecta. Isso não apaga sua conta nem a sessão no Firebase.</p></div><button type="button" data-privacy-clear-local>Limpar dados antigos</button></article>
         <article class="v34-privacy-section danger"><div><span class="v34-card-eyebrow">Exclusão</span><h3>Excluir minha conta</h3><p>Apaga de forma definitiva sua conta, perfil, telefone, trabalhos, pedidos, propostas, favoritos e avaliações. Não é possível desfazer.</p></div><button type="button" data-privacy-delete-account>Excluir minha conta</button></article>
       </div>
-      <div class="v34-privacy-notice">Antes do lançamento público, o responsável ainda precisa divulgar a identificação formal e um canal externo adicional para solicitações sem acesso à conta.</div>
+      <div class="v34-privacy-notice">O Conecta é mantido por CESAR RESENDE SAPHA (MEI), CNPJ 60.202.079/0001-65. Sem acesso à conta, escreva para ${supportEmail} usando, se possível, o e-mail cadastrado.</div>
       <p id="v34PrivacyFeedback" class="v34-privacy-feedback" role="status" aria-live="polite"></p>
     </section>`;
     if(typeof modal==='function')modal(html);
