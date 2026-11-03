@@ -60,7 +60,7 @@
       };
       backend.passwordAdvice=passwordAdvice;
       backend.strongPassword=strongPassword;
-      const actionSettings={url:'https://conecta-f6ac1.web.app/',handleCodeInApp:false};
+      const actionSettings={url:'https://conectasjc.com.br/',handleCodeInApp:false};
       const sendVerifiedEmail = async user => {
         try { return await authm.sendEmailVerification(user,actionSettings); }
         catch(e){if(e?.code!=='auth/unauthorized-continue-uri' && e?.code!=='auth/invalid-continue-uri')throw e;return authm.sendEmailVerification(user);}

@@ -1,56 +1,41 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0e3e2d">
-  <meta name="robots" content="noindex,nofollow">
-  <meta name="referrer" content="no-referrer">
-  <title>Confirmação de conta | Conecta SJC</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="confirmar.css?v=52">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f5f8f2"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><meta name="description" content="Confirme seu e-mail para continuar no Conecta.">
+<title>Confirmar e-mail | Conecta</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="confirmar.css?v=57">
 </head>
 <body>
-  <main class="page">
-    <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
-    <div class="panel">
-      <section class="story" aria-label="Conecta">
-        <a href="https://conecta-f6ac1.web.app/" class="brand" aria-label="Voltar ao Conecta">
-          <img src="favicon.svg" class="brand-logo" alt="" aria-hidden="true"><span>conecta<span class="brand-period">.</span> <small>SJC</small></span>
-        </a>
-        <div class="story-main">
-          <img src="favicon.svg" class="story-large-logo" alt="Marca Conecta SJC">
-          <h1>Uma conexão<br><em>começa aqui.</em></h1>
-          <p>Uma comunidade de pessoas e profissionais de São José dos Campos.</p>
+<div class="page">
+  <header class="topbar">
+    <a class="brand" href="https://conectasjc.com.br/" aria-label="Conecta, página inicial"><svg class="brand-logo" viewBox="0 0 44 44" role="img" aria-label="Marca Conecta" xmlns="http://www.w3.org/2000/svg"><rect width="44" height="44" rx="12" fill="#0d4232"/><g transform="rotate(-20 22 22)"><rect x="10" y="10" width="10" height="10" rx="3.1" fill="#9de0b7"/><rect x="24" y="10" width="10" height="10" rx="3.1" fill="#e4f5de"/><rect x="10" y="24" width="10" height="10" rx="3.1" fill="#e4f5de"/><rect x="24" y="24" width="10" height="10" rx="3.1" fill="#4fb58f"/></g></svg><span>conecta<span class="brand-dot">.</span></span></a>
+    <a href="https://conectasjc.com.br/" class="topbar-link">Voltar ao início</a>
+  </header>
+  <main class="main">
+    <section class="panel" aria-labelledby="statusTitle">
+      <div class="panel-inner">
+        <div id="statusIcon" class="status-icon" data-kind="info" aria-hidden="true" hidden></div>
+        <h1 id="statusTitle">Confirmar e-mail</h1>
+        <p id="statusDescription" class="status-description" aria-live="polite">Para ativar sua conta, abra o link que enviamos ao seu e-mail.</p>
+        <div id="passwordSection" class="password-section" hidden>
+          <form id="passwordForm">
+            <label for="newPassword">Nova senha</label>
+            <input type="password" id="newPassword" autocomplete="new-password" placeholder="Crie sua nova senha" minlength="10" required>
+            <label for="confirmPassword">Confirme a nova senha</label>
+            <input type="password" id="confirmPassword" autocomplete="new-password" placeholder="Digite novamente" minlength="10" required>
+            <small class="password-rule">Use pelo menos 10 caracteres, com letra maiúscula, minúscula, número e símbolo.</small>
+            <p class="form-error" id="formError" role="alert" hidden></p>
+            <button class="action-button" id="resetSubmit" type="submit">Salvar nova senha</button>
+          </form>
         </div>
-        <div class="story-footer"><span>SÃO JOSÉ DOS CAMPOS</span><span>© Conecta SJC</span></div>
-      </section>
-      <section class="action" aria-label="Confirmação de conta">
-        <div class="action-top"><span class="secure-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/></svg> CONTA CONECTA</span><a class="close-link" href="./" aria-label="Voltar para o Conecta">×</a></div>
-        <div class="action-content">
-          <div class="status-icon" id="statusIcon" data-kind="loading" aria-hidden="true"><span class="status-spinner"></span></div>
-          <div class="eyebrow" id="statusEyebrow">SEGURANÇA DA SUA CONTA</div>
-          <h2 id="statusTitle">Estamos verificando seu link...</h2>
-          <p id="statusDescription" aria-live="polite">Só um instante enquanto confirmamos as informações com segurança.</p>
-          <div id="passwordSection" class="password-section" hidden>
-            <form id="passwordForm">
-              <label for="newPassword">Nova senha</label>
-              <input type="password" id="newPassword" autocomplete="new-password" placeholder="10 caracteres, letras, números e símbolo" minlength="10" required>
-              <label for="confirmPassword">Confirme a nova senha</label>
-              <input type="password" id="confirmPassword" autocomplete="new-password" placeholder="Digite a senha novamente" minlength="10" required>
-              <small class="password-rule">Mínimo 10 caracteres, incluindo maiúscula, minúscula, número e símbolo.</small><p class="form-error" id="formError" role="alert" hidden></p>
-              <button class="action-button" id="resetSubmit" type="submit">Salvar nova senha </button>
-            </form>
-          </div>
-          <a id="primaryButton" class="action-button" href="https://conecta-f6ac1.web.app/" hidden>Ir para o Conecta </a>
-          <div class="support-line" id="supportLine">Sua segurança vem em primeiro lugar.</div>
-          <a class="support-contact" href="mailto:conectasjc@outlook.com">Precisa de ajuda? conectasjc@outlook.com</a>
-        </div>
-        <div class="action-footer"><div class="safe-mark"><span>✓</span> Confirmação protegida pelo Firebase</div><a href="https://conecta-f6ac1.web.app/">Voltar ao início </a></div>
-      </section>
-    </div>
+        <a id="primaryButton" class="action-button" href="https://conectasjc.com.br/" hidden>Ir para o Conecta</a>
+        <div class="support-area"><p id="supportLine" class="support-line">Não encontrou a mensagem? Verifique o spam ou solicite um novo envio no Conecta.</p></div>
+      </div>
+      <div class="card-bottom">Precisa de ajuda? <a class="support-contact" href="mailto:conectasjc@outlook.com">conectasjc@outlook.com</a></div>
+    </section>
   </main>
-  <script src="firebase-config.js?v=48"></script>
-  <script type="module" src="confirmar.js?v=52"></script>
-</body>
-</html>
+  <footer class="footer"><span>© Conecta</span><a href="https://conectasjc.com.br/">conectasjc.com.br</a></footer>
+</div>
+<script src="firebase-config.js?v=48"></script>
+<script type="module" src="confirmar.js?v=57"></script>
+</body></html>
