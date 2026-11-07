@@ -205,7 +205,7 @@ const categoryPictures={
 'Reformas':['https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=450&q=83','assets/category-reformas.svg'],
 'Elétrica':['https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=450&q=83','assets/category-el-trica.svg'],
 'Hidráulica':['https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=450&q=83','assets/category-hidr-ulica.svg'],
-'Limpeza':['https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=450&q=83','assets/category-limpeza.svg'],
+'Limpeza':['assets/category-cleaning-v58.webp','assets/category-limpeza.svg'],
 'Pintura':['https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=450&q=83','assets/category-pintura.svg'],
 'Jardinagem':['https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=450&q=83','assets/category-jardinagem.svg'],
 'Montagem':['https://images.unsplash.com/photo-1503602642458-232111445657?w=450&q=83','assets/category-montagem.svg'],
@@ -228,7 +228,7 @@ const key='conecta.reconstruido.v1';
 function load(){return {profile:null,works:[],requests:[],favorites:[]}} // Account data comes from Firebase. Legacy local entries are not read.
 let photosBusy=false, uploadGeneration=0;
 let publicRequests=[],offersByRequest=new Map();
-let coverImage=null, coverBusy=false, profilePhotoBusy=false, coverSource=null, coverFocus={x:.5,y:.5}, coverDrag=null, profileDraftDirty=false;
+let coverImage=null, coverBusy=false, profilePhotoBusy=false, coverSource=null, coverFocus={x:.5,y:.5}, coverZoom=1, coverDrag=null, profileDraftDirty=false;
 let state=load(), currentPage='home',selectedPro=null, stagedImages=[],profileImage=null,toastTimer,exploreTab='all';
 function save(){return true} // Publicações e salvos não usam mais o navegador.
 const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -272,7 +272,7 @@ function setupSelects(){
 }
 function renderHome(){
   $('#categories').innerHTML=categories.map(([name,_,subtitle])=>{
-    const pic=categoryPictures[name];return `<button class="category-item" data-category="${esc(name)}"><span class="v19-category-icon" aria-hidden="true">${icon(categoryIcons[name],23)}</span><span class="category-picture"><img src="${pic[1]}" data-upgrade-src="${pic[0]}" data-category-image="${esc(name)}" loading="eager" decoding="async" alt=""></span><span class="category-words"><strong>${esc(name)}</strong><small>${esc(subtitle)}</small></span></button>`
+    const pic=categoryPictures[name];return `<a class="category-item" data-category="${esc(name)}" href="${name==='Elétrica'?'/eletricistas-sjc/':'/servicos/'+name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-sjc/'}"><span class="v19-category-icon" aria-hidden="true">${icon(categoryIcons[name],23)}</span><span class="category-picture"><img src="${pic[1]}" data-upgrade-src="${pic[0]}" data-category-image="${esc(name)}" loading="eager" decoding="async" alt=""></span><span class="category-words"><strong>${esc(name)}</strong><small>${esc(subtitle)}</small></span></a>`
   }).join('');
   $('#featured').innerHTML=allPros().length?allPros().slice(0,3).map(proCard).join(''):empty('Profissionais chegando em breve','Se você oferece serviços, crie seu perfil gratuitamente e participe do Conecta.');
   $('#heroProCount').textContent=allPros().length;
@@ -363,9 +363,13 @@ function updateProfileUI(){
 function updateCoverPreview(){
   const target=$('#profileCoverPreview'),remove=$('[data-action="remove-profile-cover"]');
   if(!target)return;
-  const src=coverSource?(typeof coverSource==='string'?coverSource:coverSource.url):safePhoto(coverImage||'');
+  const src=coverSource?(typeof coverSource==='string'?safePhoto(coverSource):coverSource.url):safePhoto(coverImage||'');
   // Prévia pode ser reposicionada; a versão JPEG final é recortada ao salvar.
-  target.innerHTML=src?`<img src="${src}" alt="Sua foto de capa" draggable="false" style="object-position:${Math.round(coverFocus.x*100)}% ${Math.round(coverFocus.y*100)}%">`:'<div class="v52-cover-empty"><strong>Sua capa, do seu jeito</strong><small>Adicione uma imagem e arraste para enquadrar.</small></div>';
+  target.innerHTML=src?`<img src="${src}" alt="Sua foto de capa" draggable="false">`:'<div class="v52-cover-empty"><strong>Sua capa, do seu jeito</strong><small>Adicione uma imagem e arraste para enquadrar.</small></div>';
+  updateCoverFocus();
+  const controls=$('#profileCoverZoomControls');
+  if(controls)controls.hidden=!src;
+  updateCoverZoomControls();
   target.classList.toggle('v52-cover-draggable',!!coverSource);
   target.setAttribute('role',coverSource?'slider':'img');
   if(coverSource){target.setAttribute('tabindex','0');target.setAttribute('aria-label','Enquadrar foto de capa: arraste para posicionar ou use as setas');}
@@ -374,12 +378,43 @@ function updateCoverPreview(){
 }
 async function prepareCoverForSave(){
   if(!coverSource)return coverImage||'';
+  if(typeof coverSource==='string' && coverSource===coverImage && coverZoom===1 && coverFocus.x===.5 && coverFocus.y===.5)return coverImage;
   const source=typeof coverSource==='string'?coverSource:coverSource.file;
-  return compress(source,1000,93000,3.2,coverFocus);
+  return compress(source,1000,93000,3.2,coverFocus,coverZoom);
 }
 window.ConectaCover={prepare:prepareCoverForSave};
 function freeCoverObject(){if(coverSource && typeof coverSource!=='string')URL.revokeObjectURL(coverSource.url);coverSource=null;}
-function updateCoverFocus(){const image=$('#profileCoverPreview img');if(image)image.style.objectPosition=`${Math.round(coverFocus.x*100)}% ${Math.round(coverFocus.y*100)}%`;}
+function updateCoverFocus(){
+  const image=$('#profileCoverPreview img');
+  if(image){
+    const x=Math.round(coverFocus.x*100),y=Math.round(coverFocus.y*100);
+    image.style.objectPosition=`${x}% ${y}%`;
+    image.style.transformOrigin=`${x}% ${y}%`;
+    image.style.transform=`scale(${coverZoom})`;
+  }
+}
+function updateCoverZoomControls(){
+  const control=$('#profileCoverZoom'),value=$('#profileCoverZoomValue');
+  const zoomOut=$('#profileCoverZoomOut'),zoomIn=$('#profileCoverZoomIn'),reset=$('#profileCoverZoomReset');
+  if(control)control.value=String(Math.round(coverZoom*100));
+  if(value)value.textContent=`${Math.round(coverZoom*100)}%`;
+  if(zoomOut)zoomOut.disabled=!coverSource||coverZoom<=1.001;
+  if(zoomIn)zoomIn.disabled=!coverSource||coverZoom>=2.5;
+  if(reset)reset.disabled=!coverSource||(coverZoom===1&&coverFocus.x===.5&&coverFocus.y===.5);
+}
+function setCoverZoom(next){
+  if(!coverSource)return;
+  coverZoom=Math.max(1,Math.min(2.5,Math.round(next*20)/20));
+  profileDraftDirty=true;
+  updateCoverFocus();updateCoverZoomControls();
+}
+$('#profileCoverZoom')?.addEventListener('input',e=>setCoverZoom(Number(e.target.value)/100));
+$('#profileCoverZoomOut')?.addEventListener('click',()=>setCoverZoom(coverZoom-.15));
+$('#profileCoverZoomIn')?.addEventListener('click',()=>setCoverZoom(coverZoom+.15));
+$('#profileCoverZoomReset')?.addEventListener('click',()=>{
+  if(!coverSource)return;
+  coverFocus={x:.5,y:.5};setCoverZoom(1);
+});
 const coverPreview=$('#profileCoverPreview');
 coverPreview?.addEventListener('pointerdown',event=>{
   if(!coverSource||event.button>0)return;
@@ -391,7 +426,7 @@ coverPreview?.addEventListener('pointermove',event=>{
   const area=coverPreview.getBoundingClientRect();
   coverFocus.x=Math.max(0,Math.min(1,coverDrag.x-(event.clientX-coverDrag.startX)/Math.max(area.width,1)));
   coverFocus.y=Math.max(0,Math.min(1,coverDrag.y-(event.clientY-coverDrag.startY)/Math.max(area.height,1)));
-  updateCoverFocus();
+  updateCoverFocus();updateCoverZoomControls();
 });
 function endCoverDrag(){coverDrag=null;coverPreview?.classList.remove('v52-dragging');}
 coverPreview?.addEventListener('pointerup',endCoverDrag);
@@ -413,7 +448,7 @@ function renderDashboard(){
     for(const key of ['name','category','city','neighborhood','phone','bio']) f.elements[key].value=key==='city'?'São José dos Campos':(p[key]||'');
     profileImage=p.photo||null;
     $('#profilePreview').innerHTML=profileImage?`<img src="${profileImage}" alt="Foto de perfil">`:'';
-    freeCoverObject();coverImage=p.cover||'';coverFocus={x:.5,y:.5};updateCoverPreview();
+    freeCoverObject();coverImage=p.cover||'';coverSource=coverImage||null;coverFocus={x:.5,y:.5};coverZoom=1;updateCoverPreview();
   }
   updateProfileUI();
   $('#myWorks').innerHTML=state.works.length?state.works.map(w=>workCard(w,true)).join(''):empty('Nenhum trabalho ainda','Adicione trabalhos e mostre suas fotos para futuros clientes.');
@@ -532,7 +567,7 @@ function openWork(){
       <div class="modal-actions v32-modal-actions"><button type="button" class="btn btn-light" data-action="close-modal">Cancelar</button><button type="submit" class="btn btn-green">Publicar trabalho</button></div>
     </form></div>`);
 }
-async function compress(file,max=720,limit=81000,aspect=null,focus={x:.5,y:.5}){
+async function compress(file,max=720,limit=81000,aspect=null,focus={x:.5,y:.5},zoom=1){
   if(typeof file!=='string' && (!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>12*1024*1024))throw Error('Use JPG, PNG ou WebP de até 12 MB.');
   const img=await new Promise((resolve,reject)=>{
     const image=new Image(),url=typeof file==='string'?file:URL.createObjectURL(file);
@@ -543,7 +578,15 @@ async function compress(file,max=720,limit=81000,aspect=null,focus={x:.5,y:.5}){
   let maxSide=max;
   for(let attempt=0;attempt<9;attempt++){
     let sourceW=img.naturalWidth,sourceH=img.naturalHeight,sourceX=0,sourceY=0;
-    if(aspect){if(sourceW/sourceH>aspect){sourceW=sourceH*aspect;sourceX=(img.naturalWidth-sourceW)*Math.max(0,Math.min(1,focus.x))}else{sourceH=sourceW/aspect;sourceY=(img.naturalHeight-sourceH)*Math.max(0,Math.min(1,focus.y))}}
+    if(aspect){
+      const safeZoom=Math.max(1,Math.min(2.5,Number(zoom)||1));
+      const baseWidth=sourceW/sourceH>aspect?sourceH*aspect:sourceW;
+      const baseHeight=baseWidth/aspect;
+      sourceW=baseWidth/safeZoom;
+      sourceH=baseHeight/safeZoom;
+      sourceX=(img.naturalWidth-sourceW)*Math.max(0,Math.min(1,focus.x));
+      sourceY=(img.naturalHeight-sourceH)*Math.max(0,Math.min(1,focus.y));
+    }
     const scale=Math.min(1,maxSide/sourceW);
     const canvas=document.createElement('canvas');
     canvas.width=Math.max(1,Math.round(sourceW*scale));canvas.height=Math.max(1,Math.round(sourceH*scale));
@@ -632,7 +675,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button,a,[data-i
   const isSaved=(state.favorites||[]).includes(id);
   b.disabled=true;
   backend.setFavorite(id.slice(5),!isSaved).catch(err=>notify('Não foi possível atualizar seus salvos: '+(err?.message||'erro de conexão'))).finally(()=>{if(b.isConnected)b.disabled=false});
-}else if(b.dataset.category){exploreTab='all';$('#categoryFilter').value=b.dataset.category;$('#professionFilter').value='';setProfessionOptions();route('explore')}else if(b.dataset.filterCategory){$('#categoryFilter').value=$('#categoryFilter').value===b.dataset.filterCategory?'':b.dataset.filterCategory;setProfessionOptions();renderExplore()}else if(b.dataset.exploreTab){exploreTab=b.dataset.exploreTab;renderExplore()}else if(b.dataset.categoryScroll){$('#categories').scrollBy({left:b.dataset.categoryScroll==='next'?490:-490,behavior:'smooth'})}else if(b.dataset.pro){selectedPro=b.dataset.pro;route('professional')}else if(b.dataset.offerRequest)openOffer(b.dataset.offerRequest);else if(b.dataset.action==='open-request')openRequest();else if(b.dataset.action==='open-work')openWork();else if(b.dataset.action==='remove-profile-cover'){freeCoverObject();coverImage='';profileDraftDirty=true;const input=$('#profileCoverPicture');if(input)input.value='';updateCoverPreview();notify('Capa removida da prévia. Salve o perfil para confirmar.')}else if(b.dataset.action==='view-my-profile'){if(state.profile?.name){selectedPro='mine';route('professional')}}else if(b.dataset.action==='delete-own-profile'){window.ConectaV9?.deleteProfile?.()}else if(b.dataset.action==='close-modal')closeModal();else if(b.dataset.dash)dash(b.dataset.dash);else if(b.dataset.closeRequest){
+}else if(b.dataset.category){if(b.tagName==='A'&&(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey||e.button!==0))return;e.preventDefault();exploreTab='all';$('#categoryFilter').value=b.dataset.category;$('#professionFilter').value='';setProfessionOptions();route('explore')}else if(b.dataset.filterCategory){$('#categoryFilter').value=$('#categoryFilter').value===b.dataset.filterCategory?'':b.dataset.filterCategory;setProfessionOptions();renderExplore()}else if(b.dataset.exploreTab){exploreTab=b.dataset.exploreTab;renderExplore()}else if(b.dataset.categoryScroll){$('#categories').scrollBy({left:b.dataset.categoryScroll==='next'?490:-490,behavior:'smooth'})}else if(b.dataset.pro){selectedPro=b.dataset.pro;route('professional')}else if(b.dataset.offerRequest)openOffer(b.dataset.offerRequest);else if(b.dataset.action==='open-request')openRequest();else if(b.dataset.action==='open-work')openWork();else if(b.dataset.action==='remove-profile-cover'){freeCoverObject();coverImage='';coverZoom=1;coverFocus={x:.5,y:.5};profileDraftDirty=true;const input=$('#profileCoverPicture');if(input)input.value='';updateCoverPreview();notify('Capa removida da prévia. Salve o perfil para confirmar.')}else if(b.dataset.action==='view-my-profile'){if(state.profile?.name){selectedPro='mine';route('professional')}}else if(b.dataset.action==='delete-own-profile'){window.ConectaV9?.deleteProfile?.()}else if(b.dataset.action==='close-modal')closeModal();else if(b.dataset.dash)dash(b.dataset.dash);else if(b.dataset.closeRequest){
   const r=state.requests.find(item=>item.id===b.dataset.closeRequest);
   if(!r||r.status!=='open')return notify('Este pedido não está mais em aberto.');
   if(!confirm('Encerrar este pedido? Depois de encerrado, ele não receberá novas propostas.'))return;
@@ -654,7 +697,7 @@ document.addEventListener('input',e=>{if(e.isTrusted && e.target.closest('#profi
 document.addEventListener('change',async e=>{if(e.target.id==='requestPhotos')await readPhotos(e.target,4);else if(e.target.id==='workPhotos')await readPhotos(e.target,4);else if(e.target.id==='profileCoverPicture'&&e.target.files[0]){
   const file=e.target.files[0];
   if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>12*1024*1024){e.target.value='';notify('Escolha JPG, PNG ou WebP de até 12 MB.');return;}
-  freeCoverObject();coverSource={file,url:URL.createObjectURL(file)};coverFocus={x:.5,y:.5};profileDraftDirty=true;
+  freeCoverObject();coverSource={file,url:URL.createObjectURL(file)};coverFocus={x:.5,y:.5};coverZoom=1;profileDraftDirty=true;
   updateCoverPreview();
 }else if(e.target.id==='profilePicture'&&e.target.files[0]){profileDraftDirty=true;profilePhotoBusy=true;$('#profileSubmit').disabled=true;try{profileImage=await compress(e.target.files[0],600,115000);$('#profilePreview').innerHTML=`<img src="${profileImage}" alt="Prévia">`}catch(err){e.target.value='';notify(err.message||'Não foi possível preparar a foto de perfil.')}finally{profilePhotoBusy=false;$('#profileSubmit').disabled=false}}});
 ['searchPros','cityFilter','neighborhoodFilter'].forEach(id=>$('#'+id).addEventListener('input',renderExplore));$('#categoryFilter').addEventListener('change',()=>{setProfessionOptions();renderExplore()});$('#professionFilter').addEventListener('change',renderExplore);$('#regionFilter').addEventListener('change',renderExplore);$('#proSort').addEventListener('change',renderExplore);['requestSearch','requestCategory','requestSort'].forEach(id=>$('#'+id).addEventListener(id==='requestSearch'?'input':'change',renderRequests));$('#clearFilters').addEventListener('click',resetExploreFilters);$('#closeModal').addEventListener('click',closeModal);$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});$('#menuBtn').addEventListener('click',()=>{const opened=$('#mobileNav').classList.toggle('open');$('#menuBtn').setAttribute('aria-expanded',String(opened))});

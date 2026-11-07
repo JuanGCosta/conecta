@@ -5,7 +5,7 @@
    Não passa pelo service worker: Firebase (login, banco), Google e outros sites,
    pedidos que não são GET e a página de confirmação de e-mail (os links levam
    códigos de uso único, que não devem ser guardados). */
-const CACHE = 'conecta-v53';
+const CACHE = 'conecta-v58';
 
 self.addEventListener('install', () => self.skipWaiting());
 
