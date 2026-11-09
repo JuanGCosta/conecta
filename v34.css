@@ -5,34 +5,133 @@
 .v34-auth-policy input{width:17px!important;height:17px!important;min-width:17px!important;margin:2px 0 0!important;accent-color:#15583d;flex:none;box-shadow:none!important}
 .v34-auth-policy a,.footer-bottom a{color:#c6ebc4!important;text-decoration:underline;text-underline-offset:3px}
 .footer-bottom span:last-child{display:flex;flex-wrap:wrap;gap:18px}
-.v34-privacy-modal{max-width:760px;color:#163c2c}
-.v34-privacy-hero{padding:4px 0 8px}
-.v34-privacy-hero-tight{padding-bottom:2px}
-.v34-privacy-modal .v34-overline{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:#eef7f0;color:#2f8359;font-size:11px;font-weight:850;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
-.v34-privacy-modal h2{font-size:clamp(28px,4vw,38px);margin:0 0 10px;letter-spacing:-.05em;line-height:1.05;font-family:Manrope,'DM Sans',sans-serif}
-.v34-privacy-modal>p,.v34-privacy-hero>p{color:#688373;font-size:14px;line-height:1.75;margin:0 0 18px}
-.v34-privacy-links{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:18px}
-.v34-privacy-links a{display:inline-flex;align-items:center;justify-content:center;padding:12px 15px;border:1px solid #cee2d1;border-radius:13px;color:#135338!important;font-weight:800;text-decoration:none;background:#f4faf5;font-size:12px}
-.v34-privacy-links a:hover{transform:translateY(-1px)}
-.v35-privacy-contact{margin:6px 0 0!important;color:#547365!important;font-size:13px!important}
-.v35-privacy-contact a{color:#145c40!important;text-decoration:underline!important;font-weight:800!important;overflow-wrap:anywhere}
-.v34-privacy-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:12px}
-.v34-card-eyebrow{display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;background:#eef7f0;color:#2d8059;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
-.v34-privacy-section{display:flex;flex-direction:column;justify-content:space-between;gap:16px;padding:20px;border:1px solid #e2eae3;border-radius:22px;background:linear-gradient(180deg,#fff 0%,#fbfdfb 100%);box-shadow:0 14px 28px #173d2d0a;margin:0}
-.v34-privacy-section h3{font-size:18px;font-family:Manrope,'DM Sans',sans-serif;color:#153d2c;margin:0 0 8px;letter-spacing:-.03em}
-.v34-privacy-section p{font-size:13px;color:#6b8073;line-height:1.7;margin:0}
-.v34-privacy-section button{border-radius:14px;padding:12px 16px;font-weight:800;cursor:pointer;border:1px solid #cfe2d2;background:#edf6ef;color:#15523a;font-size:12px;align-self:flex-start}
+/* v65 - Central de Privacidade no mesmo estilo editorial das páginas legais.
+   Apenas apresentação: preserva todos os data-privacy-* e o JS da v49. */
+#modal:has(.v34-privacy-modal) .modal{
+  width:min(810px,calc(100vw - 28px));
+  max-width:810px;
+  max-height:min(90dvh,920px);
+  padding:44px clamp(24px,5.3vw,66px) 38px;
+  overflow-x:hidden;
+  overflow-y:auto;
+  border:1px solid #e4ebe6;
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 26px 90px rgba(8,37,25,.19);
+}
+#modal:has(.v34-privacy-modal) #modalBody{padding:0!important}
+#modal:has(.v34-privacy-modal) .modal-close{
+  top:15px;right:16px;z-index:2;
+  width:37px;height:37px;
+  background:#f5f8f6;color:#345d49;
+  border:1px solid #e4eae5;
+}
+.v34-privacy-modal{max-width:none;color:#193e30}
+.v34-privacy-hero{padding:0 24px 28px 0;border-bottom:1px solid #e6ece7}
+.v34-privacy-hero-tight{padding-bottom:23px}
+.v34-privacy-modal .v34-overline{
+  display:block;margin:0 0 13px;padding:0;
+  border:0;border-radius:0;background:transparent;
+  color:#34805c;font-size:10px;font-weight:800;
+  letter-spacing:.13em;line-height:1.4;text-transform:uppercase
+}
+.v34-privacy-modal h2{
+  margin:0 0 13px;
+  color:#183d2e;
+  font:760 clamp(29px,3.8vw,41px)/1.16 Manrope,'DM Sans',Arial,sans-serif;
+  letter-spacing:-.045em
+}
+.v34-privacy-modal>p,.v34-privacy-hero>p{
+  margin:0 0 18px;
+  color:#61776a;
+  font-size:14px;line-height:1.8
+}
+.v34-privacy-hero>p:first-of-type{max-width:610px}
+.v34-privacy-links{display:flex;flex-wrap:wrap;gap:8px 22px;margin:23px 0 16px}
+.v34-privacy-links a{
+  display:inline-flex;align-items:center;justify-content:flex-start;
+  min-height:32px;padding:0;
+  border:0;border-radius:0;background:transparent;
+  color:#176d4c!important;text-decoration:underline;text-underline-offset:4px;
+  font-size:13px;font-weight:700
+}
+.v34-privacy-links a:hover{color:#104e38!important;transform:none}
+.v35-privacy-contact{margin:0!important;color:#7a8d82!important;font-size:12px!important;line-height:1.7!important}
+.v35-privacy-contact a{color:#176c4b!important;text-decoration:underline!important;text-underline-offset:3px;font-weight:700!important;overflow-wrap:anywhere}
+/* Each action becomes an open, text-led row instead of a card. */
+.v34-privacy-grid{display:block;margin:0}
+.v34-privacy-section{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;gap:10px 34px;
+  padding:25px 0;
+  margin:0;
+  border:0;border-bottom:1px solid #e8ede8;border-radius:0;
+  background:transparent;box-shadow:none
+}
+.v34-privacy-section.accent,.v34-privacy-section.danger{background:transparent;border-color:#e8ede8}
+.v34-card-eyebrow{
+  display:block;margin:0 0 8px;padding:0;
+  background:transparent;border:0;border-radius:0;
+  color:#438367;font-size:10px;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase
+}
+.v34-privacy-section h3{
+  margin:0 0 8px;
+  color:#204333;
+  font:735 17px/1.35 Manrope,'DM Sans',Arial,sans-serif;
+  letter-spacing:-.025em
+}
+.v34-privacy-section p{max-width:510px;margin:0;color:#728378;font-size:13px;line-height:1.72}
+.v34-privacy-section button{
+  align-self:center;justify-self:end;
+  flex:none;min-height:42px;padding:10px 15px;
+  border:1px solid #cbded0;border-radius:9px;
+  background:#fff;color:#176044;
+  font-size:12px;line-height:1.25;font-weight:750;
+  white-space:normal;cursor:pointer;
+  transition:border-color .16s ease,background-color .16s ease
+}
+.v34-privacy-section button:hover{background:#f2f8f3;border-color:#8db9a0}
+.v34-privacy-section.accent button{background:#176a4a;color:#fff;border-color:#176a4a}
+.v34-privacy-section.accent button:hover{background:#10543a;border-color:#10543a}
 .v34-privacy-section button:disabled{opacity:.55;cursor:wait}
-.v34-privacy-section.accent{background:linear-gradient(180deg,#f7fbf8 0%,#edf7f0 100%)}
-.v34-privacy-section.danger{background:linear-gradient(180deg,#fffafa 0%,#fff4f2 100%);border-color:#f0dad6}
-.v34-privacy-section.danger .v34-card-eyebrow{background:#fff0ec;color:#9a4737}
-.v34-privacy-section.danger button{background:#fff2ef;color:#963e30;border-color:#ecc7c1}
-.v34-privacy-notice{padding:14px 16px;border-radius:16px;background:#fff6e6;border:1px solid #eedaba;color:#7b5c27;font-size:12px;line-height:1.7;margin:16px 0 0}
-.v34-privacy-feedback{min-height:24px;margin-top:14px;font-size:12px;color:#235940;font-weight:700}
-.v34-delete-form label{display:block;font-size:12px;font-weight:800;color:#27493b}
-.v34-delete-form input{display:block;width:100%;margin-top:8px;border:1px solid #dce7de;border-radius:12px;background:#fff;color:#17362e;padding:13px;outline-color:#79cbaa}
-.v34-delete-actions{display:flex;gap:10px;flex-wrap:wrap}
-.v34-delete-actions .ghost{background:#fff;border:1px solid #d6e4da;color:#234e3d}
-@media(max-width:700px){.v30-header-side{flex-wrap:wrap}.v34-privacy-grid{grid-template-columns:1fr}.v34-privacy-section{padding:16px}.v34-delete-actions{flex-direction:column}.v34-delete-actions button{width:100%}}
-#modal:has(.v34-privacy-modal) .modal{width:min(780px,calc(100vw - 24px));max-width:780px;max-height:min(90dvh,900px);padding:30px 26px;overflow-x:hidden;overflow-y:auto;border-radius:28px;background:linear-gradient(180deg,#fff 0%,#f9fcfa 100%)}
-@media(max-width:700px){#modal:has(.v34-privacy-modal) .modal{max-height:calc(100dvh - 26px);padding:24px 14px;border-radius:22px}}
+.v34-privacy-section.danger .v34-card-eyebrow{background:transparent;color:#a45445}
+.v34-privacy-section.danger button{background:#fff;border-color:#e4c9c3;color:#a04636}
+.v34-privacy-section.danger button:hover{background:#fff5f2;border-color:#d7aaa1}
+.v34-privacy-notice{margin:20px 0 0;padding:12px 16px;border:1px solid #eee1c9;border-radius:8px;background:#fffaf1;color:#805e2f;font-size:12px;line-height:1.75}
+.v34-privacy-feedback{min-height:18px;margin:18px 0 0;font-size:12px;color:#246043;font-weight:700;line-height:1.6}
+/* Deletion confirmation also follows the same restrained layout. */
+.v34-delete-modal .v34-delete-form{
+  display:grid;grid-template-columns:1fr;gap:18px;
+  margin:23px 0 0;padding:0;border:0;background:transparent
+}
+.v34-delete-form label{display:block;color:#365345;font-size:12px;font-weight:750}
+.v34-delete-form input{
+  display:block;width:100%;margin-top:8px;padding:13px;
+  border:1px solid #d9e3da;border-radius:10px;
+  background:#fff;color:#17362e;outline-color:#79cbaa
+}
+.v34-delete-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:2px}
+.v34-delete-form .v34-delete-actions button{justify-self:start;align-self:auto}
+.v34-delete-actions .ghost,.v34-delete-form .v34-delete-actions .ghost{background:#fff;border:1px solid #d6e4da;color:#234e3d}
+@media(max-width:700px){
+  .v30-header-side{flex-wrap:wrap}
+  #modal:has(.v34-privacy-modal) .modal{
+    width:calc(100vw - 20px);max-height:calc(100dvh - 20px);
+    padding:32px 22px 28px;border-radius:17px
+  }
+  #modal:has(.v34-privacy-modal) .modal-close{top:11px;right:11px;width:34px;height:34px}
+  .v34-privacy-hero{padding:4px 30px 23px 0}
+  .v34-privacy-modal h2{font-size:29px}
+  .v34-privacy-hero>p{font-size:13px}
+  .v34-privacy-links{gap:5px 16px;margin-top:17px}
+  .v34-privacy-grid{display:block}
+  .v34-privacy-section{grid-template-columns:1fr;gap:13px;padding:22px 0}
+  .v34-privacy-section h3{font-size:16px}
+  .v34-privacy-section p{font-size:12.5px}
+  .v34-privacy-section button{justify-self:start;align-self:start}
+  .v34-delete-modal .v34-delete-form{gap:15px}
+  .v34-delete-actions{flex-direction:column}
+  .v34-delete-actions button{width:100%;justify-self:stretch!important}
+}
+@media(prefers-reduced-motion:reduce){.v34-privacy-section button{transition:none}}

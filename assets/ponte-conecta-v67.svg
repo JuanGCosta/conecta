@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="690" viewBox="0 0 750 690" role="img" aria-labelledby="title">
+<title id="title">Ponte estaiada e paisagem de São José dos Campos em tons de verde</title>
+<defs>
+ <linearGradient id="air" x1=".05" y1="0" x2="1" y2="1"><stop stop-color="#f8fbf6"/><stop offset=".55" stop-color="#eef9ef"/><stop offset="1" stop-color="#daf3e3"/></linearGradient>
+ <linearGradient id="hills" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#dbf5de"/><stop offset="1" stop-color="#bae5c7"/></linearGradient>
+ <linearGradient id="bridge" x1="0" y1="0" x2=".9" y2="1"><stop stop-color="#aee0ba"/><stop offset="1" stop-color="#5bb18a"/></linearGradient>
+</defs>
+<path d="M80 540C115 402 223 299 354 278C499 253 595 338 750 235V690H0V615Z" fill="url(#air)"/>
+<circle cx="620" cy="187" r="144" fill="#edf9ed" opacity=".95"/>
+<path d="M0 537C135 485 196 507 265 472C384 424 462 409 750 443V690H0Z" fill="#e3f5e7"/>
+<g fill="#b9e5c5" opacity=".76">
+<rect x="183" y="363" width="41" height="136" rx="3"/>
+<rect x="228" y="334" width="38" height="168" rx="2"/>
+<rect x="271" y="384" width="34" height="120" rx="2"/>
+<rect x="309" y="318" width="36" height="186" rx="2"/>
+<rect x="352" y="360" width="30" height="142" rx="2"/>
+<rect x="390" y="392" width="39" height="109" rx="2"/>
+</g>
+<g fill="#a2d8b4" opacity=".38"><path d="M236 323h19v14h-19zM321 307h12v12h-12zM365 348h11v12h-11z"/></g>
+<path d="M0 533C145 504 281 501 417 503C584 507 642 538 750 523V690H0Z" fill="url(#hills)"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+<!-- bridge roadway -->
+<path d="M57 548C240 507 513 478 744 542" stroke="#8bcfa3" stroke-width="20"/>
+<path d="M57 539C246 498 522 470 744 533" stroke="#effaf0" stroke-width="6"/>
+<!-- cable tower -->
+<path d="M494 103C444 187 422 333 415 493" stroke="url(#bridge)" stroke-width="31"/>
+<path d="M494 103C559 198 594 359 611 511" stroke="url(#bridge)" stroke-width="32"/>
+<path d="M494 111C455 195 433 345 428 474" stroke="#def6e6" stroke-width="6" opacity=".66"/>
+<path d="M498 113C562 211 586 376 600 488" stroke="#def6e6" stroke-width="6" opacity=".63"/>
+<g stroke="#9acfb0" stroke-width="2.7" opacity=".9">
+<path d="M494 108L102 533M494 108L175 520M494 108L249 508M494 108L323 500M494 108L388 493"/>
+<path d="M494 108L467 490M494 108L526 494M494 108L582 501M494 108L647 517M494 108L720 535"/>
+</g></g>
+<g opacity=".82"><path d="M126 532V452" stroke="#69ad84" stroke-width="9" stroke-linecap="round"/><path d="M124 481l-25-21M126 468l24-27" stroke="#7ec39a" stroke-width="5"/><circle cx="104" cy="438" r="39" fill="#b2e6be"/><circle cx="142" cy="423" r="46" fill="#d1f0d4"/><circle cx="167" cy="456" r="35" fill="#a3dcb6"/></g>
+<path d="M0 608C175 540 405 575 750 585V690H0Z" fill="#c1e8cc" opacity=".84"/>
+<path d="M0 658C242 562 409 627 750 603V690H0Z" fill="#a3d6b5" opacity=".43"/>
+</svg>

@@ -1,0 +1,296 @@
+/* Conecta v67: mantém o hero original; altera somente a ilustração da direita e o seletor. */
+#page-home .clean-hero{
+  position:relative!important;
+  overflow:visible!important;
+  isolation:isolate;
+}
+#page-home .clean-hero-main{
+  position:relative!important;
+  z-index:5!important;
+}
+#page-home .clean-hero-main .hero-chip,
+#page-home .clean-hero-main h1,
+#page-home .clean-hero-main > p,
+#page-home .clean-hero-search,
+#page-home .hero-quick{
+  opacity:1!important;
+  transform:none!important;
+  animation:none!important;
+}
+/* Não existe mais o antigo cartão de marca no hero. A ponte ocupa apenas a coluna da direita. */
+#page-home .v67-bridge-visual{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:visible!important;
+  z-index:1!important;
+  pointer-events:none;
+}
+#page-home .v67-bridge-visual::before,
+#page-home .v67-bridge-visual::after{
+  display:none!important;
+  content:none!important;
+}
+#page-home .v67-bridge-scene{
+  position:absolute;
+  inset:-1% -4% 0 -10%;
+  background-image:url('/assets/ponte-conecta-v67.svg');
+  background-repeat:no-repeat;
+  background-position:center bottom;
+  background-size:contain;
+  filter:drop-shadow(0 18px 24px rgba(28,109,72,.08));
+}
+/* O <select> real continua existindo e sendo lido pelo app.js. */
+#page-home .v67-category-wrap{
+  flex:0 1 176px;
+  min-width:138px;
+  position:relative;
+  z-index:45;
+  align-self:stretch;
+  display:flex;
+  align-items:center;
+  border-left:1px solid #e2ebe3;
+  padding-left:5px;
+}
+#page-home #heroCategory{
+  position:absolute!important;
+  left:0!important;top:0!important;
+  width:1px!important;height:1px!important;
+  padding:0!important;margin:0!important;
+  clip-path:inset(50%)!important;
+  overflow:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
+#page-home .v67-category-trigger{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:9px;
+  width:100%;height:50px;
+  border:1px solid transparent;
+  border-radius:12px;
+  padding:0 12px;
+  background:#eff7ee;
+  color:#174732;
+  text-align:left;
+  font:700 11px/1.35 'DM Sans',Arial,sans-serif;
+  cursor:pointer;
+  transition:background-color .16s,border-color .16s;
+}
+#page-home .v67-category-trigger>span:first-child{
+  display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#page-home .v67-category-trigger:hover,
+#page-home .v67-category-trigger.v67-open{background:#e5f4e8;border-color:#a4d7b5}
+#page-home .v67-category-trigger:focus-visible{outline:3px solid #68ba85;outline-offset:2px}
+#page-home .v67-chevron{
+  width:8px;height:8px;flex:none;
+  border-right:1.7px solid #276246;border-bottom:1.7px solid #276246;
+  transform:rotate(45deg) translateY(-2px);
+  transition:transform .16s;
+}
+#page-home .v67-category-trigger.v67-open .v67-chevron{transform:rotate(225deg) translateY(-2px)}
+#page-home .v67-category-menu{
+  display:block;
+  position:absolute;
+  z-index:150;
+  top:calc(100% + 13px);
+  right:-15px;
+  width:268px;
+  max-width:calc(100vw - 38px);
+  max-height:min(440px,calc(100vh - 145px));
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding:10px;
+  border:1px solid #e2ede5;
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 22px 60px rgba(7,58,37,.19);
+  scrollbar-color:#c1ddca transparent;
+  scrollbar-width:thin;
+}
+#page-home .v67-category-menu[hidden]{display:none!important}
+#page-home .v67-category-option{
+  display:block;width:100%;min-height:39px;
+  padding:10px 13px;
+  border:0;border-radius:11px;background:transparent;
+  color:#304c3d;
+  text-align:left;
+  font:600 13px/1.3 'DM Sans',Arial,sans-serif;
+  cursor:pointer;
+}
+#page-home .v67-category-option:hover,
+#page-home .v67-category-option:focus-visible{background:#e9f5ec;outline:none}
+#page-home .v67-category-option[aria-selected="true"]{
+  background:#087a4b!important;color:#fff!important;font-weight:800;
+}
+#page-home .hero-quick{position:relative;z-index:1}
+#page-home .clean-hero-search{
+  position:relative!important;
+  overflow:visible!important;
+  z-index:30!important;
+}
+#page-home .clean-home-wrap{overflow:visible!important}
+#page-home .services-reference{position:relative;z-index:0}
+/* Mobile: mesma home do Conecta, ponte abaixo do formulário e seletor acessível. */
+@media(max-width:1100px){
+  #page-home .v67-bridge-scene{inset:0 -3% 0 -7%}
+  #page-home .v67-category-wrap{flex-basis:156px;min-width:122px}
+  #page-home .v67-category-trigger{height:45px;font-size:10px;padding:0 9px}
+}
+@media(max-width:760px){
+  #page-home .clean-hero{overflow:visible!important}
+  #page-home .v67-bridge-visual{
+    display:block!important;
+    position:relative!important;
+    margin:12px auto 0!important;
+    width:100%!important;
+    min-height:205px!important;
+    height:205px!important;
+    max-width:500px!important;
+  }
+  #page-home .v67-bridge-scene{inset:-4% 0 0 0;background-size:contain;background-position:center bottom}
+  #page-home .v67-category-wrap{min-width:0;flex:1 1 auto;align-self:stretch;padding-left:4px;border-left:1px solid #e9efe7}
+  #page-home .v67-category-trigger{min-width:0;width:100%;height:44px;min-height:44px;padding:0 8px;font-size:11px;background:#eef8ef}
+  #page-home .v67-category-menu{
+    position:fixed!important;
+    top:auto!important;bottom:74px!important;
+    left:14px!important;right:14px!important;
+    width:auto!important;max-width:none!important;
+    max-height:min(65vh,500px)!important;
+    box-shadow:0 18px 66px rgba(10,61,40,.26);
+  }
+  #page-home .clean-hero-search{
+    display:grid!important;
+    grid-template-columns:22px minmax(0,1fr) minmax(115px,.85fr) auto!important;
+    gap:5px!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-height:62px!important;
+    padding:5px 5px 5px 9px!important;
+  }
+  #page-home .clean-hero-search .search-ico{grid-column:1;display:flex!important;padding:0!important}
+  #page-home .clean-hero-search input{grid-column:2;min-width:0!important;width:100%;font-size:11px!important}
+  #page-home .v67-category-wrap{grid-column:3}
+  #page-home .clean-hero-search .btn{grid-column:4;min-width:72px;height:44px!important;min-height:44px!important;padding:0 10px!important;font-size:11px!important}
+}
+@media(max-width:480px){
+  #page-home .clean-hero-search{
+    grid-template-columns:22px minmax(0,1fr) minmax(100px,.95fr) auto!important;
+    gap:4px!important;
+  }
+  #page-home .clean-hero-search input{font-size:10px!important}
+  #page-home .v67-category-trigger{font-size:10px;padding:0 6px}
+  #page-home .clean-hero-search .btn{min-width:69px;padding:0 8px!important;font-size:10px!important}
+  #page-home .v67-bridge-visual{height:200px!important;min-height:200px!important}
+}
+@media(prefers-reduced-motion:reduce){#page-home .v67-chevron,#page-home .v67-category-trigger{transition:none}}
+
+
+/* V68 — Ponte e praça japonesa: a arte aprovada ocupa toda a lateral até a borda da tela.
+   Sem card, sombra ou moldura e sem afetar os elementos interativos da busca. */
+#page-home .clean-home-wrap{background:#faf9f4!important}
+#page-home .clean-hero{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:visible!important;
+  min-height:660px!important;
+  grid-template-columns:minmax(0,1.06fr) minmax(0,.94fr)!important;
+  background:#faf9f4!important;
+}
+#page-home .clean-hero-main{
+  position:relative!important;
+  isolation:auto!important;
+  overflow:visible!important;
+  z-index:2!important;
+}
+#page-home .v67-bridge-visual{
+  position:absolute!important;
+  top:0!important;bottom:0!important;right:0!important;
+  width:min(66vw,1110px)!important;
+  height:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  max-width:none!important;
+  z-index:0!important;
+  overflow:hidden!important;
+  background:transparent!important;
+  pointer-events:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+#page-home .v67-bridge-scene{
+  position:absolute!important;
+  inset:0!important;
+  background-image:url('/assets/ponte-praca-conecta-v68.webp')!important;
+  background-size:auto 100%!important;
+  background-position:right bottom!important;
+  background-repeat:no-repeat!important;
+  filter:none!important;
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 15%,#000 100%)!important;
+  mask-image:linear-gradient(to right,transparent 0%,#000 15%,#000 100%)!important;
+}
+#page-home .clean-hero-search {z-index:10!important}
+#page-home .hero-quick{z-index:1!important}
+
+/* V68 — Dropdown em portal no body: não é mais recortado pelo hero nem pelas seções. */
+body > #v66CategoryMenu.v68-category-portal{
+  position:fixed!important;
+  display:block;
+  box-sizing:border-box;
+  z-index:2147483000!important;
+  top:0;left:0;right:auto;bottom:auto;
+  width:282px;
+  max-height:400px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+  padding:9px;
+  border:1px solid #dceae0;
+  border-radius:17px;
+  background:#fff;
+  box-shadow:0 22px 48px rgba(12,59,39,.20);
+  scrollbar-color:#c1ddca transparent;
+  scrollbar-width:thin;
+}
+body > #v66CategoryMenu.v68-category-portal[hidden]{display:none!important}
+body > #v66CategoryMenu.v68-category-portal .v67-category-option{
+  display:block;width:100%;min-height:41px;padding:10px 12px;
+  border:0;border-radius:10px;background:transparent;
+  color:#284c3a;text-align:left;
+  font:600 13px/1.3 'DM Sans',Arial,sans-serif;
+  cursor:pointer;
+}
+body > #v66CategoryMenu.v68-category-portal .v67-category-option:hover,
+body > #v66CategoryMenu.v68-category-portal .v67-category-option:focus-visible{background:#e9f5ec;outline:0}
+body > #v66CategoryMenu.v68-category-portal .v67-category-option[aria-selected=true]{background:#0b7549;color:#fff;font-weight:800}
+
+@media(max-width:1100px) and (min-width:761px){
+  #page-home .v67-bridge-visual{width:64vw!important}
+  #page-home .v67-bridge-scene{background-size:auto 95%!important;background-position:right bottom!important}
+}
+@media(max-width:760px){
+  #page-home .clean-hero{
+    display:flex!important;flex-direction:column!important;
+    min-height:0!important;
+    padding-bottom:0!important;
+    overflow:visible!important;
+  }
+  #page-home .v67-bridge-visual{
+    display:block!important;
+    position:relative!important;
+    width:100vw!important;
+    max-width:none!important;
+    height:245px!important;
+    min-height:245px!important;
+    margin:10px 0 0 calc(50% - 50vw)!important;
+    overflow:hidden!important;
+  }
+  #page-home .v67-bridge-scene{
+    inset:0!important;
+    background-size:auto 100%!important;
+    background-position:right bottom!important;
+    -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 12%,#000 100%)!important;
+    mask-image:linear-gradient(to right,transparent 0%,#000 12%,#000 100%)!important;
+  }
+  body > #v66CategoryMenu.v68-category-portal{border-radius:15px;width:calc(100vw - 28px);max-width:none}
+}

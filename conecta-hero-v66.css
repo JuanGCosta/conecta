@@ -1,0 +1,187 @@
+/* Conecta v66 — nova apresentação da home; não altera comportamento do app. */
+#page-home .clean-home-wrap {background:#f8fcf8!important}
+#page-home .clean-hero {
+  display:block!important;
+  position:relative!important;
+  isolation:isolate;
+  min-height:705px!important;
+  overflow:visible!important;
+  width:100%!important;
+  padding:88px clamp(24px,6vw,100px) 66px!important;
+  background:radial-gradient(ellipse at 8% 0%,#e3f5e7 0,transparent 39%),
+             radial-gradient(ellipse at 100% 56%,#e7f8ec 0,transparent 54%),
+             linear-gradient(115deg,#fff 7%,#f9fdfa 70%,#f1f9f3)!important;
+}
+#page-home .clean-hero::before {
+  content:""!important;display:block!important;position:absolute!important;
+  inset:auto 0 0 0!important;height:120px!important;z-index:-1!important;
+  background:linear-gradient(170deg,transparent 22%,#e8f6eb 23%,#edf9ef 73%,transparent 74%)!important;
+  pointer-events:none!important;
+}
+#page-home .clean-hero-main {
+  z-index:3!important;position:relative!important;max-width:1200px!important;width:100%!important;
+  min-width:0!important;min-height:0!important;margin:0 auto!important;
+  display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+  padding:0!important;justify-content:flex-start!important;background:transparent!important;
+}
+#page-home .v19-location-bar {display:none!important}
+#page-home .hero-chip {display:none!important}
+#page-home .clean-hero-main h1 {
+  max-width:760px!important;
+  margin:22px 0 25px!important;
+  font:800 clamp(76px,10vw,145px)/.98 'DM Sans',Arial,sans-serif!important;
+  letter-spacing:-.085em!important;
+  color:#073b29!important;
+  text-transform:none!important;
+  text-wrap:balance!important;
+}
+#page-home .clean-hero-main h1 em {font-style:normal!important;color:inherit!important}
+#page-home .clean-hero-main > p {
+  max-width:490px!important;margin:0!important;
+  font:400 clamp(17px,1.75vw,24px)/1.62 'DM Sans',Arial,sans-serif!important;
+  letter-spacing:-.018em!important;color:#54685f!important;
+}
+#page-home .clean-hero-main > p strong{color:#143f30!important;font-weight:750!important}
+#page-home .hero-visual.hero-brand-visual {
+  display:block!important;position:absolute!important;z-index:0!important;
+  width:min(60vw,880px)!important;height:min(48vw,590px)!important;min-height:380px!important;
+  max-width:none!important;margin:0!important;inset:auto 0 0 auto!important;
+  border:0!important;opacity:.86!important;pointer-events:none!important;
+  background:url('assets/ponte-conecta.svg') right bottom/contain no-repeat!important;
+  box-shadow:none!important;transform:none!important;
+}
+#page-home .hero-visual.hero-brand-visual::before,#page-home .hero-visual.hero-brand-visual::after{display:none!important}
+#page-home .hero-brand-panel {display:none!important}
+#page-home .clean-hero-search {
+  position:relative!important;z-index:8!important;
+  display:grid!important;grid-template-columns:minmax(0,1fr) 280px 230px!important;
+  align-items:center!important;gap:12px!important;
+  margin:65px 0 0!important;padding:12px!important;
+  width:min(100%,1200px)!important;min-height:92px!important;
+  border:1px solid #e5eee5!important;border-radius:30px!important;
+  background:rgba(255,255,255,.98)!important;
+  box-shadow:0 20px 60px rgba(11,75,47,.10)!important;
+  overflow:visible!important;
+}
+#page-home .clean-hero-search .search-ico {display:none!important}
+#page-home .clean-hero-search input {
+  box-sizing:border-box!important;height:62px!important;width:100%!important;
+  font:500 17px/1.2 'DM Sans',Arial,sans-serif!important;
+  padding:0 24px!important;border:0!important;background:transparent!important;
+  min-width:0!important;outline-offset:3px!important;color:#123e2c!important;
+}
+#page-home .clean-hero-search input::placeholder{color:#768981!important}
+#page-home .v66-category-wrap{position:relative!important;min-width:0!important;height:100%!important;display:flex!important;align-items:center!important}
+#page-home #heroCategory.v66-native-select {display:none!important}
+#page-home .v66-category-trigger {
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  width:100%!important;height:64px!important;min-height:64px!important;
+  padding:0 20px!important;margin:0!important;border-radius:22px!important;
+  border:1px solid #bfe0c8!important;background:#eef8ee!important;
+  color:#164d36!important;box-shadow:none!important;
+  font:750 16px/1.2 'DM Sans',Arial,sans-serif!important;
+  cursor:pointer!important;white-space:nowrap!important;text-align:left!important;
+}
+#page-home .v66-category-trigger:hover,#page-home .v66-category-trigger.v66-open{border-color:#228653!important;background:#e8f5eb!important}
+#page-home .v66-category-trigger:focus-visible{outline:3px solid #72c897!important;outline-offset:2px!important}
+#page-home .v66-category-trigger span:first-child{white-space:nowrap;text-overflow:ellipsis;overflow:hidden;min-width:0}
+#page-home .v66-chevron {display:block!important;flex:none;width:10px;height:10px;border-bottom:2px solid #23714b;border-right:2px solid #23714b;transform:rotate(45deg);margin:0 4px 6px 14px;transition:transform .16s}
+#page-home .v66-category-trigger.v66-open .v66-chevron{transform:rotate(225deg);margin-bottom:-3px}
+#page-home .v66-category-menu {
+  display:block;position:absolute;z-index:100!important;
+  left:50%;bottom:calc(100% + 20px);top:auto;
+  transform:translateX(-50%);
+  width:320px;max-width:min(92vw,370px);max-height:min(640px,calc(100vh - 130px));
+  overflow:auto;overscroll-behavior:contain;
+  border:1px solid #e3eee6;border-radius:25px;
+  background:#fff;box-shadow:0 24px 75px rgba(11,72,44,.16);
+  padding:12px;scrollbar-color:#c9dbce transparent;scrollbar-width:thin;
+}
+#page-home .v66-category-menu[hidden]{display:none!important}
+#page-home .v66-category-option {
+  display:block;width:100%;min-height:36px;padding:9px 16px;
+  border:0;border-radius:13px;background:transparent;
+  color:#27463a;text-align:left;cursor:pointer;
+  font:500 14px/1.3 'DM Sans',Arial,sans-serif;
+}
+#page-home .v66-category-option:hover,#page-home .v66-category-option:focus-visible {background:#e8f5eb!important;outline:0!important}
+#page-home .v66-category-option[aria-selected="true"]{background:#0a7545!important;color:#fff!important;font-weight:700!important}
+#page-home .clean-hero-search .btn {
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;height:66px!important;min-height:66px!important;
+  border-radius:22px!important;padding:0 18px!important;margin:0!important;
+  background:linear-gradient(112deg,#249e60,#006439)!important;
+  color:#fff!important;border:0!important;
+  font:750 20px/1.2 'DM Sans',Arial,sans-serif!important;
+  box-shadow:0 7px 16px rgba(8,119,65,.13)!important;
+}
+#page-home .clean-hero-search .btn svg{display:none!important}
+#page-home .hero-quick {margin:26px 0 0!important;position:relative!important;z-index:1!important;gap:12px!important;align-items:center!important}
+#page-home .hero-quick>span{display:none!important}
+#page-home .hero-quick-actions {display:flex!important;flex-wrap:wrap!important;gap:12px!important;overflow:visible!important}
+#page-home .hero-quick-actions button {
+  background:#e7f7eb!important;border:1px solid #e1f0e5!important;
+  border-radius:100px!important;padding:11px 24px!important;
+  color:#255442!important;box-shadow:none!important;
+  font:600 12px/1.3 'DM Sans',Arial,sans-serif!important;
+}
+#page-home .hero-quick-actions button:hover{background:#d5efd9!important}
+/* Better alignment of the existing brand mark, without replacing it. */
+.header.clean-header .logo{color:#0a3929!important}
+.header.clean-header .logo-symbol{transform:rotate(-17deg)}
+@media(max-width:950px){
+  #page-home .clean-hero{min-height:660px!important;padding:75px 28px 60px!important}
+  #page-home .clean-hero-main h1{font-size:clamp(66px,11vw,100px)!important}
+  #page-home .hero-visual.hero-brand-visual{width:68vw!important;height:50vw!important;opacity:.52!important}
+  #page-home .clean-hero-search{grid-template-columns:minmax(0,1fr) 210px 160px!important;gap:7px!important;padding:9px!important}
+  #page-home .v66-category-trigger{font-size:13px!important;padding:0 14px!important}
+  #page-home .clean-hero-search .btn{font-size:16px!important}
+}
+@media(max-width:650px){
+  #page-home .clean-hero{min-height:0!important;padding:36px 18px 48px!important;overflow:visible!important}
+  #page-home .clean-hero-main{width:100%!important;align-items:stretch!important;min-height:0!important;padding:0!important;}
+  #page-home .clean-hero-main h1{font-size:clamp(64px,17vw,100px)!important;letter-spacing:-.085em!important;margin:44px 0 19px!important;line-height:1!important}
+  #page-home .clean-hero-main > p{font-size:16px!important;max-width:350px!important;line-height:1.55!important;margin:0!important}
+  #page-home .hero-visual.hero-brand-visual{width:100vw!important;height:320px!important;min-height:0!important;right:-5px!important;bottom:115px!important;opacity:.30!important}
+  #page-home .clean-hero-search{
+    display:grid!important;grid-template-columns:minmax(0,1fr) 145px!important;
+    gap:8px!important;width:100%!important;min-height:0!important;
+    padding:9px!important;margin:65px 0 0!important;border-radius:23px!important;
+    box-shadow:0 14px 40px rgba(11,75,47,.12)!important;
+  }
+  #page-home .clean-hero-search input{grid-column:1/-1!important;grid-row:1!important;height:49px!important;font-size:13px!important;padding:0 12px!important;border-bottom:1px solid #e9f0e9!important}
+  #page-home .v66-category-wrap{grid-row:2!important;grid-column:1!important;min-width:0!important}
+  #page-home .v66-category-trigger{height:52px!important;min-height:52px!important;border-radius:15px!important;padding:0 12px!important;font-size:13px!important}
+  #page-home .clean-hero-search .btn{grid-row:2!important;grid-column:2!important;height:52px!important;min-height:52px!important;border-radius:15px!important;font-size:14px!important;padding:0 7px!important}
+  #page-home .v66-category-menu{bottom:auto;top:calc(100% + 10px);left:0;transform:none;width:min(83vw,320px);max-height:min(55vh,480px);border-radius:17px}
+  #page-home .v66-category-option{min-height:43px;font-size:14px;padding:12px 14px}
+  #page-home .hero-quick{margin:22px 0 0!important}
+  #page-home .hero-quick-actions{gap:8px!important;overflow:visible!important;padding:0!important}
+  #page-home .hero-quick-actions button{padding:10px 14px!important;font-size:11px!important}
+}
+@media(prefers-reduced-motion:reduce){#page-home .v66-chevron{transition:none}}
+/* Final layout guard against older max-width rules in the original theme. */
+#page-home .clean-hero-search {max-width:1200px!important;box-sizing:border-box!important;margin-top:84px!important}
+#page-home .clean-hero-search input {max-width:none!important;display:block!important;min-width:0!important;box-sizing:border-box!important}
+#page-home .v66-category-menu {max-height:min(490px,calc(100vh - 170px))}
+@media(max-width:650px){#page-home .clean-hero-search {max-width:100%!important;margin-top:58px!important}#page-home .v66-category-menu{max-height:min(55vh,480px)}}
+/* The old hero intro animation begins at opacity 0 and only runs after a JS hook.
+   Keep the refreshed hero visible even on slow devices or if that hook is delayed. */
+#page-home .clean-hero-main h1,
+#page-home .clean-hero-main > p,
+#page-home .clean-hero-search,
+#page-home .hero-quick {
+  opacity:1!important;transform:none!important;animation:none!important;
+}
+/* The category layer must stay over the next home sections. */
+#page-home .clean-hero {z-index:12!important}
+@media(max-width:650px){
+  #page-home .v66-category-menu {
+    position:fixed!important;
+    top:auto!important;bottom:84px!important;left:12px!important;right:12px!important;
+    width:auto!important;max-width:none!important;
+    transform:none!important;max-height:min(66vh,570px)!important;
+    box-shadow:0 18px 65px rgba(14,70,42,.25)!important;
+    border-radius:22px!important;
+  }
+}

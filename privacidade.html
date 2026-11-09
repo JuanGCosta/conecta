@@ -2,85 +2,232 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#123f32">
-  <link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48"><link rel="icon" href="/favicon.png" type="image/png" sizes="192x192">
-  <link rel="stylesheet" href="politicas.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Entenda como seus dados são utilizados no Conecta, quais informações são públicas e como exercer seus direitos de privacidade.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://conectasjc.com.br/privacidade.html">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <style>
+/* Conecta | documentação legal em estilo editorial, sem dependências externas */
+:root{color-scheme:light;--forest:#153f31;--forest-dark:#103629;--green:#17744e;--green-soft:#eef7f0;--text:#273c33;--muted:#63786e;--line:#e6ebe7;--bg:#fff}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;font-size:15px;line-height:1.8;-webkit-font-smoothing:antialiased}
+a{color:var(--green);text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #8acdab;outline-offset:3px}
+button,input{font:inherit}
+[hidden]{display:none!important}
+.site-header{border-bottom:1px solid var(--line);background:#fff}
+.site-header-inner{max-width:1190px;margin:0 auto;min-height:78px;padding:14px 28px;display:flex;align-items:center;gap:17px}
+.brand{display:inline-flex;align-items:center;gap:9px;color:var(--forest);font-size:23px;font-weight:800;letter-spacing:-1.15px;line-height:1}
+.brand:hover{text-decoration:none}
+.brand-symbol{display:block;flex:none}
+.brand-point{color:#36ac76}
+.header-divider{height:23px;width:1px;background:#dae4dc;margin:0 4px}
+.header-context{font-size:12.5px;color:#5c7066;font-weight:650;white-space:nowrap}
+.site-nav{margin-left:auto;display:flex;align-items:center;gap:27px}
+.site-nav a{font-size:13px;color:#566d61;font-weight:600;white-space:nowrap}
+.site-nav a:hover,.site-nav a[aria-current="page"]{color:var(--green)}
+.search-band{max-width:764px;padding:57px 24px 0;margin:0 auto}
+.search-box{height:59px;display:flex;align-items:center;gap:14px;border:1px solid #dfe6e1;border-radius:12px;background:#fff;box-shadow:0 3px 13px rgba(18,54,41,.025);padding:0 18px;transition:border-color .15s ease,box-shadow .15s ease}
+.search-box:focus-within{border-color:#81baa0;box-shadow:0 0 0 3px #eaf6ef}
+.search-icon{width:21px;height:21px;flex:none;color:#91a196}
+.search-box input{width:100%;min-width:0;border:0;outline:0!important;color:var(--forest);background:transparent;font-size:14px}
+.search-box input::placeholder{color:#95a49b}
+.search-shortcut{white-space:nowrap;color:#97a89d;font-size:11px;font-weight:550;letter-spacing:.02em}
+.search-feedback{margin:10px 3px 0;font-size:13px;color:#607569}
+.content-wrap{max-width:764px;padding:48px 24px 99px;margin:0 auto}
+.breadcrumbs{display:flex;align-items:center;flex-wrap:wrap;gap:9px;color:#7e9185;font-size:12px;font-weight:500;margin-bottom:24px;line-height:1.6}
+.breadcrumbs a{color:var(--green);font-weight:600}
+.legal-article{width:100%}
+.article-header{padding-bottom:34px;border-bottom:1px solid var(--line)}
+.eyebrow{margin:0 0 9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:10px;color:var(--green)}
+h1{margin:0 0 14px;font-size:clamp(31px,4.5vw,44px);line-height:1.15;letter-spacing:-1.9px;color:var(--forest);font-weight:760}
+.updated{margin:0 0 22px;color:#839286;font-size:13px;font-style:italic}
+.intro{margin:0;font-size:16px;line-height:1.77;color:#4f6558}
+.document-sections{padding-top:7px}
+.document-section{padding:30px 0 27px;scroll-margin-top:32px;border-bottom:1px solid var(--line)}
+.document-section h2{margin:0 0 13px;font-size:21px;line-height:1.35;font-weight:725;letter-spacing:-.55px;color:var(--forest)}
+.document-section p,.document-section li{font-size:14.5px;line-height:1.85;color:#53665b}
+.document-section p{margin:0 0 13px}
+.document-section p:last-child{margin-bottom:0}
+.document-section ul{padding-left:21px;margin:2px 0 13px}
+.document-section li{padding-left:2px;margin:0 0 6px}
+.document-section li::marker{color:#4f9c75}
+.document-section a{font-weight:650;word-break:break-word}
+.document-section strong{color:#304e3d;font-weight:700}
+.document-section:target h2{color:#148158}
+.search-empty{padding:48px 0 26px}
+.search-empty h2{font-size:21px;color:var(--forest);margin:0 0 9px}
+.search-empty p{color:var(--muted);margin:0;font-size:14px}
+.search-empty button{border:0;background:none;padding:0;color:var(--green);font-weight:700;cursor:pointer;text-decoration:underline}
+.help-contact{padding:34px 0 32px;border-bottom:1px solid var(--line)}
+.help-contact h2{margin:0 0 9px;font-size:19px;letter-spacing:-.4px;line-height:1.4;color:var(--forest)}
+.help-contact p{font-size:14px;color:var(--muted);max-width:560px;margin:0 0 14px;line-height:1.7}
+.contact-link{font-weight:700;font-size:14px;word-break:break-word}
+.related{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:30px 0 0}
+.related>span{font-size:13px;color:#728477}
+.related a{font-size:14px;font-weight:700}
+.related a span{font-size:16px;margin-left:4px}
+.site-footer{border-top:1px solid var(--line);background:#fafcfb}
+.footer-inner{max-width:1190px;margin:0 auto;padding:25px 28px;display:flex;align-items:center;justify-content:space-between;gap:22px;color:#8a988e;font-size:12px}
+.footer-inner nav{display:flex;flex-wrap:wrap;gap:22px}
+.footer-inner a{color:#698075}
+@media(max-width:720px){
+ .site-header-inner{padding:17px 18px;flex-wrap:wrap;gap:12px}
+ .brand{font-size:22px}
+ .header-divider,.header-context{display:none}
+ .site-nav{gap:16px;justify-content:flex-start;flex-wrap:wrap;width:100%;margin:2px 0 0}
+ .site-nav a{font-size:12px}
+ .search-band{padding:35px 20px 0}
+ .search-box{height:55px}
+ .search-shortcut{display:none}
+ .content-wrap{padding:37px 20px 68px}
+ .breadcrumbs{margin-bottom:22px}
+ h1{letter-spacing:-1.25px}
+ .document-section{padding:26px 0 24px}
+ .document-section h2{font-size:19px}
+ .document-section p,.document-section li{font-size:14px}
+ .footer-inner{padding:27px 20px;flex-direction:column;align-items:flex-start}
+ .footer-inner nav{gap:12px 19px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.search-box{transition:none}}
+
+</style>
   <title>Política de Privacidade | Conecta</title>
-<link rel="canonical" href="https://conectasjc.com.br/privacidade.html"><meta name="description" content="Conheça a Política de Privacidade do Conecta, plataforma de serviços em São José dos Campos."></head>
-<body class="policy-body">
-  <header class="policy-header">
-    <a class="brand" href="./">conecta<span>.</span></a>
-    <nav>
-      <a href="privacidade.html">Privacidade</a>
-      <a href="termos.html">Termos</a>
-      <a href="./">Voltar ao Conecta</a>
-    </nav>
-  </header>
-  <main class="policy-page">
-    <section class="policy-hero">
-      <span class="kicker">Privacidade e proteção de dados</span>
-      <h1>Política de Privacidade</h1>
-      <p class="policy-lead">Atualização: 3 de novembro de 2026. O Conecta é uma plataforma para localizar profissionais e publicar pedidos de serviços na região de São José dos Campos.</p>
-      <div class="notice"><strong>Contato de privacidade e suporte:</strong> <a href="mailto:conectasjc@outlook.com">conectasjc@outlook.com</a>. Solicitações também podem ser enviadas por esse canal sem acesso à conta.</div>
-      <div class="policy-highlights">
-        <article><strong>Dados públicos e privados</strong><p>Perfil, pedidos e portfólio podem ser exibidos publicamente, enquanto telefone e registros internos ficam em áreas protegidas.</p></article>
-        <article><strong>Central de Privacidade</strong><p>Você pode baixar seus dados, registrar pedidos de acesso e administrar a conta direto dentro da plataforma.</p></article>
-        <article><strong>Canal oficial</strong><p>Para dúvidas, suporte e solicitações relacionadas à privacidade, utilize <a href="mailto:conectasjc@outlook.com">conectasjc@outlook.com</a>.</p></article>
-      </div>
-    </section>
 
-    <div class="policy-sections">
-      <section>
-        <h2>Quais informações utilizamos</h2>
-        <p>Quando você cria uma conta, o Firebase Authentication trata e-mail, nome de exibição, identificador e credenciais de autenticação. O Conecta utiliza ainda as informações que você decide publicar, como nome profissional, categoria, cidade, bairro de atendimento, descrição e fotografias.</p>
-        <p>Se optar por cadastrar telefone, ele fica em um registro separado do perfil público. Pedidos e portfólio incluem textos e imagens enviados por seus autores. As conversas incluem participantes, mensagens, datas e estado da autorização do contato. Também tratamos propostas, favoritos e avaliações.</p>
-      </section>
-
-      <section>
-        <h2>Para que usamos os dados</h2>
-        <ul>
-          <li>Manter contas, autenticação e confirmação de e-mail.</li>
-          <li>Exibir perfis profissionais e pedidos publicados.</li>
-          <li>Permitir propostas, avaliações e conversas entre participantes.</li>
-          <li>Guardar preferências necessárias para o funcionamento do aplicativo e registros de solicitações de privacidade.</li>
-          <li>Proteger o serviço contra uso indevido e atender obrigações legais aplicáveis.</li>
-        </ul>
-        <p>O tratamento de dados deve estar fundamentado nas bases legais aplicáveis a cada finalidade, conforme a LGPD. Nem toda operação depende de consentimento.</p>
-      </section>
-
-      <section>
-        <h2>Quem pode ver suas informações</h2>
-        <p>Perfil, fotos de capa e portfólio, pedidos publicados e avaliações são públicos para visitantes. Mensagens e conversas são disponibilizadas aos seus participantes autenticados. O WhatsApp cadastrado não integra o perfil público e só é disponibilizado ao dono e, quando houver uma conversa aceita, ao cliente autorizado.</p>
-        <p>O Conecta não oferece criptografia de ponta a ponta para mensagens: o acesso técnico aos dados pode existir nos serviços de infraestrutura e por administradores autorizados.</p>
-      </section>
-
-      <section>
-        <h2>Fornecedores e tecnologias</h2>
-        <p>Utilizamos Firebase Authentication e Cloud Firestore, da Google, para login e armazenamento, além de Firebase Hosting para hospedagem do site. Recursos visuais podem carregar fotografias do Unsplash e fontes do Google Fonts, serviços que podem receber informações técnicas da conexão como o endereço IP. O navegador guarda dados técnicos necessários para manter a sessão de autenticação e preferências de uso.</p>
-        <p>Dados podem ser processados em infraestrutura fora do Brasil conforme a configuração e os termos dos respectivos serviços. A transferência internacional de dados, quando aplicável, deve observar as garantias e exigências legais pertinentes.</p>
-      </section>
-
-      <section>
-        <h2>Seus direitos e solicitações</h2>
-        <p>Você pode editar informações do perfil, solicitar acesso ou correção e pedir exclusão dos dados nos casos aplicáveis, conforme a LGPD. No Conecta, a Central de Privacidade permite baixar uma cópia dos registros disponíveis, registrar solicitações de acesso e excluir a própria conta.</p>
-        <p><strong>Ao excluir a conta pela Central de Privacidade</strong>, são apagados de forma definitiva o login, o perfil, o telefone, o portfólio, os pedidos e as propostas recebidas, as propostas enviadas, os favoritos e as avaliações feitas e recebidas. Nas conversas, o nome passa a aparecer como "Usuário removido" e a conversa é encerrada. As mensagens trocadas continuam disponíveis para a outra pessoa da conversa. O registro de solicitações de privacidade é mantido para comprovar o atendimento.</p>
-        <p>Caso não consiga acessar sua conta, escreva para <a href="mailto:conectasjc@outlook.com">conectasjc@outlook.com</a> usando, se possível, o endereço de e-mail cadastrado. Nunca envie sua senha.</p>
-      </section>
-
-      <section>
-        <h2>Retenção e segurança</h2>
-        <p>Os dados são mantidos enquanto necessários para oferecer os serviços e cumprir obrigações aplicáveis. Os prazos de retenção podem variar conforme o tipo de registro, a necessidade do serviço e as obrigações aplicáveis. Para informações sobre um dado específico, use nosso canal de privacidade.</p>
-        <p>O acesso aos dados em Firestore é controlado por regras de segurança, sem substituir auditorias, testes de acesso e revisão dos controles administrativos. Nunca publique senhas, documentos de identificação, endereço residencial ou detalhes financeiros em perfis ou pedidos.</p>
-      </section>
-
-      <section>
-        <h2>Responsável pelo tratamento e contato</h2>
-        <p>Canal oficial para dúvidas, suporte e solicitações de titulares: <a href="mailto:conectasjc@outlook.com">conectasjc@outlook.com</a>.</p>
-        <p>Para solicitar informações sobre o responsável pelo tratamento e exercer seus direitos relacionados aos dados pessoais, escreva para <a href="mailto:conectasjc@outlook.com">conectasjc@outlook.com</a>.</p>
-      </section>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="/" aria-label="Conecta, página inicial"><svg class="brand-symbol" width="34" height="34" viewBox="0 0 44 44" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><rect width="44" height="44" rx="12" fill="#0d4232"/><g transform="rotate(-20 22 22)"><rect x="10" y="10" width="10" height="10" rx="3.1" fill="#9de0b7"/><rect x="24" y="10" width="10" height="10" rx="3.1" fill="#e4f5de"/><rect x="10" y="24" width="10" height="10" rx="3.1" fill="#e4f5de"/><rect x="24" y="24" width="10" height="10" rx="3.1" fill="#4fb58f"/></g></svg><span class="brand-name">conecta<span class="brand-point">.</span></span></a>
+      <span class="header-divider" aria-hidden="true"></span>
+      <span class="header-context">Central de ajuda</span>
+      <nav class="site-nav" aria-label="Menu de ajuda">
+        <a href="/privacidade.html" aria-current="page">Privacidade</a>
+        <a href="/termos.html" >Termos</a>
+        <a href="/">Voltar ao Conecta</a>
+      </nav>
     </div>
+  </header>
+
+  <div class="search-band">
+    <label class="search-box" for="document-search">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+      <input id="document-search" type="search" autocomplete="off" placeholder="Pesquisar um assunto nesta página" aria-label="Pesquisar um assunto nesta página">
+      <span class="search-shortcut" aria-hidden="true">Buscar</span>
+    </label>
+    <p class="search-feedback" id="search-feedback" aria-live="polite" hidden></p>
+  </div>
+
+  <main class="content-wrap" id="conteudo">
+    <nav class="breadcrumbs" aria-label="Você está aqui"><a href="/">Início</a><span aria-hidden="true">/</span><span>Central de ajuda</span><span aria-hidden="true">/</span><span aria-current="page">Política de Privacidade</span></nav>
+    <article class="legal-article" aria-labelledby="page-title">
+      <header class="article-header">
+        <p class="eyebrow">Proteção de dados</p>
+        <h1 id="page-title">Política de Privacidade</h1>
+        <p class="updated">Atualizado em 3 de novembro de 2026</p>
+        <p class="intro">Como utilizamos e protegemos as informações de quem usa o Conecta.</p>
+      </header>
+      <div class="document-sections" id="document-sections">
+        <section class="document-section" id="quais-informacoes-utilizamos">
+<h2>Quais informações utilizamos</h2>
+<p>Quando você cria uma conta, o Firebase Authentication trata e-mail, nome de exibição, identificador e credenciais de autenticação. O Conecta utiliza ainda as informações que você decide publicar, como nome profissional, categoria, cidade, bairro de atendimento, descrição e fotografias.</p>
+<p>Se optar por cadastrar telefone, ele fica em um registro separado do perfil público. Pedidos e portfólio incluem textos e imagens enviados por seus autores. As conversas incluem participantes, mensagens, datas e estado da autorização do contato. Também tratamos propostas, favoritos e avaliações.</p>
+</section>
+<section class="document-section" id="para-que-usamos-os-dados">
+<h2>Para que usamos os dados</h2>
+<ul>
+<li>Manter contas, autenticação e confirmação de e-mail.</li>
+<li>Exibir perfis profissionais e pedidos publicados.</li>
+<li>Permitir propostas, avaliações e conversas entre participantes.</li>
+<li>Guardar preferências necessárias para o funcionamento do aplicativo e registros de solicitações de privacidade.</li>
+<li>Proteger o serviço contra uso indevido e atender obrigações legais aplicáveis.</li>
+</ul>
+<p>O tratamento de dados deve estar fundamentado nas bases legais aplicáveis a cada finalidade, conforme a LGPD. Nem toda operação depende de consentimento.</p>
+</section>
+<section class="document-section" id="quem-pode-ver-suas-informacoes">
+<h2>Quem pode ver suas informações</h2>
+<p>Perfil, fotos de capa e portfólio, pedidos publicados e avaliações são públicos para visitantes. Mensagens e conversas são disponibilizadas aos seus participantes autenticados. O WhatsApp cadastrado não integra o perfil público e só é disponibilizado ao dono e, quando houver uma conversa aceita, ao cliente autorizado.</p>
+<p>O Conecta não oferece criptografia de ponta a ponta para mensagens: o acesso técnico aos dados pode existir nos serviços de infraestrutura e por administradores autorizados.</p>
+</section>
+<section class="document-section" id="fornecedores-e-tecnologias">
+<h2>Fornecedores e tecnologias</h2>
+<p>Utilizamos Firebase Authentication e Cloud Firestore, da Google, para login e armazenamento, além de Firebase Hosting para hospedagem do site. Recursos visuais podem carregar fotografias do Unsplash e fontes do Google Fonts, serviços que podem receber informações técnicas da conexão como o endereço IP. O navegador guarda dados técnicos necessários para manter a sessão de autenticação e preferências de uso.</p>
+<p>Dados podem ser processados em infraestrutura fora do Brasil conforme a configuração e os termos dos respectivos serviços. A transferência internacional de dados, quando aplicável, deve observar as garantias e exigências legais pertinentes.</p>
+</section>
+<section class="document-section" id="seus-direitos-e-solicitacoes">
+<h2>Seus direitos e solicitações</h2>
+<p>Você pode editar informações do perfil, solicitar acesso ou correção e pedir exclusão dos dados nos casos aplicáveis, conforme a LGPD. No Conecta, a Central de Privacidade permite baixar uma cópia dos registros disponíveis, registrar solicitações de acesso e excluir a própria conta.</p>
+<p><strong>Ao excluir a conta pela Central de Privacidade</strong>, são apagados de forma definitiva o login, o perfil, o telefone, o portfólio, os pedidos e as propostas recebidas, as propostas enviadas, os favoritos e as avaliações feitas e recebidas. Nas conversas, o nome passa a aparecer como "Usuário removido" e a conversa é encerrada. As mensagens trocadas continuam disponíveis para a outra pessoa da conversa. O registro de solicitações de privacidade é mantido para comprovar o atendimento.</p>
+<p>Caso não consiga acessar sua conta, escreva para <a href="mailto:conectasjc@outlook.com">conectasjc@outlook.com</a> usando, se possível, o endereço de e-mail cadastrado. Nunca envie sua senha.</p>
+</section>
+<section class="document-section" id="retencao-e-seguranca">
+<h2>Retenção e segurança</h2>
+<p>Os dados são mantidos enquanto necessários para oferecer os serviços e cumprir obrigações aplicáveis. Os prazos de retenção podem variar conforme o tipo de registro, a necessidade do serviço e as obrigações aplicáveis. Para informações sobre um dado específico, use nosso canal de privacidade.</p>
+<p>O acesso aos dados em Firestore é controlado por regras de segurança, sem substituir auditorias, testes de acesso e revisão dos controles administrativos. Nunca publique senhas, documentos de identificação, endereço residencial ou detalhes financeiros em perfis ou pedidos.</p>
+</section>
+<section class="document-section" id="responsavel-pelo-tratamento-e-contato">
+<h2>Responsável pelo tratamento e contato</h2>
+<p>Canal oficial para dúvidas, suporte e solicitações de titulares: <a href="mailto:conectasjc@outlook.com">conectasjc@outlook.com</a>.</p>
+<p>Para solicitar informações sobre o responsável pelo tratamento e exercer seus direitos relacionados aos dados pessoais, escreva para <a href="mailto:conectasjc@outlook.com">conectasjc@outlook.com</a>.</p>
+</section>
+      </div>
+      <div class="search-empty" id="search-empty" hidden>
+        <h2>Nenhum resultado encontrado</h2>
+        <p>Tente outra palavra ou <button type="button" id="clear-search">limpe sua pesquisa</button> para visualizar o documento completo.</p>
+      </div>
+      <aside class="help-contact" aria-labelledby="help-title">
+        <h2 id="help-title">Ainda ficou com alguma dúvida?</h2>
+        <p>Se precisar de suporte ou quiser falar sobre seus dados, entre em contato pelo nosso canal oficial.</p>
+        <a class="contact-link" href="mailto:conectasjc@outlook.com">conectasjc@outlook.com</a>
+      </aside>
+      <nav class="related" aria-label="Documento relacionado">
+        <span>Veja também</span>
+        <a href="/termos.html">Termos de Uso <span aria-hidden="true">↗</span></a>
+      </nav>
+    </article>
   </main>
-  <footer class="policy-footer">Suporte e privacidade: <a href="mailto:conectasjc@outlook.com">conectasjc@outlook.com</a> · Conecta</footer>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>© Conecta</span>
+      <nav aria-label="Rodapé"><a href="/">Página inicial</a><a href="/privacidade.html">Política de Privacidade</a><a href="/termos.html">Termos de Uso</a></nav>
+    </div>
+  </footer>
+  <script>
+/* Pesquisa local dos tópicos deste documento. Nenhuma consulta é enviada a servidores. */
+(() => {
+  'use strict';
+  const input = document.querySelector('#document-search');
+  const sections = [...document.querySelectorAll('.document-section')];
+  const feedback = document.querySelector('#search-feedback');
+  const empty = document.querySelector('#search-empty');
+  const clear = document.querySelector('#clear-search');
+  if (!input || !sections.length) return;
+  const normalize = value => (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  const items = sections.map(section => ({ section, text: normalize(section.textContent) }));
+  const update = () => {
+    const q = normalize(input.value);
+    let count = 0;
+    items.forEach(({section,text}) => {
+      const match = !q || text.includes(q);
+      section.hidden = !match;
+      if (match) count++;
+    });
+    empty.hidden = !q || count !== 0;
+    feedback.hidden = !q;
+    if (q) feedback.textContent = count === 0 ? 'Nenhum tópico corresponde à pesquisa.' : `${count} ${count === 1 ? 'tópico encontrado' : 'tópicos encontrados'} nesta página.`;
+  };
+  input.addEventListener('input',update);
+  input.addEventListener('keydown',event => { if (event.key === 'Escape') { input.value = ''; update(); input.blur(); } });
+  if (clear) clear.addEventListener('click',() => { input.value = ''; update(); input.focus(); });
+})();
+
+  </script>
 </body>
 </html>
